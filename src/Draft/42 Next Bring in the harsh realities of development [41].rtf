@@ -1,0 +1,38 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1671
+\stshfdbch0{\fonttbl\f0\fswiss\fcharset0 ArialMT{\*\falt Arial};\f1\fswiss\fcharset0 Arial-ItalicMT{\*\falt Arial Italic};\f2\froman\fcharset0 Times-Roman{\*\falt Times Roman};
+}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+{\stylesheet {\s0 Normal;}}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0;}
+{\info
+{\author Phil Sturgeon}
+{\creatim\yr2019\mo2\dy27\hr17\min51\sec22\timesinceref572979082}
+{\revtim\yr2019\mo2\dy27\hr19\min23\sec2\timesinceref572984582}}\deftab720
+\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\pard\pardeftab720\sl400\partightenfactor0
+
+\f0\fs29\fsmilli14667 \cf2 \expnd0\expndtw0\kerning0
+At this point, you\'92ll have an idea of the order in which data 
+\f1\i should
+\f0\i0  be loaded -- ideally. You will inevitably find that this isn\'92t technically feasible in all cases. Your APIs may not provide information granularly enough for you to request just-the-bits-you-want, and that\'92s 
+\f1\i okay!
+\f0\i0  \
+\
+These days there is a big push for flexibility in requests. A lot of APIs offer you the ability to grab a lot of data all at once, but they should also let you load just the bits you want. This used to be slow in a HTTP/1 world, with browsers limiting you to 6 connections to a domain at any time. Now that you can use HTTP/2, that limit is configurable, and defaults to about 100 in most browsers, so crack on and make more connections.\
+\
+In particular, with GraphQL, this gives you the opportunity to pare your query down to 
+\f1\i exactly the data
+\f0\i0  you need for a given view. This give you the opportunity to consume an API in exactly the ways that you need, making for extremely efficient data requests.  \
+\
+Combining this with the process we discussed for loading information progressively, you can craft separate queries for each tier of information you need to display on a given view. This will help ensure that when a given query comes back, it will contain only the data needed to hydrate a particular subset of your interface.\
+\
+If you\'92re building your application with a modern framework like Angular or React, you can suddenly build a custom query for each type or collection of components loaded onscreen, which can be tweaked as design or business requirements change.
+\f2\fs24 \
+\pard\pardeftab720\sl280\partightenfactor0
+\cf2 \
+\pard\pardeftab720\sl400\partightenfactor0
+
+\f0\fs29\fsmilli14667 \cf2 For third-party APIs, you\'92ll have to work with what is available to you. For APIs delivered by your team or organization, this gives you an opportunity to have a discussion about data delivery strategy. Often times, when testing early versions of a product, there\'92s no sense in creating APIs 
+\f1\i or 
+\f0\i0 interfaces that work this way. Once your team has proven the value of what you\'92re building, you can revisit the page load experience to make things feel smoother and more intuitive.
+\f2\fs24 \
+}

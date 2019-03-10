@@ -1,0 +1,72 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1671
+\stshfdbch0{\fonttbl\f0\fnil\fcharset0 Cochin;}
+{\colortbl;\red255\green255\blue255;}
+{\stylesheet {\s0 Normal;}}
+{\*\expandedcolortbl;;}
+{\info
+{\author Phil Sturgeon}
+{\creatim\yr2018\mo1\dy3\hr12\min16\sec9\timesinceref536670969}
+{\revtim\yr2018\mo1\dy20\hr19\min5\sec42\timesinceref538164342}}\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\fi360\sl288\slmult1\sb160\pardirnatural\partightenfactor0
+
+\f0\fs28 \cf0 Not quite as popular these days, OAuth 1.0a was a big player on the web-based authentication scene and used by\
+services such as Dropbox, Flickr, Twitter, Google, LinkedIn and Tumblr. Since then, most have moved over to OAuth 2,\
+which we will discuss next. The two are very different beasts and should not be conflated.\
+> OAuth provides a method for clients to access server resources on\
+> behalf of a resource owner (such as a different client or an end-user).\
+> It also provides a process for end-users to authorize third-party access\
+> to their server resources without sharing their\
+> credentials (typically, a username and password pair), using user-agent redirections.\
+> -- **Source:** [Wikipedia](http://en.wikipedia.org/wiki/OAuth)\
+Previously, we looked at authentication technologies that were essentially built into the browser, and were\
+not particularly flexible in their usages. OAuth 1.0 was a great way for services such as social networks to\
+implement web-based HTML login forms that looked the same as any other login form (were branded with logos,\
+color schemes, etc) but could then send you back to the third party website for all sorts of awesome\
+integration purposes.\
+For example, when Twitter swapped from HTTP Basic integration to OAuth 1.0 it meant that instead of\
+third-parties (iPhone apps, other websites, CMSs, whatever) asking end-users to enter their username and\
+password (which would be saved somewhere in plain text), the third party could redirect the user to the Twitter\
+website, get them to log in, and have them come back to their service to save a special token, instead of saving a\
+password. OAuth 1.0a called these tokens an 'OAuth Token' and an 'OAuth Token Secret'.\
+OAuth 1.0a was built to be very secure even when not running over SSL. That meant, of course, that it was\
+incredibly complicated, having to set up signatures of which there were a few different algorithms, including\
+HMAC-SHA1 and RSA-SHA1, or just plaintext. That got a bit tricky when trying to write client code, as you had to\
+make sure you supported the right signature algorithm, and most of the PHP implementations out there (including\
+my old CodeIgniter library) did not support them all.\
+An average OAuth 1.0a signed HTTP request would look a little something like this:\
+~~~~~~~~\
+POST /moments/1/gift HTTP/1.1\
+Host: api.example.org\
+Authorization: OAuth realm="http://sp.example.org/",\
+oauth_consumer_key="0685bd9184jfhq22",\
+oauth_token="ad180jjd733klru7",\
+oauth_signature_method="HMAC-SHA1",\
+oauth_signature="wOJIO9A2W5mFwDgiDvZbTSMK%2FPY%3D",\
+oauth_timestamp="137131200",\
+oauth_nonce="4572616e48616d6d65724c61686176",\
+oauth_version="1.0"\
+Content-Type: application/json\
+\{ "user_id" : 2 \}\
+~~~~~~~~\
+Ouch.\
+Another complication was that there were different implementations: two-legged ("proper" and "not proper") and\
+three-legged. This is incredibly confusing, so I will let Mashape explain in the [OAuth Bible: OAuth Flows].\
+There was also xAuth (which is still OAuth 1.0a), designed for mobile and desktop applications that do\
+not have easy access to a browser. It is much easier for a web application to spawn a popup with JavaScript, or to\
+redirect a user, than it is for a mobile app. This made it a much handier way to get OAuth Tokens than the other\
+implementations.\
+In the end, if you got the OAuth Token and Secret, you would place the OAuth Token in the request as a\
+header and use the secret to sign the signature, which would encrypt the request and make the whole thing nice\
+and secure. If you can shove SSL on top of that, then you have got yourself a very secure setup - except for the\
+fact that tokens would stay the same once created, so over time their security could be compromised. Somebody\
+could recover the data from a laptop you sold them on eBay, or a potential hacker could packet sniff enough\
+traffic signed with your signature to eventually programmatically guess the token and secret.\
+**Pros**\
+* Super secure, even without SSL\
+* Does not send username/password in every request (plain text or hashed)\
+* Stops third party applications wanting or storing your username and password\
+* An attacker gaining an OAuth Token and even a Secret should still never be able to change your password, meaning you should be safe from account hijack\
+**Cons**\
+* Rather complicated to interact with, even if you have a well built client library. PHP never really had one, but [The League of Extraordinary Packages](http://thephpleague.com/) has recently [built a decent one](https://github.com/thephpleague/oauth1-client)\
+* Limited number of ways to grant access. xAuth and Two/Three-legged flows ended up being rather restrictive\
+* Tokens never changed, so security was essentially just a matter of how long and how much you used the service\
+OAuth 1.0a would be a great technology to implement if you were building a website with a public user-based API... and you were building it in 2009-2010. Now, probably not.}

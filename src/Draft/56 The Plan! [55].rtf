@@ -1,0 +1,71 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1671
+\stshfdbch0{\fonttbl\f0\froman\fcharset0 Palatino-Roman{\*\falt Palatino};\f1\froman\fcharset0 Palatino-Bold{\*\falt Palatino Bold};\f2\froman\fcharset0 Palatino-Italic{\*\falt Palatino Italic};
+}
+{\colortbl;\red255\green255\blue255;}
+{\stylesheet {\s0 Normal;}{\s1 \tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\sl264\slmult1\sb260\pardirnatural\partightenfactor0\b\fs36\cf0\outlinelevel1 Heading 1;}}
+{\*\expandedcolortbl;;}
+{\info
+{\author Phil Sturgeon}
+{\creatim\yr2018\mo11\dy13\hr1\min48\sec32\timesinceref563762912}
+{\revtim\yr2018\mo12\dy11\hr15\min3\sec19\timesinceref566229799}}\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\fi360\sl264\slmult1\pardirnatural\partightenfactor0
+
+\s0
+\f0\fs26 \cf0 Ok that was admittedly a lot of information thrown around, so let us take a step back, and figure out how you can get some caching on your API interactions right now: what you can do yourself, and what you might need a little help on. \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\sl264\slmult1\sb260\pardirnatural\partightenfactor0
+
+\s1
+\f1\b\fs36 \cf0 Which Paradigm is in use?\
+\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\fi360\sl264\slmult1\pardirnatural\partightenfactor0
+
+\s0
+\f0\b0\fs26 \cf0 If gRPC or any other type of RPC API, there will not have any caching metadata to hook onto for automated client caching. Don\'92t even worry about trying to figure it out. \
+If using GraphQL there might some client side data, but you need to figure out which extension is being used and find a matching client side tool or middleware.\
+If REST or RESTish, the API developers may well have implemented caching, but it is still not guaranteed. To find out\'85\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\sl264\slmult1\sb260\pardirnatural\partightenfactor0
+
+\s1
+\f1\b\fs36 \cf0 Look for Cache-Control and Etag\
+\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\fi360\sl264\slmult1\pardirnatural\partightenfactor0
+
+\s0
+\f0\b0\fs26 \cf0 If the API you are talking to does not have a Cache-Control header, maybe politely ask the API developers to consider it. They might think the data is uncacheable, but they can probably put a 10-30 second cache on it at the very least.\
+Even if they think their data is so very precious that it could not possibly have any sort of cache time, Etags can be used to speed up requests when data has no changed, by skipping rendering and downloading JSON. Let them know that supporting conditional requests will lighten the load on their servers and make their API quicker with basically no work, and you\'92ll almost certainly get that feature implemented.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\sl264\slmult1\sb260\pardirnatural\partightenfactor0
+
+\s1
+\f1\b\fs36 \cf0 Add Client Caching Middleware\
+\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\fi360\sl264\slmult1\pardirnatural\partightenfactor0
+
+\s0
+\f0\b0\fs26 \cf0 Find a middleware for your HTTP client of choice, and if that client does not support middleware you should switch out for one that does. Every programming language has a lot of HTTP clients of varying quality, and the best always support middleware. \
+If there is no HTTP caching middleware for any HTTP client in the language you are using, it might be time to put on your open-source hat and build one.\
+You will need a data store for this caching middleware, and that will depend on the language and ecosystem you are building for. If it is a backend application then you\'92ll probably be setting up Redis or Memcache, and if it is front end then check out Local Storage.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\sl264\slmult1\sb260\pardirnatural\partightenfactor0
+
+\s1
+\f1\b\fs36 \cf0 Identify no-cache Requests\
+\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\fi360\sl264\slmult1\pardirnatural\partightenfactor0
+
+\s0
+\f0\b0\fs26 \cf0 Figure out which parts - if any - of your application require the freshest possible data, and add Cache-Control: no-cache on there to force revalidation on that request. \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\sl264\slmult1\sb260\pardirnatural\partightenfactor0
+
+\s1
+\f1\b\fs36 \cf0 Check for Network Caching\
+\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\fi360\sl264\slmult1\pardirnatural\partightenfactor0
+
+\s0
+\f0\b0\fs26 \cf0 Look for hints in the documentation that network caching has been setup, and if there is nothing there scout around the responses for X-Cache headers - or something similar. \
+If there is no network caching, it might be because the API developers have done such a fantastic job of replicating their servers to data centers all over the world that they didn't see the need, but this is both highly unlikely, and not entirely true even if they have put API servers in Mumbai, Helsinki, Sydney, Peru...\
+Network caching can often help smooth out traffic spikes, and fulfill a reasonable percentage of traffic when the API server has gone down. Even when API servers are spread all over the world, well load balanced, auto-scaled and finely tuned, having a network cache on there is just going to help speed up requests for max-age based stuff, and there is basically no overhead.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\sl264\slmult1\sb260\pardirnatural\partightenfactor0
+
+\s1
+\f1\b\fs36 \cf0 Don't Let APIs Be Slow\
+\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\fi360\sl264\slmult1\pardirnatural\partightenfactor0
+
+\s0
+\f0\b0\fs26 \cf0 If the API is offering cached responses of ~50ms but the uncached responses are taking 500ms, you should have a chat with their development team about how they\'92re using caching to 
+\f2\i simulate
+\f0\i0  good performance, and explain that hiding a performance issue behind caching is an unacceptable poor practice. \
+Remember, going over the wire is inherently slow and fraught with danger and potential issues. Caching helps clients do that less often by identifying which questions they already have answers to, but that does not mean API developers can stop worrying about performance.}

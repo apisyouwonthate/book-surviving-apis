@@ -1,0 +1,38 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1671
+\stshfdbch0{\fonttbl\f0\fnil\fcharset0 Cochin;\f1\fnil\fcharset0 Cochin-Italic{\*\falt Cochin Italic};\f2\froman\fcharset0 TimesNewRomanPSMT{\*\falt Times New Roman};
+\f3\fnil\fcharset0 Menlo-Regular{\*\falt Menlo Regular};\f4\fnil\fcharset0 Cochin-Bold{\*\falt Cochin Bold};}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue233;}
+{\stylesheet {\s0 Normal;}{\s1 \tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\li720\fi-720\pardirnatural\partightenfactor0\fs22\cf0 Code Block;}}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0;\cssrgb\c0\c0\c93333;}
+{\info
+{\author Phil Sturgeon}
+{\creatim\yr2018\mo3\dy13\hr14\min46\sec36\timesinceref542641596}
+{\revtim\yr2018\mo12\dy10\hr4\min49\sec21\timesinceref566106561}}\deftab720
+\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\pard\pardeftab720\sl280\sa240\partightenfactor0
+
+\f0\fs24 \cf2 \expnd0\expndtw0\kerning0
+\s0
+If it's a web process... well, 2s+ is certainly no good, especially seeing as it might fail anyway. Waiting around for this unstable transaction to complete is as much of a good plan as skydiving with just the one chute. Let's create a backup plan using retries.\
+So we have this special web application that absolutely has to have this web request to Service B in the thread. We know this endpoint generally responds in 35-100ms and on a bad day it can take anywhere from 300-850. We do not want to wait around for anything over 1s as its unlikely to even respond, but we don't want this endpoint to take more than 1s...\'a0\
+Here's a plan: set the timeout to 400ms, add a retry after 50ms, then if the first attempt is taking a while 
+\f1\i \cf2 boom
+\f0\i0 \cf2 , it'll give up and try again!
+\f2 \cf2 \
+\pard\tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\pardeftab720\li720\fi-720\pardirnatural\partightenfactor0
+
+\s1
+\f3\fs22 \cf0 \kerning1\expnd0\expndtw0 conn = Faraday.new('http://example.com');\
+conn.post('/payment_attempts', \{ \'a0\}) do |req|\
+\'a0 conn.options.timeout = 0.4\
+\'a0 conn.request :retry, max: 1, interval: 0.05\
+end\
+\pard\pardeftab720\sl280\sa240\partightenfactor0
+
+\f0\fs24 \cf2 \expnd0\expndtw0\kerning0
+\s0
+There is potential for trouble here, as the second and first attempts might end up in a race condition. The interval there will hopefully give the database long enough to notice the first response was successful, meaning the 2nd request will fail and say "already paid" or something intelligent, which can be inspected and potentially treated as a success by the client.\
+Anyway, (400 * 2) + 50 = 950, with another 50ms for whatever other random gumf is happening in the application, should mean that we come in at under 1 second!\
+This is a good place to be in. You have 2x the chance of success, and you're setting tight controls to avoid service B messing your own application up.\'a0\
+
+\f4\b An important note for Ruby users
+\f0\b0 : you are {\field{\*\fldinst{HYPERLINK "https://engineering.wework.com/ruby-users-be-wary-of-net-http-f284747288b2"}}{\fldrslt \cf3 \ul \ulc3 already using retries}}\'a0on idempotent requests, and you probably had no idea. It's wild that NetHTTP does this by default, even in Ruby v2.5.0 where it is configurable. }

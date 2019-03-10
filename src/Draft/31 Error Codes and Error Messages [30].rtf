@@ -1,0 +1,101 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1671
+\stshfdbch0{\fonttbl\f0\fnil\fcharset0 Cochin;\f1\fnil\fcharset0 Menlo-Regular{\*\falt Menlo Regular};\f2\fswiss\fcharset0 Helvetica;
+\f3\froman\fcharset0 Palatino-Roman{\*\falt Palatino};\f4\froman\fcharset0 Palatino-Bold{\*\falt Palatino Bold};}
+{\colortbl;\red255\green255\blue255;}
+{\stylesheet {\s0 Normal;}{\s1 \tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\sl264\slmult1\sb260\pardirnatural\partightenfactor0\b\fs36\cf0\outlinelevel1 Heading 1;}{\s2 \tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\li720\fi-720\pardirnatural\partightenfactor0\fs22\cf0 Code Block;}}
+{\*\expandedcolortbl;;}
+{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid1}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}}
+{\info
+{\author Phil Sturgeon}
+{\creatim\yr2017\mo12\dy21\hr20\min37\sec30\timesinceref535577850}
+{\revtim\yr2018\mo12\dy28\hr3\min10\sec9\timesinceref567655809}}\deftab720
+\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl288\slmult1\sb160\pardirnatural\partightenfactor0
+
+\s0
+\f0\fs28 \cf0 Error codes are usually strings or integers that act as a unique index to a corresponding human-readable error message with more information about what is going wrong. That sounds a lot like HTTP status codes, but these errors are about application specific things that may or may not have anything to do with HTTP specific responses.\
+Some folks will try to use HTTP status codes exclusively and skip using error codes because they do not like the idea of making their own error codes or having to document them, but this is not a scalable approach. There will be some situations where the same endpoint could easily return the same status code for more than one different condition. For example, a 403 could be because the authenticated user is not allowed to send a message to this specific user, or it could mean the users has been banned entirely. \
+HTTP status codes are there to merely hint at the category of error. When an API needs to return application specific information, it can do that with a simple bit of JSON in the response.\
+For example, an issue with the access token will always result in the user not being recognized. An uninterested client would simply say "User could not get in" while a more interested client would probably prefer to offer suggestions via messages in their own webapp/iPhone app interface.\
+\
+\pard\tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\pardeftab720\li720\fi-720\pardirnatural\partightenfactor0
+
+\s2
+\f1\fs22 \cf0 \{\
+  "error": \{\
+    "type": "OAuthException",\
+    "message": "Session has expired at unix time 1385243766.\
+The current unix time is 1385848532."\
+  \}\
+\}
+\f0\fs28 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl288\slmult1\sb160\pardirnatural\partightenfactor0
+\s0
+\cf0 Humans can understand that nicely enough, but this example from an old version of the Facebook Graph API is not good enough. Their \'93type\'94 is vague, making it rather hard for computers to understand the problem. They have added error codes since then, which removes the hell which is substring matching a bit of text to find out the specifics of what is going on.\
+ Twitter does a great job of having their {\field{\*\fldinst{HYPERLINK "https://developer.twitter.com/en/docs/basics/response-codes.html"}}{\fldrslt error responses and codes documented}}. It\'92s a good thing they use error codes on top of HTTP status codes, because they loooooooove to use 403. In the Twitter API, a 403 response could mean:
+\f2\fs27\fsmilli13920 \
+\pard\tx220\tx720\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardeftab720\li720\fi-500\sl288\slmult1\pardirnatural\partightenfactor0
+\ls1\ilvl0
+\f3\fs26 \cf0 {\listtext	\uc0\u8226 	}The access token being used belongs to a suspended user.\
+{\listtext	\uc0\u8226 	}The OAuth credentials cannot be validated. Check that the token is still valid\
+{\listtext	\uc0\u8226 	}Thrown when a user cannot follow another user due to some kind of limit\
+{\listtext	\uc0\u8226 	}Thrown when a Tweet cannot be viewed by the authenticating user, usually due to the Tweet\'92s author having protected their Tweets\
+{\listtext	\uc0\u8226 	}This was a duplicated follow request and a previous request was not yet acknowleged\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\fi360\sl312\slmult1\partightenfactor0
+\cf0 This is a snipped list because I got tired of copying and pasting. Twitter are misusing 403 for most of those examples past the first, but they\'92ve never much cared about good API design. \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\sl312\slmult1\partightenfactor0
+\cf0 Anyway, if you check their documentation, they have a code next to each of those specific error instances, which means you can figure out exactly which situation you are in when a 403 pops up. \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\sl264\slmult1\sb260\pardirnatural\partightenfactor0
+
+\s1
+\f4\b\fs36 \cf0 Programatically Detecting Errors\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl288\slmult1\sb160\pardirnatural\partightenfactor0
+
+\s0
+\f0\b0\fs28 \cf0 You can use error codes to make an application respond intelligently to failure of something as basic as a posted Twitter\
+status.\
+\pard\tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\pardeftab720\li720\fi-720\pardirnatural\partightenfactor0
+
+\s2
+\f1\fs22 \cf0 try:\
+    api.PostUpdates(body['text'])\
+except twitter.TwitterError, exc:\
+    skip_codes = [\
+        # Page does not exist\
+        34,\
+        # You cannot send messages to users who are not following you\
+        150,\
+        # Sent too many\
+        # TODO Make this requeue with a dekal somehow\
+        151\
+    ]\
+    error_code = exc.__getitem__(0)[0]['code']\
+    # If the error code is one of those listed before, let\'92s just end here\
+    if error_code in skip_codes:\
+        message.reject()\
+    else:\
+        # Rate limit exceeded? Might be worth taking a nap before we requeue\
+        if error_code == 88:\
+            time.sleep(10)\
+        message.requeue()
+\f0\fs28 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl288\slmult1\sb160\pardirnatural\partightenfactor0
+\s0
+\cf0 Compare this sort of logic with the Facebook example from when they lacked error codes:\
+\pard\tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\pardeftab720\li720\fi-720\pardirnatural\partightenfactor0
+
+\f1\fs22 \cf0 \
+\pard\tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\pardeftab720\li720\fi-720\pardirnatural\partightenfactor0
+\s2
+\cf0 except facebook.GraphAPIError, e:\
+    phrases = ['expired', 'session has been invalidated']\
+    for phrase in phrases:\
+        # If the token has expired then lets knock it out so we don't try again\
+        if e.message.find(phrase) > 0:\
+            log.info("Deactivating Token %s", user['token_id'])\
+            self._deactivate_token(user['token_id'])\
+    log.error("-- Unknown Facebook Error", exec_info=True)
+\f0\fs28 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl288\slmult1\sb160\pardirnatural\partightenfactor0
+\s0
+\cf0 Looking out for codes is considerably more reliable than checking for bits of text in a message, but if you have no choice then do what you have to do.}

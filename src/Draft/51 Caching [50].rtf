@@ -1,0 +1,45 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1671
+\stshfdbch0{\fonttbl\f0\froman\fcharset0 Palatino-Roman{\*\falt Palatino};\f1\froman\fcharset0 Palatino-Bold{\*\falt Palatino Bold};}
+{\colortbl;\red255\green255\blue255;}
+{\stylesheet {\s0 Normal;}{\s1 \tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\sl264\slmult1\sb260\pardirnatural\partightenfactor0\b\fs36\cf0\outlinelevel1 Heading 1;}}
+{\*\expandedcolortbl;;}
+{\info
+{\author Phil Sturgeon}
+{\creatim\yr2018\mo8\dy23\hr13\min36\sec28\timesinceref556716988}
+{\revtim\yr2018\mo12\dy10\hr3\min43\sec2\timesinceref566102582}}\deftab720
+\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl264\slmult1\pardirnatural\partightenfactor0
+
+\s0
+\f0\fs26 \cf0 Caching is a huge topic, and there\'92s a lot of different types of caching which makes discussing it tricky. The most basic definition of caching is: avoid wasting time computing the answer to the same questions over and over again.\
+A backend program will often cache the response to database calls to avoid making them multiple times. It could then also cache the serialized output to avoid needing to convert the model into JSON multiple times, and other stuff can be cached too. In the world of APIs, caching can do a lot more. HTTP calls can be skipped by clients, or memorized by servers to skip the application server having to do get involved to answer a similar request. All of this could happen in the life-cycle of a single request.\
+For backend applications data stores like {\field{\*\fldinst{HYPERLINK "https://redis.io/"}}{\fldrslt Redis}} and {\field{\*\fldinst{HYPERLINK "https://www.memcached.org/"}}{\fldrslt Memcached}} are the most common caching solutions, but anything can be a cache. The file system (not the most performant) or plain-old SQL can be used to cache data. Frontend applications running in a web browser often use {\field{\*\fldinst{HYPERLINK "https://developer.mozilla.org/en-US/docs/Web/API/Storage/LocalStorage"}}{\fldrslt LocalStorage}}.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\sl264\slmult1\sb260\pardirnatural\partightenfactor0
+
+\s1
+\f1\b\fs36 \cf0 Caching and Performance\
+\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl264\slmult1\pardirnatural\partightenfactor0
+
+\s0
+\f0\b0\fs26 \cf0 Often caching is misused by inexperienced developers to try and make slow code look like fast code. This leads other folks to consider caching a crutch that should be avoided whenever possible. \
+The goal of caching on the client side is not \'93to make our application faster\'94, but to avoid asking questions if we have an acceptable level of confidence that we already know the answers. Making unnecessary requests, even if they are fast, is of course going to be slower than just not making those requests. This is what caching is about. \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\sl264\slmult1\sb260\pardirnatural\partightenfactor0
+
+\s1
+\f1\b\fs36 \cf0 Caching in relation to APIs\
+\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl264\slmult1\pardirnatural\partightenfactor0
+
+\s0
+\f0\b0\fs26 \cf0 For the rest of this chapter we\'92re going to skip talking about caching in a general way, and talk about caching as it relates to API requests and responses. As such there are three terms we\'92re going to use.\
+\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl264\slmult1\pardirnatural\partightenfactor0
+
+\f1\b \cf0 Application Caching: 
+\f0\b0 Software like Memcache, Redis, etc. can be implemented in your application, to cache whatever you want, for however long you want, in whatever data store you want.
+\f1\b \
+Network Caching:
+\f0\b0  Tools like {\field{\*\fldinst{HYPERLINK "https://www.varnish-cache.org/"}}{\fldrslt Varnish}} or {\field{\*\fldinst{HYPERLINK "http://www.squid-cache.org/"}}{\fldrslt Squid}} (known as \'93cache proxies\'94) intercept requests that look the same, then return a response early straight out of memory instead of hitting the application server. Doing this allows the application server to spend more time handling other traffic, and can reduce network latency for clients.\
+
+\f1\b Client Caching:
+\f0\b0  The client, browser, app, another service, etc. can treat an API response just like any other CSS, Javascript or Image file. If that resource had an expire time, ETags, or one of a few other cache related headers, the last request could be directly reused, or a conditional request might be triggered to see if the data has changed, instead of grabbing the whole resource every time.\
+
+\f1\b HTTP Caching:
+\f0\b0  A set of conventions written into the HTTP specification, which is a way to collectively refer to both network and client caching when it relates to HTTP. GraphQL for example has it\'92s own set of conventions for supplying network caching, but HTTP caching at its core should theoretically work for any programming language, framework, or paradigm, that respects the specification and doesn\'92t build in its own contradicting conventions on top.}

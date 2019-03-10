@@ -1,0 +1,297 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1671
+\stshfdbch0{\fonttbl\f0\froman\fcharset0 Palatino-Roman{\*\falt Palatino};\f1\fnil\fcharset0 Menlo-Regular{\*\falt Menlo Regular};\f2\froman\fcharset0 Palatino-Bold{\*\falt Palatino Bold};
+\f3\froman\fcharset0 Palatino-Italic{\*\falt Palatino Italic};\f4\froman\fcharset0 Palatino-BoldItalic{\*\falt Palatino Bold Italic};}
+{\colortbl;\red255\green255\blue255;}
+{\stylesheet {\s0 Normal;}{\s1 \tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\sl264\slmult1\sb260\pardirnatural\partightenfactor0\b\fs36\cf0\outlinelevel1 Heading 1;}{\s2 \tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\sl264\slmult1\sb260\pardirnatural\partightenfactor0\b\fs26\cf0\outlinelevel2 Heading 2;}{\s3 \tx720\tx1080\tx1440\li720\sl264\slmult1\sb240\sa240\pardirnatural\partightenfactor0\fs24 Block Quote;}{\s4 \tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\li720\fi-720\pardirnatural\partightenfactor0\fs22\cf0 Code Block;}{\*\cs25 \fs22\cf0 Code Span;}{\*\cs26 \i\cf0 Emphasis;}}
+{\*\expandedcolortbl;;}
+{\info
+{\author Phil Sturgeon}
+{\creatim\yr2017\mo11\dy11\hr22\min28\sec18\timesinceref532128498}
+{\revtim\yr2018\mo12\dy11\hr15\min4\sec12\timesinceref566229852}}\deftab720
+\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl264\slmult1\pardirnatural\partightenfactor0
+
+\s0
+\f0\fs26 \cf0 Client caching when leveraging the HTTP standard is no different from how caching works for Javascript, images, etc. There are some headers telling the client how long to keep this data around, and after that you can chuck it out entirely, or check to see if it is still valid.\
+This is how browsers interact with websites: the browser assumes the website is the one in charge of certain things like how long to cache data. Whenever you go to pretty much any website, the server defines various cache-related headers and the browser respects them (unless told to override them via something like a hard refresh). \
+When we build systems that call other systems, we often skip out this step, and performance can suffer. Hopefully the API you are integrating with has {\cs25
+\f1\fs22 Cache-Control} headers, if not, you are on your own and have to use the application caching approach we discussed before.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\sl264\slmult1\sb260\pardirnatural\partightenfactor0
+
+\s1
+\f2\b\fs36 \cf0 Implementing HTTP Client\'a0Caching\
+\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl264\slmult1\pardirnatural\partightenfactor0
+
+\s0
+\f0\b0\fs26 \cf0 At work we built an upstream \'93Permissions\'93 API, which would talk to a lot of other systems to see if a user should be allowed to complete the action they were attempting to make. One request from the end-user could end up making 5 more HTTP requests to other services which were not always the quickest. \
+We threw a few {\cs25
+\f1\fs22 Cache-Control} headers on the different services the Permissions API was calling, like on user profiles, membership information, etc., then enabled HTTP client caching using a middleware for our Ruby HTTP client: {\field{\*\fldinst{HYPERLINK "https://github.com/plataformatec/faraday-http-cache"}}{\fldrslt faraday-http-cache}}.  This thing took an instance of a Redis client, and no more work was required. \
+Benchmarking with {\field{\*\fldinst{HYPERLINK "https://www.joedog.org/siege-home/"}}{\fldrslt siege}}:\
+\pard\tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\pardeftab720\li720\fi-720\pardirnatural\partightenfactor0
+
+\s4
+\f1\fs22 \cf0 siege -c 5 --time=5m --content-type "application/json" 'https://permissions.example.com/check POST \{ ...not relevant... \}\
+\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl264\slmult1\pardirnatural\partightenfactor0
+
+\s0
+\f0\fs26 \cf0 All of a sudden the Permissions API went from this:\
+\pard\tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\pardeftab720\li720\fi-720\pardirnatural\partightenfactor0
+
+\s4
+\f1\fs22 \cf0 Transactions:            443 hits\
+Response time:           3.35 secs\
+Transaction rate:        1.48 trans/sec\
+Successful transactions: 443\
+Failed transactions:     0\
+Longest transaction:     5.95\
+Shortest transaction:    0.80\
+\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl264\slmult1\pardirnatural\partightenfactor0
+
+\s0
+\f0\fs26 \cf0 \'85 to this:\
+\pard\tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\pardeftab720\li720\fi-720\pardirnatural\partightenfactor0
+
+\s4
+\f1\fs22 \cf0 Transactions:            5904 hits\
+Response time:           0.25 secs\
+Transaction rate:        19.75 trans/sec\
+Successful transactions: 5904\
+Failed transactions:     0\
+Longest transaction:     1.75\
+Shortest transaction:    0.12
+\f0\fs26 \
+\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl264\slmult1\pardirnatural\partightenfactor0
+\s0
+\cf0 This benchmark is of course somewhat artificial due to requesting the same handfuls of users and their related membership data thousands of times, but repeat requests are down to ~250ms from 3.5s. This is substantial however you spin it. \
+{\cs26
+\f3\i We also later switched from making these calls synchronously, to asynchronously, which of course saved a buuuuunch of time.}\
+This was done with standard {\cs25
+\f1\fs22 max-age} based caching, which is often incredibly useful all by itself. These days a lot of people act like their APIs are \'93big data\'94 and everything must be completely real-time, but in most cases having data be a few minutes out-of-date is fine. Basic profile data for a company could absolutely take a few minutes to update, as they\'92re probably not changing their Opening Hours or name very often. Featured items on an e-commerce store is also not likely to change on the regular. I used to work for a financial company which build stocks and shares monitoring systems, and they\'92d cache most \
+An API developer could set an hour long max-age for these things, then clients would only need to make the call to the API once an hour.  \
+For information that is more subject to change, a max-age might still be appropriate, it would just be much shorter. This has a few benefits, like making sure browser-based application users can hit the Back button without replicating every single request again, or improving the speed of a backend-based data import script which has a HTTP request written into a loop. Respecting a 10 second cache is still going to cut down load on the server, and speed things up for the client in many cases.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\sl264\slmult1\sb260\pardirnatural\partightenfactor0
+
+\s1
+\f2\b\fs36 \cf0 Conditional Validation\
+\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl264\slmult1\pardirnatural\partightenfactor0
+
+\s0
+\f0\b0\fs26 \cf0 Caching based entirely on time is not always the most helpful, but that does not mean client caching should be thrown out. Basic time-based caching will help a client skip making requests entirely, but conditional requests can be made which are much quicker than standard requests. \
+A conditional request is one which attaches a HTTP header with some sort of information that basically asks the server: has data changed since this previous request? If the data is the same, you can skip downloading it all Armani, which reduces load on the server, reduces data going over the wire, saves battery use on mobiles, and reduces data transfer. \
+\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl264\slmult1\partightenfactor0
+\cf0 Using HTTP caching there are two headers that enable this functionality: If-Modified-Since, and If-Match-None. The first accepts a timestamp, and basically the client is letting the server know then time it last got a response, so it only cares about new data. The second is a bit more involved. Maybe you've  heard of the concept of Etags, but are not really sure what they are? \
+Etags are usually some unique hash, which in web frameworks like Rails are  a md5 checksum of the type of model, a unique ID, and an updated at timestamp.\
+\pard\tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\pardeftab720\li720\fi-720\pardirnatural\partightenfactor0
+
+\s4
+\f1\fs22 \cf0 etag = md5(author/123/2018-12-01)\
+\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl264\slmult1\partightenfactor0
+
+\s0
+\f0\fs26 \cf0 This etag is then returned in a response to a GET request, which the client can save, and reuse on a subsequent request. In the request it goes into the If-Match-None header, and if the API is paying attention if it will rerun the checksum. If the checksum matches it will return a 304 Not Modified with no body, and if there is a mismatch it will shove the normal JSON response into the HTTP body\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\sl264\slmult1\sb260\pardirnatural\partightenfactor0
+
+\s1
+\f2\b\fs36 \cf0 No Need to Roll Your Own
+\f0\b0\fs26 \
+\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl264\slmult1\pardirnatural\partightenfactor0
+\s0
+\cf0 Writing all the code to handle this on the client side would be a big job. Luckily, there are solutions built in pretty much every single language.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\sl264\slmult1\sb260\pardirnatural\partightenfactor0
+
+\s2
+\f2\b \cf0 Ruby\
+\pard\tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\pardeftab720\li720\fi-720\pardirnatural\partightenfactor0
+
+\s4
+\f1\b0\fs22 \cf0 client = Faraday.new do |builder|\
+  builder.use :http_cache, store: Rails.cache\
+  ... \
+end\
+\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl264\slmult1\pardirnatural\partightenfactor0
+{\field{\*\fldinst{HYPERLINK "https://github.com/plataformatec/faraday-http-cache"}}{\fldrslt 
+\s0
+\f0\fs26 \cf0 plataformatec/faraday-http-cache}}
+\f0\fs26  - a Faraday middleware that respects HTTP cache\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\sl264\slmult1\sb260\pardirnatural\partightenfactor0
+
+\s2
+\f2\b \cf0 PHP\
+\pard\tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\pardeftab720\li720\fi-720\pardirnatural\partightenfactor0
+
+\s4
+\f1\b0\fs22 \cf0 use GuzzleHttp\\Client;\
+use GuzzleHttp\\HandlerStack;\
+use Kevinrob\\GuzzleCache\\CacheMiddleware;\
+\
+// Create default HandlerStack\
+$stack = HandlerStack::create();\
+\
+// Add this middleware to the top with `push`\
+$stack->push(new CacheMiddleware(), 'cache');\
+\
+// Initialize the client with the handler option\
+$client = new Client(['handler' => $stack]);\
+\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl264\slmult1\pardirnatural\partightenfactor0
+{\field{\*\fldinst{HYPERLINK "https://github.com/Kevinrob/guzzle-cache-middleware"}}{\fldrslt 
+\s0
+\f0\fs26 \cf0 Kevinrob/guzzle-cache-middleware}}
+\f0\fs26  - A HTTP Cache middleware for Guzzle 6\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\sl264\slmult1\sb260\pardirnatural\partightenfactor0
+
+\s2
+\f2\b \cf0 Python\
+\pard\tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\pardeftab720\li720\fi-720\pardirnatural\partightenfactor0
+
+\s4
+\f1\b0\fs22 \cf0 import requests\
+import requests_cache\
+\
+requests_cache.install_cache('demo_cache')\
+\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl264\slmult1\pardirnatural\partightenfactor0
+{\field{\*\fldinst{HYPERLINK "https://pypi.python.org/pypi/requests-cache"}}{\fldrslt 
+\s0
+\f0\fs26 \cf0 requests-cache}}
+\f0\fs26  - Persistent cache for requests library\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\sl264\slmult1\sb260\pardirnatural\partightenfactor0
+
+\s2
+\f2\b \cf0 JavaScript (Browser)\
+\pard\tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\pardeftab720\li720\fi-720\pardirnatural\partightenfactor0
+
+\s4
+\f1\b0\fs22 \cf0 // Download a resource with cache busting, to bypass the cache\
+// completely.\
+fetch("some.json", \{cache: "no-store"\})\
+  .then(function(response) \{ /* consume the response */ \});\
+\
+// Download a resource with cache busting, but update the HTTP\
+// cache with the downloaded resource.\
+fetch("some.json", \{cache: "reload"\})\
+  .then(function(response) \{ /* consume the response */ \});\
+\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl264\slmult1\partightenfactor0
+{\field{\*\fldinst{HYPERLINK "https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API"}}{\fldrslt 
+\s0
+\f0\fs26 \cf0 Fetch API}}
+\f0\fs26  - Replacement for XMLHttpRequest build into most modern browsers\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\sl264\slmult1\sb260\pardirnatural\partightenfactor0
+
+\s2
+\f2\b \cf0 JavaScript (Node)\
+\pard\tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\pardeftab720\li720\fi-720\pardirnatural\partightenfactor0
+
+\s4
+\f1\b0\fs22 \cf0 const http = require('http');\
+const CacheableRequest = require('cacheable-request');\
+const cacheableRequest = new CacheableRequest(http.request);\
+const cacheReq = cacheableRequest('http://example.com', cb);\
+cacheReq.on('request', req => req.end());\
+\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl264\slmult1\pardirnatural\partightenfactor0
+{\field{\*\fldinst{HYPERLINK "http://www.npmjs.com/package/cacheable-request"}}{\fldrslt 
+\s0
+\f0\fs26 \cf0 cacheable-request}}
+\f0\fs26  - Wrap native HTTP requests with RFC compliant cache support\
+\
+\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl264\slmult1\pardirnatural\partightenfactor0
+
+\f4\i\b \cf0 Note: 
+\f3\b0 Despite NodeJS having a {\field{\*\fldinst{HYPERLINK "https://www.npmjs.com/package/whatwg-fetch"}}{\fldrslt Fetch API polyfill}}, it {\field{\*\fldinst{HYPERLINK "https://github.com/github/fetch/issues/438"}}{\fldrslt does not support cache mode}}, and therefore alternatives must be used. 
+\f0\i0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\sl264\slmult1\sb260\pardirnatural\partightenfactor0
+
+\s2
+\f2\b \cf0 Go\
+\pard\tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\pardeftab720\li720\fi-720\pardirnatural\partightenfactor0
+
+\s4
+\f1\b0\fs22 \cf0 proxy := &httputil.ReverseProxy\{\
+    Director: func(r *http.Request) \{\
+    \},\
+\}\
+\
+handler := httpcache.NewHandler(httpcache.NewMemoryCache(), proxy)\
+handler.Shared = true\
+\
+log.Printf("proxy listening on http://%s", listen)\
+log.Fatal(http.ListenAndServe(listen, handler))\
+\pard\tx560\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\pardeftab720\sl264\slmult1\pardirnatural\partightenfactor0
+{\field{\*\fldinst{HYPERLINK "https://github.com/lox/httpcache"}}{\fldrslt 
+\s0
+\f0\fs26 \cf0 lox/httpcache}}
+\f0\fs26  - An RFC7234 compliant golang http.Handler for caching HTTP responses\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\sl264\slmult1\sb260\pardirnatural\partightenfactor0
+
+\s1
+\f2\b\fs36 \cf0 Real World Considerations\
+\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl264\slmult1\pardirnatural\partightenfactor0
+
+\s0
+\f0\b0\fs26 \cf0 Not every HTTP GET request is one you want to cache. The middleware will generally do the correct thing so long as the server has declared their intentions well, but regardless of how well the server declares its cacheability, you may way to store things for longer, shorter, or not at all.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\sl264\slmult1\sb260\pardirnatural\partightenfactor0
+
+\s2
+\f2\b \cf0 Maybe Stale is Better Than Nothing\
+\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl264\slmult1\pardirnatural\partightenfactor0
+
+\s0
+\f0\b0 \cf0 Disrespecting the max age of a response can have similar effects to ignoring the use-by date on a carton of milk, but if you\'92re aware of what you\'92re doing then sometimes ignoring the intentions of the server to persist longer makes sense.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\sl264\slmult1\sb260\pardirnatural\partightenfactor0
+
+\s2
+\f2\b \cf0 Admin Panels\
+\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl264\slmult1\pardirnatural\partightenfactor0
+
+\s0
+\f0\b0 \cf0 There will be times when you want to make sure things are as fresh as possible, and don\'92t mind waiting a little longer to get it. If you are calling the same API for both typical frontend functionality for a user-facing web/mobile app, and also using it to populate data for an \'93admin panel\'94, then you might want to skip cached responses for the admin panel. Sure you can use cached results on many of the admin panel \'93list\'94 or \'93overview\'94 pages, but when it gets to the \'93edit form\'94 you would be better off waiting a little longer to get the latest information. \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\sl264\slmult1\sb260\pardirnatural\partightenfactor0
+
+\s2
+\f2\b \cf0 Hard Refresh in your App\
+\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl264\slmult1\pardirnatural\partightenfactor0
+
+\s0
+\f0\b0 \cf0 Writing your own application caching logic for requests to other site can lead to unexpected caching in front end applications. End users of web applications expect the refresh button to work, and if you have cached data in a way that won't work with the refresh button 5t can cause trouble. End users of mobile devices generally expect to \'93pull down to refresh\'94 on feeds or similar interfaces, which can be problematic if its not there. Following the rules of HTTP caching makes it pretty easy to implement this functionality locally in your front end application. Again, you can simply throw a Cache-Control: no-cache on there. \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\sl264\slmult1\sb260\pardirnatural\partightenfactor0
+
+\s2
+\f2\b \cf0 Sometimes HTTP Caching is Inefficient
+\f0\b0 \
+\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl264\slmult1\pardirnatural\partightenfactor0
+\s0
+\cf0 If you are making multiple calls to APIs with large responses to create one composite resource (one local thing made out of multiple remote things) you might not want to cache the calls.\
+If the client is only using a few fields from each response, caching all of the responses is going to swamp the cache server. File-based cache stores might be slower than making the HTTP call, and Redis or Memcache caches may well run out of space.\
+Besides, restitching the data from those multiple requests to make the composite resource locally may be too costly on the CPU. In that case absolutely stick to application-level caching the composite resource instead of using the low level HTTP cache. You can use your own rules and logic on expiry, etc. because the composite item is yours.\
+One final example: if you have data that changes based on the authenticated user, you\'92ll need to use {\cs25
+\f1\fs22 Vary: Authentication}, which basically segments the caches by {\cs25
+\f1\fs22 Authentication} header. Two requests that are identical in all ways other than the {\cs25
+\f1\fs22 Authentication} header will result in two different cache results.\
+This can lower cache hit ratios so much it might not be worth worrying about. Depends. Give it a try.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\sl264\slmult1\sb260\pardirnatural\partightenfactor0
+
+\s1
+\f2\b\fs36 \cf0 GRPC\
+\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl264\slmult1\pardirnatural\partightenfactor0
+
+\s0
+\f0\b0\fs26 \cf0 Seeing as gRPC is not an \'93endpoint-based\'94 API implementation, there is no way for HTTP caching to work. That said, if they have implemented the \'93REST Bridge\'94 then they might have applied Cache-Control headers, so maybe you can hook onto that. The REST Bridge really just means RESTish (they have endpoints instead of firing methods and arguments at it), so same rules apply. \
+If you want to cache gRPC data and they do not have the REST bridge, then you need to roll your own application caching. Pick an arbitrary number that seems appropriate, and cache away. \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\fi360\sl312\slmult1\partightenfactor0
+\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\sl264\slmult1\sb260\pardirnatural\partightenfactor0
+
+\s1
+\f2\b\fs36 \cf0 GraphQL\
+\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl264\slmult1\pardirnatural\partightenfactor0
+
+\s0
+\f0\b0\fs26 \cf0 The recommendation from the GraphQL documentation suggests the responsibility of caching falls on clients to implement their own application caching:\
+\
+\pard\tx720\tx1080\tx1440\pardeftab720\li720\sl264\slmult1\sb240\sa240\pardirnatural\partightenfactor0
+
+\s3
+\fs24 \cf0 In an endpoint-based API, clients can use HTTP caching to easily avoid refetching resources, and for identifying when two resources are the same. The URL in these APIs is a globally unique identifier that the client can leverage to build a cache. In GraphQL, though, there\'92s no URL-like primitive that provides this globally unique identifier for a given object. It\'92s hence a best practice for the API to expose such an identifier for clients to use.\uc0\u8202 
+\f2\b \'97\uc0\u8202 Source: {\field{\*\fldinst{HYPERLINK "http://graphql.org/learn/caching/"}}{\fldrslt graphql.org}}\
+\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl264\slmult1\pardirnatural\partightenfactor0
+
+\s0
+\f0\b0\fs26 \cf0 This is advertised like a feature, but as we discussed already having a client decide arbitrary cache lifetimes is often rather questionable. Due to the way GraphQL is implemented on a single endpoint (and usually as a POST(, trying to use any existing client caching middleware would not work. \
+There are some third-party extensions showing up that place extra metadata into the response, and that metadata looks a lot like some of the keywords found in the HTTP caching standard. If you spot these keywords on an API you are working with, check the API documentation to see if there is mention of which of these various extensions it is, so you know how to work with it.}

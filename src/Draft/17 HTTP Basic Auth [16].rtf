@@ -1,0 +1,77 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1671
+\stshfdbch0{\fonttbl\f0\fnil\fcharset0 Cochin;\f1\fnil\fcharset0 Cochin-Bold{\*\falt Cochin Bold};\f2\fnil\fcharset0 Menlo-Regular{\*\falt Menlo Regular};
+\f3\fmodern\fcharset0 Courier;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+{\stylesheet {\s0 Normal;}{\s1 \tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\sl264\slmult1\sb260\pardirnatural\partightenfactor0\b\fs36\cf0\outlinelevel1 Heading 1;}{\s2 \tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\li720\fi-720\pardirnatural\partightenfactor0\fs22\cf0 Code Block;}}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0;}
+{\info
+{\author Phil Sturgeon}
+{\creatim\yr2018\mo1\dy3\hr11\min52\sec29\timesinceref536669549}
+{\revtim\yr2018\mo1\dy20\hr19\min43\sec50\timesinceref538166630}}\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\fi360\sl288\slmult1\sb160\pardirnatural\partightenfactor0
+
+\s0
+\f0\fs28 \cf0 Stripe is an example of an API using HTTP Basic Auth, which like the name might suggest, is rather simple. HTTP Basic used to be misused by a lot of APIs who demanded the username and password be sent over the wire, and that is incredibly easy to \'93packet sniff\'94. Basically a malicious user (without even having much technical prowess) can see other peoples username and password as they transmit over the network, between a client and the API\'85 \
+Luckily HTTPS is a thing, and that S stands for Secure - by which it means traffic is encrypted. Stripe require HTTP Basic be used over HTTPS as it is infinitely more difficult to packet sniff, and a malicious user would need to man-in-the-middle with faked certificates, and all sorts of other crazy stuff, to get those credentials. Also Stripe are asking for API tokens not usernames and passwords, so their usage of HTTP Basic is very responsible. \
+If you see an API requiring HTTP Basic Auth over HTTP (not HTTPS) then you will want to shout at them via whatever contact details they provide. \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\sl264\slmult1\sb260\pardirnatural\partightenfactor0
+
+\s1
+\f1\b\fs36 \cf0 Using HTTP Basic Auth\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\fi360\sl288\slmult1\sb160\pardirnatural\partightenfactor0
+
+\s0
+\f0\b0\fs28 \cf0 Authentication is usually handled in HTTP by an Authentication header, as defined in the \
+\pard\tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\li720\fi-720\sl288\slmult1\sb160\pardirnatural\partightenfactor0
+
+\s2
+\f2\fs22 \cf0 Basic \{TOKEN\}\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\fi360\sl288\slmult1\sb160\pardirnatural\partightenfactor0
+
+\s0
+\f0\fs28 \cf0 where the `\{TOKEN\}` is the base 64 of the username and password separated by a colon. In pseudo-code, it would be:\
+\pard\tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\li720\fi-720\sl288\slmult1\sb160\pardirnatural\partightenfactor0
+
+\s2
+\f2\fs22 \cf0 base64(username + ':' + password)
+\f0\fs28 \
+\pard\pardeftab720\sl288\slmult1\sb160\partightenfactor0
+
+\f3\fs24 \cf2 \expnd0\expndtw0\kerning0
+\s0
+curl https://api.stripe.com/v1/charges \\\
+   -u sk_test_BQokikJOvBiI2HlWgH4olfQ2:
+\f0\fs28 \cf0 \kerning1\expnd0\expndtw0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\fi360\sl288\slmult1\sb160\pardirnatural\partightenfactor0
+\cf0 **Pros**\
+* Easy to implement\
+* Easy to understand\
+* Works in the browser and any other HTTP client\
+**Cons**\
+* Is ludicrously insecure over HTTP\
+* Is fairly insecure over HTTPS\
+* Passwords can be stored by the browser, meaning a honeypot of user data is sitting around waiting to be gobbled up\
+**Browsers Storing Passwords**\
+With Chrome not even protecting these plain text passwords with a master password, you really are leaving your\
+users wide open to attack if you let HTTP Basic be an option.\
+Elliott Kember publicly [outed Chrome on this](http://blog.elliottkember.com/chromes-insane-password-security-strategy). [The Guardian cared](http://www.theguardian.com/technology/2013/aug/07/google-chrome-password-security-flaw?INTCMP=SRCH). [Sir Tim Berners-Lee cared](https://twitter.com/timberners_lee/status/364839351651274752). [Google didn't](https://news.ycombinator.com/item?id=6166886).\
+**More plain text Woe**\
+Another security issue with Basic authentication is that it is ludicrously insecure when running over HTTP.\
+In the example provided by Wikipedia, a header will be placed in the HTTP request that looks like this:\
+> Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==\
+If a request is made that goes over the wire (such as a JS based API request from a user sitting in a coffee shop),\
+then that request could easily be intercepted. Taking that header as an example, it is insanely simple to find\
+the username and password.\
+~~~~~~~~\
+$ php -a\
+php > echo base64_decode('QWxhZGRpbjpvcGVuIHNlc2FtZQ==');\
+Aladdin:open sesame\
+~~~~~~~~\
+This is no more or less secure than a HTML login form, but is certainly not secure enough for any API with\
+sensitive data.\
+Using SSL improves the concerns greatly, but as the password is sent in every single HTTP request, there is still\
+the potential for cracking it. At this point, though, somebody has to _really_ want to get in.\
+HTTP Basic Auth may be a good fit for a relatively unimportant internal API, which needs some basic protection\
+and needs to be implemented quickly, but certainly is not any good for anything that handles money, air traffic,\
+or nuclear weapons.\
+TODO\
+If they offer a ?access_token don\'92t use it, you\'92re making it far easier for your users to have their information grabbed. The server might be logging poorly and that\'92ll expose their access tokens.}

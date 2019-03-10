@@ -1,0 +1,43 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1671
+\stshfdbch0{\fonttbl\f0\fnil\fcharset0 Cochin;\f1\fnil\fcharset0 AppleColorEmoji{\*\falt Apple Color Emoji};\f2\fnil\fcharset0 Cochin-Italic{\*\falt Cochin Italic};
+\f3\fnil\fcharset0 Cochin-Bold{\*\falt Cochin Bold};}
+{\colortbl;\red255\green255\blue255;}
+{\stylesheet {\s0 Normal;}{\s1 \tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\sl264\slmult1\sb260\pardirnatural\partightenfactor0\b\fs36\cf0\outlinelevel1 Heading 1;}}
+{\*\expandedcolortbl;;}
+{\info
+{\author Phil Sturgeon}
+{\creatim\yr2017\mo12\dy23\hr2\min47\sec31\timesinceref535686451}
+{\revtim\yr2018\mo1\dy20\hr19\min44\sec25\timesinceref538166665}}\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\fi360\sl288\slmult1\sb160\pardirnatural\partightenfactor0
+
+\s0
+\f0\fs28 \cf0 Throughout the 2000s, most of us web developers were building frontend and the backend in the same application. The frontend was just whatever HTML the backend decided to spit out. Frontend developers would design the templates (HTML + data tags), and the backend would decide which HTML template to show, and what values to shove into those tags. Go Smarty.\
+It was a simple time, but there was a lot wrong with it. Sharing data between apps was awful, and the amount of iframe trickery was scary. One time I was working on an integration where a financial services company set up a deal to provide the stocks and shares information for the MSN Money UK homepage. We generated full HTML on our site, (possibly generated from a CMS that was not expecting this sort of thing), they read the whole thing, regex replaced some special tags added just for them, cached it somehow, and shoved their own CSS on it\'85  \
+It was around this time I started blogging about APIs. 
+\f1 \uc0\u55358 \u56596 
+\f0 \
+Thankfully we\'92ve mostly escaped that swamp, and the vast majority of companies are building APIs first. On the desktop it\'92s all about single-page JavaScript applications, with Angular/Ember/React using data binding to pull down and push back data from a data source, and mobiles often work very similarly, regardless of if the apps are HTML based or native. These frontend applications cannot do all that much by themselves, so they need to hook up to APIs to do
+\f2\i  something
+\f0\i0 . That something might be as simple as persisting data to the server, enabling communications with other users, charging somebodies credit card, etc.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\sl264\slmult1\sb260\pardirnatural\partightenfactor0
+
+\s1
+\f3\b\fs36 \cf0 External APIs\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\fi360\sl288\slmult1\sb160\pardirnatural\partightenfactor0
+
+\s0
+\f0\b0\fs28 \cf0 These days most architectures involve at least one external API (an API built by another company), and that trend is only going to continue. \
+Think about older video games like Rollercoaster Tycoon. They were developed singlehandedly, by one software developer who could do a bunch of things. Over time, the expectations for video games have shot up so much that no one person could ever create the next bestselling video game singlehandedly. Now there are whole teams of people who work on physics engines, some folks figure out how to make realistic hair, and everyone focuses on building their specific modules. \
+Most smaller game studios will skip building their own physics engines and simply pay the licensing fee to use an existing software, because they don\'92t have the human-power to build their own, and it\'92s probably cheaper. APIs are very much the same sort of idea. Startups don\'92t have time to build their own SMS messaging service, so they just use Twilio. It\'92s fantastic, it only takes a few minutes to get started, and it means that startup can focus on their application, which is going to make the world a better place through drone-based, underwear folding in-the-home. \
+If something awfully complex pops up like geocoding, most folks will just shove Google Maps API in there, or Mapbox API, or OpenStreet Map API, because generating a standard interface for wildly different datasets around the globe is a mess, and why waste time on that when you\'92ve got underpants to fold!\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\sl264\slmult1\sb260\pardirnatural\partightenfactor0
+
+\s1
+\f3\b\fs36 \cf0 Breaking Down the Monolith\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\fi360\sl288\slmult1\sb160\pardirnatural\partightenfactor0
+
+\s0
+\f0\b0\fs28 \cf0 Over the last few years, the rise of the service (or micro service) has meant you\'92ll often be working with more than one API. External APIs might be replaced with internal APIs as your teams grow and ownership becomes more important, and larger applications can start to become an unmanageable non-performant mess. This really makes sense for companies with larger engineering teams, who want to avoid stepping on each others toes with changes they make. The more services at play, the more complex everything gets, but a mature, and educated engineering department with a strong devops culture can eventually learn to manage this.\
+A lot of teams who are just getting started with building services kinda forget about this integration part, and forget their systems are going to be used by a myriad of others. As companies grow, other developers want to start hooking into these data sources, and often the original developers have moved on. You end up with all these random things talking to other random things and the architectural diagrams (if kept up to date) would look like an octopus orgy. \
+These services need to talk to each other intelligently, handle various types of error, have realistic timeouts, know when to retry, and most importantly identify themselves, so you don\'92t end up with a stampeding herd; with no idea which client is causing it.\
+These services also need frontends, or have one mega dashboard that handles the UI for many of them. \
+One of these scenarios is where you probably come in, so with the why covered, let\'92s look at how.}

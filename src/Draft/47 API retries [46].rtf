@@ -1,0 +1,48 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1671
+\stshfdbch0{\fonttbl\f0\fswiss\fcharset0 ArialMT{\*\falt Arial};\f1\froman\fcharset0 Times-Roman{\*\falt Times Roman};}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red16\green60\blue192;}
+{\stylesheet {\s0 Normal;}}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0;\cssrgb\c6667\c33333\c80000;}
+{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid1}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}}
+{\info
+{\author Phil Sturgeon}
+{\creatim\yr2019\mo2\dy27\hr17\min54\sec36\timesinceref572979276}
+{\revtim\yr2019\mo2\dy27\hr18\min5\sec56\timesinceref572979956}}\deftab720
+\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\pard\pardeftab720\ri288\sl380\partightenfactor0
+
+\f0\fs28 \cf2 \expnd0\expndtw0\kerning0
+It can be easy to forget that there are times when API requests might fail the first time they're sent. Many front-end frameworks allow developers to {\field{\*\fldinst{HYPERLINK "https://github.com/greatjapa/node-fetch-retry"}}{\fldrslt \cf2 \ul \ulc2 automatically}} {\field{\*\fldinst{HYPERLINK "https://www.rubydoc.info/gems/faraday/Faraday/Request/Retry"}}{\fldrslt \cf2 \ul \ulc2 retry}} failed requests. This is great when connections drop momentarily, but requires some restraint: be mindful that each retry attempt takes a finite amount of time. If these attempts prevent users from accessing a part of your interface, excessive retry attempts will make your app feel unresponsive and broken. In order to combat this feeling, give your users the ability to cancel retry attempts, and display a message or status on your interface that clearly shows that a retry attempt is being made.
+\f1\fs24 \
+\pard\pardeftab720\sl280\partightenfactor0
+\cf2 \
+\pard\pardeftab720\ri288\sl380\partightenfactor0
+
+\f0\fs28 \cf2 You should have an application-wide strategy for retrying failed API calls. \'a0If you detect that an API fails, it may be okay to retry that call 2 or 3 times before alerting the user that something is wrong. \'a0In these cases, it\'92s also a good idea to keep track of the amount of time between sending the initial request and alerting users - in cases where API calls are taking multiple seconds to fail, it will be better to show a failure notice as soon as you detect the first failure. \'a0This takes some intuition, and may also require some fine-tuning on a per-scenario basis.
+\f1\fs24 \
+\pard\pardeftab720\sl280\partightenfactor0
+\cf2 \
+\pard\pardeftab720\ri288\sl380\partightenfactor0
+
+\f0\fs28 \cf2 While retrying, it\'92s also a good idea to add an exponential backoff to your API calls. \'a0In essence, this means you might wait 100ms after the first API call fails (to give the server a chance to get its act together), and 200ms after the second, then 400ms, etc. \'a0At scale, this will prevent you from accidentally DDoSing your API services when there\'92s a brief failure of an API.  
+\f1\fs24 \
+\pard\pardeftab720\sl280\partightenfactor0
+\cf2 \
+\pard\pardeftab720\ri288\sl380\partightenfactor0
+
+\f0\fs28 \cf2 It\'92s also a great idea to communicate to your users when calls are taking longer than expected, too. \'a0Letting them know in plain english that you\'92re waiting for a response from the server gives you a chance to let users know that your app hasn\'92t frozen or crashed. \'a0This is also an opportunity to send a link to a system status page, so users can see whether the problem they\'92re having is local to them or not.
+\f1\fs24 \
+\pard\pardeftab720\sl280\partightenfactor0
+\cf2 \
+\pard\tx220\tx720\pardeftab720\li720\fi-500\sl380\partightenfactor0
+\ls1\ilvl0
+\f0\fs28 \cf2 \kerning1\expnd0\expndtw0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
+Slack: {\field{\*\fldinst{HYPERLINK "https://status.slack.com/"}}{\fldrslt \cf3 \ul \ulc3 https://status.slack.com}}\line \
+\pard\tx220\tx720\pardeftab720\li720\fi-500\sl400\partightenfactor0
+\ls1\ilvl0
+\fs29\fsmilli14667 \cf2 \kerning1\expnd0\expndtw0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
+Amazon AWS: {\field{\*\fldinst{HYPERLINK "https://status.aws.amazon.com/"}}{\fldrslt 
+\fs28 \cf3 \ul \ulc3 https://status.aws.amazon.com}}
+\fs28 \line \
+\pard\pardeftab720\sl320\partightenfactor0
+\cf2 Strava: {\field{\*\fldinst{HYPERLINK "https://status.strava.com/"}}{\fldrslt \cf3 \ul \ulc3 https://status.strava.com}}}

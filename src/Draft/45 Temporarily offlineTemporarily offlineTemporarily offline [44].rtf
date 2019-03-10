@@ -1,0 +1,31 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1671
+\stshfdbch0{\fonttbl\f0\fswiss\fcharset0 ArialMT{\*\falt Arial};\f1\froman\fcharset0 Times-Roman{\*\falt Times Roman};\f2\fswiss\fcharset0 Arial-ItalicMT{\*\falt Arial Italic};
+}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+{\stylesheet {\s0 Normal;}}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0;}
+{\info
+{\author Phil Sturgeon}
+{\creatim\yr2019\mo2\dy27\hr17\min53\sec38\timesinceref572979218}
+{\revtim\yr2019\mo2\dy27\hr19\min32\sec18\timesinceref572985138}}\deftab720
+\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\pard\pardeftab720\ri288\sl380\partightenfactor0
+
+\f0\fs28 \cf2 \expnd0\expndtw0\kerning0
+Imagine that your site is being viewed from a mobile phone. Your user enters an elevator or a tunnel, and connectivity drops temporarily right in the middle of an API call. Can you recover?
+\f1\fs24 \
+\pard\pardeftab720\sl280\partightenfactor0
+\cf2 \
+\pard\pardeftab720\ri288\sl380\partightenfactor0
+
+\f0\fs28 \cf2 There are considerations to be made in recovering gracefully. If the user started an interaction in offline mode and suddenly regains their connection, it\'92s generally not a great idea to assume that the connection is then steadfast and reliable. In other words, do not suddenly assume that internet is fantastic and there to stay. \
+\
+This is a common failure of applications with amazing offline support.  As soon as they detect a connection, they attempt to flush all local changes to their cloud services.  If everything goes well, and the connection is indeed back for good, 
+\f2\i great!
+\f0\i0   But - as is often the case, if the connection then goes down while these local changes are being sent up to the API,  everything that was waiting to be sent to the API in the local cache is lost. \
+\
+This happens for example in Asana (a todo list application) for iOS, which is often recommended entirely because of the service\'92s advertised offline syncing. Imagine this: You write up a bunch of todo items when underground or without an internet connection.  Your offline changes stay on your phone, waiting for the moment you regain service, so they can sync back up to Asana\'92s servers.  This all works perfectly when you have a great connection, 
+\f2\i but
+\f0\i0  if that sync attempt gets a 500 it throws a bunch of alert boxes and errors, then eventually just forgets about the todo items, along with the user who wrote them. 
+\f2\i Sorry I didn\'92t get you a birthday present, mum!
+\f1\i0\fs24 \
+}

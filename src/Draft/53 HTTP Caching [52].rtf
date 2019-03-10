@@ -1,0 +1,108 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1671
+\stshfdbch0{\fonttbl\f0\froman\fcharset0 Palatino-Roman{\*\falt Palatino};\f1\fnil\fcharset0 Menlo-Regular{\*\falt Menlo Regular};\f2\froman\fcharset0 Palatino-Bold{\*\falt Palatino Bold};
+}
+{\colortbl;\red255\green255\blue255;\red16\green18\blue20;\red255\green255\blue255;}
+{\stylesheet {\s0 Normal;}{\s1 \tx720\tx1080\tx1440\li720\sl264\slmult1\sb240\sa240\pardirnatural\partightenfactor0\fs24 Block Quote;}{\s2 \tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\li720\fi-720\pardirnatural\partightenfactor0\fs22\cf0 Code Block;}{\*\cs25 \fs22\cf0 Code Span;}}
+{\*\expandedcolortbl;;\cssrgb\c7843\c9020\c10196;\cssrgb\c100000\c100000\c100000;}
+{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid1}
+{\list\listtemplateid2\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid101\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid2}
+{\list\listtemplateid3\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid201\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid3}
+{\list\listtemplateid4\listhybrid{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{decimal\}.}{\leveltext\leveltemplateid301\'02\'00.;}{\levelnumbers\'01;}\fi-360\li720\lin720 }{\listname ;}\listid4}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}{\listoverride\listid2\listoverridecount0\ls2}{\listoverride\listid3\listoverridecount0\ls3}{\listoverride\listid4\listoverridecount0\ls4}}
+{\info
+{\author Phil Sturgeon}
+{\creatim\yr2018\mo9\dy18\hr0\min24\sec47\timesinceref558915887}
+{\revtim\yr2018\mo12\dy11\hr14\min19\sec44\timesinceref566227184}}\deftab720
+\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl264\slmult1\pardirnatural\partightenfactor0
+
+\s0
+\f0\fs26 \cf0 HTTP caching is one of the best parts of the HTTP specification. At it most simple it\'92s just telling various actors (like an API client) how long to keep data before they chuck it out, and at its most complex it solves the issue of cache invalidation - one of the toughest problems in programming. \
+Any \'93endpoint-based\'94 API can use HTTP caching, so potentially you could run into it quite often, but it\'92s also ignored by a lot of API developers who just do not know it exists. \
+Basically there are a whole bunch of conventions outlines in {\field{\*\fldinst{HYPERLINK "http://Speeding"}}{\fldrslt RFC 7234: HTTP/1.1 Caching}}, the most commonly used of which is the {\field{\*\fldinst{HYPERLINK "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control"}}{\fldrslt Cache-Control  HTTP header}}, which resources can use to define its cacheability. The idea of defining cacheability is one of the main requirements for a REST API, and it refers to a standard way to \'94control\'94 who can cache the response, what they can do with it, under which conditions, and for how long. If a GET request has a {\cs25
+\f1\fs22 Cache-Control} header, the client knows it can keep it around for a while.\
+\pard\tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\pardeftab720\li720\fi-720\pardirnatural\partightenfactor0
+
+\s2
+\f1\fs22 \cf0 Cache-Control: max-age=120\
+\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl264\slmult1\pardirnatural\partightenfactor0
+
+\s0
+\f0\fs26 \cf0 Here the API is telling clients they should keep that information for two minutes, but it can do a whole lot more than that. There is conditional validation, which allow for requests asking \'93only respond with data if it has changed since my last request\'94, and you can create all sorts of complex instructions. \
+The main idea is to avoid repeating the same GET requests, because no matter how well optimized the API is at responding, not making a request is quicker than making a request. Storing a local copy of a response allows you to skip network latency entirely, which not only saves the end user from waiting, but can also save money too. Respecting cache control headers provided by an API will make your end users experience feel quicker, cheaper, reduce power usage (important for mobile devices). If the API is leveraging network caching too, then when your client does make requests, there is a chance the responses will be served from the cache server, which is usually quicker than the application server. It is also often sitting \'93at the edge\'94 if it's a CDN (\'93Content Delivery Network\'94) style network cache.\
+There is a lot to learn about HTTP caching, and some of the words used do not mean what you would expect them to mean anything first glance. Google have {\field{\*\fldinst{HYPERLINK "https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/http-caching"}}{\fldrslt an amazing guide}} which is designed at understanding the concepts in general, and the hosting company {\field{\*\fldinst{HYPERLINK "https://www.fortrabbit.com/"}}{\fldrslt Fortrabbit}} have written a brilliant {\field{\*\fldinst{HYPERLINK "https://blog.fortrabbit.com///blog.fortrabbit.com/mastering-http-caching"}}{\fldrslt article on HTTP caching for applications in general}}. To leverage some of their writing, here is an overview of the Cache-Control header from fortrabbit:\
+\pard\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\pardeftab720\fi360\sl264\slmult1\partightenfactor0
+\cf0 \
+\pard\tx720\tx1080\tx1440\pardeftab720\li720\sl264\slmult1\sb240\sa240\pardirnatural\partightenfactor0
+
+\s1
+\fs24 \cf0 The Cache-Control header controls not just the request and response, but holds instructions for potentially two cache locations: The "local cache" (aka "private cache") and the "shared cache".\
+The local cache, is a cache on the local disk of the machine running the browser. Your laptop, if you will. Be aware that you don't have "exact control" over that cache. Ultimately, the browser decides whether to follow your "suggestions" or not, which means: don't rely on it. The user might clear all caches whenever the browser is closed and you would not know about it, aside from increased traffic cause those caches invalidate faster then you anticipate.\
+The shared cache \'85 between the web server and the client. The CDN, in this case. You have full control over the shared cache and should leverage it to the fullest. \
+OK, let's dive in with some code examples. I'll explain in detail below:\
+\pard\tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\pardeftab720\li720\fi-720\pardirnatural\partightenfactor0
+
+\s2
+\f1\fs22 \cf0 Cache-Control: public max-age=3600\
+Cache-Control: private immutable\
+Cache-Control: no-cache\
+Cache-Control: public max-age=3600 s-maxage=7200\
+Cache-Control: public max-age=3600 proxy-revalidate\
+\pard\tx720\tx1080\tx1440\pardeftab720\li720\sl264\slmult1\sb240\sa240\pardirnatural\partightenfactor0
+
+\s1
+\f0\fs24 \cf0 That might look a bit confusing, but don't worry, it's not that hard. First you should now that Cache-Control takes three "kinds" of directives: Cachability, expiration and revalidation.\
+First cachability, which takes care of the cache location, which in includes whether it should be cached at all. The most important directives are:\
+\pard\s1\tx220\tx720\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardeftab720\li720\fi-500\sl264\slmult1\pardirnatural\partightenfactor0
+\ls1\ilvl0\cf0 {\listtext	\uc0\u8226 	}
+\f2\b private:
+\f0\b0  Means it shall only be cached in the local (private) cache. On your laptop.\
+{\listtext	\uc0\u8226 	}
+\f2\b public:
+\f0\b0  Means it shall be cached in the shared cache. In the CDN. It can also be cached on the local cache, though.\
+{\listtext	\uc0\u8226 	}
+\f2\b no-cache:
+\f0\b0  Interestingly this means caching is allowed - just everybody (local cache, shared cache) must revalidate before using the cached value\
+{\listtext	\uc0\u8226 	}
+\f2\b no-store:
+\f0\b0  Means it shall not be cached. Nowhere. Not ever.\
+\pard\s1\tx720\tx1080\tx1440\pardeftab720\li720\sl264\slmult1\sb240\sa240\pardirnatural\partightenfactor0
+\cf0 Next up is expiration, which takes care of how long things are cached. The most important directives are:\
+\pard\s1\tx220\tx720\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardeftab720\li720\fi-500\sl264\slmult1\pardirnatural\partightenfactor0
+\ls2\ilvl0\cf0 {\listtext	\uc0\u8226 	}
+\f2\b max-age=<seconds>:
+\f0\b0  Sets the cache validity time. How many seconds shall the cache location keep it? Goes for local and shared cache.\
+{\listtext	\uc0\u8226 	}
+\f2\b s-maxage=<seconds>:
+\f0\b0  Overrides max-age just for the shared cache. No effect on local cache.\
+\pard\s1\tx720\tx1080\tx1440\pardeftab720\li720\sl264\slmult1\sb240\sa240\pardirnatural\partightenfactor0
+\cf0 Lastly there is revalidation, which is, more or less, fine control. The most important directives are:\
+\pard\s1\tx220\tx720\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardeftab720\li720\fi-500\sl264\slmult1\pardirnatural\partightenfactor0
+\ls3\ilvl0\cf0 {\listtext	\uc0\u8226 	}
+\f2\b immutable: 
+\f0\b0 Means that the document won't change. Ever. Can be cached until the heat death of the universe.\
+{\listtext	\uc0\u8226 	}
+\f2\b must-revalidate:
+\f0\b0  Means the client (browser) must still check with the proxy (CDN), even while it's cached!\
+{\listtext	\uc0\u8226 	}
+\f2\b proxy-revalidate:
+\f0\b0  Means that the shared cache (CDN) must check the origin, even while it's cached!\
+\pard\s1\tx720\tx1080\tx1440\pardeftab720\li720\sl264\slmult1\sb240\sa240\pardirnatural\partightenfactor0
+\cf0 And to put it all together, here is how to read the above code examples in plain English:\
+\pard\s1\tx220\tx720\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardeftab720\li720\fi-500\sl264\slmult1\pardirnatural\partightenfactor0
+\ls4\ilvl0\cf0 {\listtext	1.	}Cache it both on CDN and laptop for an hour.\
+{\listtext	2.	}Don't store in CDN, only on laptop. Once cached (on laptop), no need to ever refresh it.\
+{\listtext	3.	}Don't cache it - or do. Just make sure to revalidate always!\
+{\listtext	4.	}Cache it for an hour on laptop, but for two hours on the CDN\
+{\listtext	5.	}Cache it both on CDN and laptop for an hour. BUT: if a request hits the CDN, although it's cached here for an hour, it still must check with the origin whether the document is still unchanged.\
+\ls4\ilvl0\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\fi360\sl312\slmult1\pardirnatural\partightenfactor0
+
+\s0
+\fs26 \cf0 \'97 
+\f2\b \cf2 \highlight3 Ulrich Kautz, 
+\f0\b0 \cf0 \highlight1 Fortrabbit.com 
+\f2\b \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\fi360\sl312\slmult1\partightenfactor0
+
+\f0\b0 \cf0 Couldn't have put that any better myself! We've spoken a bit here about client caching and network caching, so let's look into both of those concepts in more detail. }
