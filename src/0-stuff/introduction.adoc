@@ -1,0 +1,199 @@
+= Introduction
+
+Web APIs are just code somebody else wrote, that lives on a server
+controlled by somebody else. The acronym API itself stands for
+"Application Program Interface", and that’s what it says on the tin: an
+interface for interacting with an application.
+
+This is a rather generic term in the world of computer science and
+programming, as a Linux command-line utility would consider its command
+names and options to be an API, whilst a Java library would also
+consider its method names and arguments to be an API.
+
+Essentially it’s all the same concept, but when talking about Web APIs
+we’re talking about the utilization of network protocols such as HTTP,
+AMQP, etc., and instead of command-line arguments or method parameters,
+we’re working with URLs, query string parameters, or chunks of data like
+JSON.
+
+The goal of a Web API is to provide other applications with access to
+specific subset of functionality and data that this application owns.
+Some APIs are public (anyone can get the weather from
+http://api.weather.gov[api.weather.gov]), some are private (it’s
+probably tough to get access to JPMorgan Chase’s Enterprise Customers
+API), and some are a mixture.
+
+APIs can give you data for a single-page JavaScript application, handle
+payment information so you don’t have to worry about storing credit card
+details, post a Facebook status on a users timeline, or share the same
+data across a myriad of different devices. Watch that Netflix show on
+your Xbox, it’s all good, APIs have you covered.
+
+For a long time my job was designing and building APIs, Then it was
+coaching and advising other teams how to build APIs. In more recent
+years, it has shifted towards helping different teams building different
+software interact with each others systems. These are sometimes
+architectural concerns, but a lot of it comes down to clients calling
+other systems and knowing what to do with the responses.
+
+Essentially the role has been making HTTP interactions reliable, warning
+people of potential problems like: don’t assume everything is going to
+be JSON, normalizing state management into the API instead of having
+loads of clients doing subtly different guesswork, how to configure
+timeouts to stop half the company’s applications crashing, and improving
+performance with smart usage of HTTP caching. This advice seemed like it
+should also go into a book, because I’ve learned a substantial amount
+from my time working at WeWork.
+
+This book aims to help you interact with an API that is already built.
+It will explain things from the users perspective, and if you do happen
+to be an API developer, this might give you some insight into how users
+will be interacting with your API. Everyone wins. That said, if you want
+help building fantastic web APIs, this might not be first book you
+should read, and instead you should consider picking up a copy of
+http://apisyouwonthate.com[_Build APIs You Won’t Hate_]. This is for the
+frontend folks, and those building systems that talk to other systems.
+
+== Terminology
+
+APIs are built by all sorts of folks; maybe another company, some large
+like Google or Facebook, startups, governments, or charity
+organizations. They could also be coworkers on another team, or another
+department, on another floor (or continent). Maybe you built an API
+because you’re a full-stack developer who can do frontend and backend!
+This whole time we’re going to refer to "them" as the guardians of these
+Web API(s), and assume we have little control over the API.
+
+Those writing code that interact with APIs are usually called "API
+Clients" or "user agents", and that is usually a frontend application
+(browser app, iOS app, Android app, etc.), or it can actually be another
+backend application. Backend applications talking to other Web APIs
+share a lot of the same properties as a frontend application talking to
+another API, so this book is aimed at all of you.
+
+Web API, microservice, service, etc, they’re all terms that mean subtly
+different things, that are often used interchangeably by some. For the
+duration of this book, we’re just going to say API. A micro service, or
+a service, will probably have an API, otherwise it’s not doing anything.
+So when you see the generic term API, you know we’re talking about a web
+API, which might be part of a service, micro service, a gateway to
+multiple microservices, or a giant monolithic application with some API
+endpoints jammed into it. It’s all the same as far as API interaction is
+concerned.
+
+== Do we really need to read a book?
+
+Integrating an API is meant to be easy, and backend engineers will often
+just throw that phrase around without really understanding what they’re
+asking from people.
+
+If you’ve never integrated with an API then there’s a bit of a learning
+curve. Beyond that, there are a lot of things to learn, a lot of
+acronyms and jargon, a lot of conflicting advice on StackOverflow, and a
+lot of people spouting really bad advice. There are different types of
+API (REST, RPC, GraphQL, SOAP), different types of transportation layer,
+lots of different errors to understand, and a tricky balancing act to
+make your applications both performant and up-to-date with this data
+that lives somewhere else. Many people don’t think about HTTP timeouts
+or the effects an accidental 10s hang could have on downstream systems.
+What happens if the user gets on a subway half way through a
+transaction... Even something as simple as an unexpected validation rule
+coming back from the API can leave user stuck in a tween-state, with a
+blank screen and no way to progress. AGGH!
+
+Some of this would be easier if API developers documenting things
+extensively, but most of the time you’re lucky to get an out-of-date
+Word document called API Documentation-v2-33-January-18-Final.doc.
+Sometimes you might have to guess a contract, and that’s no easy feat.
+
+Some of these problems are just lessons learned over time, but in the
+mean time your application can be suffering all sorts of bug reports,
+user complaints, server issues, and who knows what other sort of
+production issues. If it’s not as dire as that, there are at least other
+sources of confusion that’ll get you spinning your wheels trying to
+figure out what to do next. Throughout the 2000s, most of us web
+developers were building frontend and the backend in the same
+application. The frontend was just whatever HTML the backend decided to
+spit out. Frontend developers would design the templates (HTML + data
+tags), and the backend would decide which HTML template to show, and
+what values to shove into those tags. Go Smarty.
+
+It was a simple time, but there was a lot wrong with it. Sharing data
+between apps was awful, and the amount of iframe trickery was scary. One
+time I was working on an integration where a financial services company
+set up a deal to provide the stocks and shares information for the MSN
+Money UK homepage. We generated full HTML on our site, (possibly
+generated from a CMS that was not expecting this sort of thing), they
+read the whole thing, regex replaced some special tags added just for
+them, cached it somehow, and shoved their own CSS on it...
+
+It was around this time I started blogging about APIs. 🤔
+
+Thankfully we’ve mostly escaped that swamp, and the vast majority of
+companies are building APIs first. On the desktop it’s all about
+single-page JavaScript applications, with Angular/Ember/React using data
+binding to pull down and push back data from a data source, and mobiles
+often work very similarly, regardless of if the apps are HTML based or
+native. These frontend applications cannot do all that much by
+themselves, so they need to hook up to APIs to do _something_. That
+something might be as simple as persisting data to the server, enabling
+communications with other users, charging somebodies credit card, etc.
+
+== External APIs
+
+These days most architectures involve at least one external API (an API
+built by another company), and that trend is only going to continue.
+
+Think about older video games like Rollercoaster Tycoon. They were
+developed singlehandedly, by one software developer who could do a bunch
+of things. Over time, the expectations for video games have shot up so
+much that no one person could ever create the next bestselling video
+game singlehandedly. Now there are whole teams of people who work on
+physics engines, some folks figure out how to make realistic hair, and
+everyone focuses on building their specific modules.
+
+Most smaller game studios will skip building their own physics engines
+and simply pay the licensing fee to use an existing software, because
+they don’t have the human-power to build their own, and it’s probably
+cheaper. APIs are very much the same sort of idea. Startups don’t have
+time to build their own SMS messaging service, so they just use Twilio.
+It’s fantastic, it only takes a few minutes to get started, and it means
+that startup can focus on their application, which is going to make the
+world a better place through drone-based, underwear folding in-the-home.
+
+If something awfully complex pops up like geocoding, most folks will
+just shove Google Maps API in there, or Mapbox API, or OpenStreet Map
+API, because generating a standard interface for wildly different
+datasets around the globe is a mess, and why waste time on that when
+you’ve got underpants to fold!
+
+== Breaking Down the Monolith
+
+Over the last few years, the rise of the service (or micro service) has
+meant you’ll often be working with more than one API. External APIs
+might be replaced with internal APIs as your teams grow and ownership
+becomes more important, and larger applications can start to become an
+unmanageable non-performant mess. This really makes sense for companies
+with larger engineering teams, who want to avoid stepping on each others
+toes with changes they make. The more services at play, the more complex
+everything gets, but a mature, and educated engineering department with
+a strong devops culture can eventually learn to manage this.
+
+A lot of teams who are just getting started with building services kinda
+forget about this integration part, and forget their systems are going
+to be used by a myriad of others. As companies grow, other developers
+want to start hooking into these data sources, and often the original
+developers have moved on. You end up with all these random things
+talking to other random things and the architectural diagrams (if kept
+up to date) would look like an octopus orgy.
+
+These services need to talk to each other intelligently, handle various
+types of error, have realistic timeouts, know when to retry, and most
+importantly identify themselves, so you don’t end up with a stampeding
+herd; with no idea which client is causing it.
+
+These services also need frontends, or have one mega dashboard that
+handles the UI for many of them.
+
+One of these scenarios is where you probably come in, so with the why
+covered, let’s look at how.

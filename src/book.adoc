@@ -1,0 +1,14 @@
+= Surviving Other Peoples APIs
+Philip Sturgeon <phil@apisyouwonthate.com>
+Mike Bifulco <mbifulco@live.com>
+:doctype: book
+:toc:
+:leveloffset: +1
+
+// include::0-stuff/author.adoc[]
+
+include::0-stuff/introduction.adoc[]
+
+:sectnums:
+
+include::everything.adoc[]
