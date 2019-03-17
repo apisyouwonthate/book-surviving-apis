@@ -5,10 +5,30 @@ Mike Bifulco <mbifulco@live.com>
 :toc:
 :leveloffset: +1
 
-// include::0-stuff/author.adoc[]
+// include::author.adoc[]
 
-include::0-stuff/introduction.adoc[]
+include::00-introduction.adoc[]
 
 :sectnums:
 
-include::everything.adoc[]
+include::01-transportation.adoc[]
+
+include::02-sdks.adoc[]
+
+include::03-paradigms.adoc[]
+
+include::04-authentication.adoc[]
+
+include::05-common-pitfalls.adoc[]
+
+include::06-ux-pitfalls.adoc[]
+
+include::07-caching.adoc[]
+
+include::08-validation.adoc[]
+
+include::09-timeouts-retries.adoc[]
+
+include::10-change-management.adoc[]
+
+include::99-outro.adoc[]

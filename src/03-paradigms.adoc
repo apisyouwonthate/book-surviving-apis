@@ -1,0 +1,462 @@
+
+= RPC, REST and GraphQL
+
+Before getting too much further, understanding the differences between
+these difference concepts is going to be vital. Every API in the world
+is following some sort of paradigm, whether it knows it or not. They
+will fall under RPC, REST, or a "query language."
+
+Even if you are confident you understand the difference, do yourself a
+favor and read them anyway. About 99% of people get this wrong, so you
+can get be in the top 1% with a quick read.
+
+== Remote Procedure Call (RPC)
+
+RPC is the earliest, simplest form of API interaction. It is about
+executing a block of code on another server, and when implemented in
+HTTP or AMQP it can become a Web API. There is a method and some
+arguments, and that is pretty much it. Think of it like calling a
+function in JavaScript, taking a method name and arguments.
+
+For example:
+
+....
+POST /sayHello HTTP/1.1
+HOST: api.example.com
+Content-Type: application/json
+{"name": "Racey McRacerson"}
+....
+
+In JavaScript, we would do the same by defining a function, and later
+we'd call it elsewhere:
+
+....
+/* Signature */
+function sayHello(name) {
+  // ...
+}
+/* Usage */
+sayHello("Racey McRacerson");
+....
+
+The idea is the same. An API is built by defining public methods; then,
+the methods are called with arguments. RPC is just a bunch of functions,
+but in the context of an HTTP API, that entails putting the method in
+the URL and the arguments in the query string or body.
+
+When used for CRUD, RPC is just a case of sending up and down data
+fields, which is fine, but one downside is that the client is entirely
+in charge of pretty much everything. The client must know which methods
+(endpoints) to hit at what time, in order to construct its own workflow
+out of otherwise incredibly naive and non-descriptive endpoints.
+
+RPC is merely a concept, but that concept has a lot of specifications,
+all of which have concrete implementations:
+
+* https://en.wikipedia.org/wiki/XML-RPC[XML-RPC]
+* https://en.wikipedia.org/wiki/JSON-RPC[JSON-RPC]
+* https://en.wikipedia.org/wiki/SOAP[Simple Object Access Protocol
+(SOAP)]
+
+XML-RPC and JSON-RPC are not used all that much other than by a minority
+of entrenched fanatics, but SOAP is still kicking around for a lot of
+financial services and corporate systems like
+https://developer.salesforce.com/docs/atlas.en-us.api.meta/api/sforce_api_quickstart_intro.htm[Salesforce].
+XML-RPC was problematic, because ensuring data types of XML payloads is
+tough. In XML, a lot of things are just strings, which JSON does
+improve, but has trouble differentiating different data formats like
+integers and decimals.
+
+You need to layer metadata on top in order to describe things such as
+which fields correspond to which data types. This became part of the
+basis for SOAP, which used https://en.wikipedia.org/wiki/XML_schema[XML
+Schema] and a
+https://en.wikipedia.org/wiki/Web_Services_Description_Language[Web
+Services Description Language (WSDL)] to explain what went where and
+what it contained.
+
+This metadata is essentially what most science teachers drill into you
+from a young age: "label your units!" The sort of thing that stops
+people paying $100 for something that should have been $1 but was just
+marked as "price: 100" which was meant to be cents... It is also worth
+pointing out if your "distance" field is metric or imperial, to avoid
+bad math crashing your billion dollar satellite into Mars.
+
+A modern RPC implementation is https://grpc.io/[gRPC], which can easily
+be considered modern (and drastically better) SOAP. It uses a data
+format called https://developers.google.com/protocol-buffers/[Protocol
+Buffers] (or Protobuff for short), which requires a schema as well as
+the data instance, much like the WSDL in SOAP. GRPC focuses on making
+single interactions as quick as possible, thanks to HTTP/2, and the fact
+that Protobuff packs down smaller than JSON. Fear not, JSON is available
+for as an option too.
+
+== Representational State Transfer (REST)
+
+REST is a network paradigm described by Roy Fielding in
+https://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm[a
+dissertation] in 2000. REST is all about a client-server relationship,
+where server-side data are made available through representations of
+data in simple formats. This format is usually JSON or XML but could be
+anything.
+
+These representations portray data from various sources as simple
+"resources", or "collections" of resources, which are then potentially
+modifiable with actions and relationships being made discoverable via a
+concept known as hypermedia controls (HATEOAS).
+
+Hypermedia is fundamental to REST, and is essentially just the concept
+of providing "next available actions", which could be related data, or
+in the example of an "Invoice" resource, it might be a link to a
+"Payment Attempts" collection so that the client can attempt paying the
+invoice. These actions are just links, but the idea is the client knows
+that an invoice is payable by the presence of a "pay" link, and if that
+link is not there it should not show that option to the end user.
+
+....
+{
+  "data": {
+    "type": "invoice",
+    "id": "093b941d",
+    "attributes": {
+      "created_at": "2017-06-15 12:31:01Z",
+      "sent_at": "2017-06-15 12:34:29Z",
+      "paid_at": "2017-06-16 09:05:00Z",
+      "status": "published"
+    }
+  },
+  "links": {
+    "pay": "https://api.acme.com/invoices/093b941d/payment_attempts"
+  }
+}
+....
+
+This is quite different to RPC. Imagine the two approaches were
+answering the phones for a doctors office:
+
+*Client:* Hi, I would like to speak to Dr Watson, is he there? If so,
+what time can I see him and what location.
+
+*RPC:* No. *click*
+
+*Calls back*
+
+*Client:* I checked his calendar, and it looks like he is off for the
+day. I would like to visit another doctor, and it looks like Dr Jones is
+available at 3pm, can I see her then?
+
+*RPC:* Yes.
+
+The burden of knowing what to do is entirely on the client. It needs to
+know all the data, come to the appropriate conclusion itself, then has
+to figure out what to do next. REST however presents you with the next
+available options:
+
+*Client:* Hi, I would like to speak to Dr Watson, is he there? *REST:*
+Doctor Watson is not currently in the office, he'll be back tomorrow,
+but you have a few options. If it's not urgent you could leave a message
+and I'll get it to him tomorrow, or I can book you with another doctor,
+would you like to hear who is available today? *Client:* Yes, please let
+me know who is there! *REST:* Doctors Smith and Jones, here are links to
+their profiles. *Client:* Ok, Doctor Jones looks like my sort of Doctor,
+I would like to see them, let's make that appointment.
+
+*REST:* Appointment created, here's a link to the appointment details.
+
+REST provided all of the relevant information with the response, and the
+client was able to pick through the options to resolve the situation. Of
+course REST would needed to know to look for `"status: unavailable"` and
+follow the `other_doctors` link to
+`https://api.doc.io/available_doctors?available_at=2017-01-01 03:00:00
+GMT`, but that is far less of a burden on the client than forcing it to
+check the calendar itself, ensure it's getting timezones right when
+checking for availability for that time, etc.
+
+This centralization of state into the server has benefits for systems
+with multiple different clients who offer similar workflows. Instead of
+distributing all the logic, checking data fields, showing lists of
+"Actions", etc. around various clients - who might come to different
+conclusions - REST keeps it all in one place.
+
+Other than hypermedia (the most powerful yet most ignored part) there
+are a few other requirements for a system to be a REST API:
+
+* REST must be stateless: not persisting sessions between requests
+* Responses should declare cacheablility: helps your API scale if
+clients respect the rules
+* REST focuses on uniformity: if you're using HTTP you should utilize
+HTTP features whenever possible, instead of inventing conventions
+
+The goal of these constraints is to make the REST architecture help APIs
+last for decades, which is almost impossible to do without these
+concepts.
+
+REST also does not require the use of schema metadata, which many API
+developers hated in SOAP. For a long time nobody was building REST APIs
+with schema, but these days it is far more common thanks to
+http://json-schema.org/[JSON Schema] (inspired by XML Schema but not
+functionally identical). This optional layer is something we will talk
+about a lot, as it can provide some incredibly functionality like
+client-side validation, that was defined by the backend!
+
+Unfortunately, REST became a marketing buzzword for most of 2006-2014.
+It became a metric of quality that developers would aspire to, fail to
+understand, then label as REST anyway, so most systems saying they are
+REST are little more than RPC with HTTP verbs and pretty URLs. As such,
+you might not get cacheability provided, it might have a bunch of wacky
+conventions, and there might not be any links for you to use to discover
+next available actions. These APIs are jokingly called RESTish by people
+aware of the difference.
+
+On the flip side, a REST API can be used in an RPC fashion if you as the
+client developer chose to ignore the links. It is not advisable of
+course, but it is possible.
+
+A huge source of confusion for people with REST is that they do not
+understand "all the extra faffing about" such as hypermedia controls and
+HTTP caching. They do not see the point, and many consider RPC to be the
+almighty. To them, it is all about executing the remote code as fast
+possible, but REST (which can still absolutely be performant) focuses
+far more on longevity and reduced client-coupling. I like to think of
+REST as a state machine operating over a network.
+
+REST can theoretically work in any transportation protocol that provides
+it the ability to fulfill the constraints, but no transportation
+protocol other than HTTP quite has the functionality to do so. To fit
+REST into AMQP, you would need to define hypermedia controls somehow
+(potentially an array of messages you could call next), a standard for
+declaring cacheability of the AMQP messages, etc., and create a lot of
+tooling that does not exist to implement that cacheing. Basically REST
+is too powerful for other existing transportation protocols, so it is
+generally implemented in HTTP.
+
+REST has no specification which is what leads to some of this confusion,
+nor does REST have any concrete implementations. That said, there are
+two large popular specifications which provide a whole lot of
+standardization for REST APIs that chose to use them:
+
+* http://www.odata.org/[OData]
+* http://jsonapi.org/[JSON-API]
+
+If the API advertises itself as using these, you are off to a good
+start. These are more than just standardized shapes for the JSON, they
+have guides on pagination, metadata, manipulating relationships between
+existing items, etc. Find an OData client or a JSON-API client in
+programming language to save yourself some work. Otherwise go at it
+yourself with a plain-old HTTP client and you should be ok with a little
+bit of elbow grease.
+
+== GraphQL
+
+Listing GraphQL as a direct comparison to these other two concepts is a
+little odd, as GraphQL is essentially RPC, with a lot of good ideas from
+the REST/HTTP community tacked in. Still, it is one of the fastest
+growing API ecosystems out there, mostly due to some of the confusion
+outlined above.
+
+GraphQL is basically RPC with a default procedure providing a query
+language, a little like SQL - if that is something you are familiar
+with. You ask for specific resources and specific fields, and it will
+return that data in the response.
+
+image::images/graphql-query.png%20width=714px%20height=194px[image]
+
+It has Mutations for creates, updates, deletes, etc. and again they are
+exactly RPC.
+
+image::images/graphql-mutations.png%20width=715px%20height=272px[image]
+
+GraphQL has many fantastic features and benefits, which are all bundled
+in one package, with a nice marketing site. If you are trying to learn
+how to make calls to a GraphQL API, the http://graphql.org/learn/[Learn
+GraphQL] documentation will help, and their site has a bunch of other
+resources.
+
+Seeing as GraphQL was built by Facebook, who had previously built a
+RESTish API, they're familiar with various REST/HTTP API concepts. Many
+of those existing concepts were used as inspiration for GraphQL
+functionality, or carbon copied straight into GraphQL. Sadly a few of
+the most powerful REST concepts were completely ignored.
+
+The backstory to GraphQL, is an interesting one. Facebook has
+experimented with various different approaches to sharing all their data
+between apps over the years; remember FQL? Executing SQL-like syntax
+over a GET endpoint was a bit odd.
+
+....
+GET /fql?q=SELECT%2Buid2%2BFROM%2Bfriend%2BWHERE%2Buid1%3Dme()&access_token=...
+....
+
+Facebook got a bit fed up with having a RESTish approach to get data,
+and then having the FQL approach for more targeted queries as well, as
+they both require different code. As such, GraphQL was created as a
+middle-ground between endpoint-based APIs and FQL, the latter being an
+approach most API developers would never consider --- or want.
+
+In the end, they developed this RPC-style query language system, to
+ignore most of the transportation layer, meaning they had full control
+over the concepts. Endpoints are gone, resources declaring their own
+cacheability is gone, the concept of the uniform interface (as REST
+defines it) is obliterated, which has the supposed benefit of making
+GraphQL so incredibly simple it could fit into AMQP or any other
+transportation protocol.
+
+The main selling point of GraphQL is that it defaults to providing the
+very smallest response from an API, as you are requesting only the
+specific bits of data that you want, which minimizes the Content
+Download portion of the HTTP request. It also reduces the number of HTTP
+requests necessary to retrieve data for multiple resources, known as the
+"HTTP N+1 Problem" that has been a problem for API developers through
+the lifetime of HTTP/1.1, but thankfully was solved quite nicely in
+HTTP/2.
+
+Sadly despite being a rather nice package, GraphQL through Mutations
+force the responsibility onto clients to know everything. The only
+difference between RPC and GraphQL is the ability to request which
+fields you get on a successful mutation.
+
+*Client:* Hi, I would like to see Dr Watson, and if he is there, what
+time can I see him and what location?
+
+*RPC:* No. *click*
+
+*Calls back*
+
+*Client:* I checked his calendar, and it looks like he is off for the
+day. I would like to visit another doctor, and it looks like Dr Jones is
+available at 3pm, can I see her then? If so, what time can I see him and
+what location.
+
+*RPC:* Yes. 2pm at the Soho Office
+
+That is a handy feature as it saves a tiny bit of network bandwidth, but
+again the client was forced to figure out its own workflow instead of
+being presented with a plethora of potential next actions. This sort of
+thing makes GraphQL very nice for fetching custom reports, gathering
+statistics, etc, somewhat passable at CRUD, but not particularly good
+for much else. Despite that it is regularly used for APIs that would be
+better suited as REST, so expect to bump into it now and then.
+
+When you do bump into GraphQL, you will not be able to use your regular
+HTTP clients, and most of things you do with any other HTTP API will not
+work here, with GraphQL instead requiring its own special client tools.
+
+=== Skinny/Fat Clients
+
+There is one more piece of theory we need to get our heads around to
+really understand the differences between these API paradigms/concepts.
+In couples dancing there is usually one person leading, and another
+person following. The leader will be in charge of signaling when moves
+should be made, and the follower follows their hints. In REST the idea
+is that the server leads. In all forms of RPC (including GraphQL), the
+client leads.
+
+We already spoke about REST "normalizing state", which is the concept of
+removing the guesswork and decision making on things that the server is
+authoritative on. The client application in a REST API becomes a thin
+UI, which handles user interactions, forms, validations, rendering,
+animations, but very little business logic. That is the theory anyway. A
+lot of RESTish/RPC/GraphQL APIs force the clients to figure out things
+they should not be trying to figure out, as their main interest is
+trying to send as little data as possible.
+
+== Inferring State from Arbitrary Fields
+
+At the day job, an upstream API decided originally suggested that
+clients should check for `location_uuid == nil` to infer the membership
+type as an "Anywhere member" (a member who can access any of our
+coworking specs. One day they changed the logic, suggesting clients
+check for location_uuid == "some-special-uuid". This was not
+communicated to the developers in charge of various systems as nobody
+remembered which of the 50+ systems were making the check. One outcome
+of that was to confuse the permissions API, which started denying things
+it should not have been denying. Who even knows what else broke and what
+else was fixed by various teams working on various systems. Applications
+need to be investigated, fixed, and updated.
+
+Inferring meaning from arbitrary fields can lead to production issues,
+angry users, and wasted developer time debugging bizarre things. The
+preferred approach in many of these situations would be to have the
+current state normalized on the server with a simple field like "type"
+which could have a few options like "anywhere", "other", and the API can
+figure out when to display that. If the API you are working with asks
+you to infer state of some random fields, politely let them know that
+you don't want their laziness to break your client application. Request
+they provide their data in a useful generic fashion, so the clients
+don't need to guess everything.
+
+== Available Actions
+
+Working out the current state is bad enough, but working out what to do
+"next" when you have a record can be really tough. For example, a
+ReactJS application at work had loads of awful helper functions to work
+out which "actions" to show next to a list of users in a company
+(through the joining resource known as seats).
+
+....
+IsNotPrimaryOfAnotherCompany(user, company_uuid) {
+  return _(user.data.result.seats).select(s => {
+    return s.company.uuid != company_uuid &&
+    s.status == "active" &&
+    s.kind == "Licensee" &&
+    s.company.status == "active";
+  }).isEmpty();
+},
+....
+
+The users and company resources have status, and seats has a kind, so
+this is somewhat ok, but the client is still working really hard for
+this seemingly complex, but potentially simple functionality. Business
+logic states that users should not be primary members of more than one
+company at the time, so a rule was made in the user management interface
+to hide the "Make Primary Member" option if they were. That seems
+reasonable enough, but when the iOS native codebase forgot to add that
+`s.status == "active";` condition, the two devices were showing
+different actions. We fixed it on iOS, and a few months later another
+rule was added to the JavaScript code, causing an unexpected difference
+that regression tests did not catch...
+
+The "skinny server, fat client" approach is forcing the client to
+download all the seats, and the user information, and the company, just
+to spin through all the records and establish if the user can or cannot
+see a "Make Primary Member" button...
+
+The most basic thing to do for RPC would be to make a "can_be_promoted"
+boolean field, which would contain all of the logic internally. The API
+is a far better at handling this, it'll do it more performantly, and it
+will be able to change its own ruling internally whilst still
+communicating the same meaning. Try requesting that from the API
+developers, and who knows you might get lucky. The REST approach would
+be to normalize hypermedia controls (HATEOAS), to also normalize that
+state up into the server. If the API was using a format like Siren, you
+might see a link nicknamed "promote" for employees, and "demote" for
+primary members. The client application could then easily be trained to
+recognize the promote/demote links and show the appropriate buttons.
+Siren would also handily show the metadata (URI, method, fields, etc.)
+required for the client to make the change.
+
+== You Cannot Always Be a Skinny Client
+
+Neither approach is definitely good or bad in their entirety, it's
+simply the case that skinny clients have fewer chances of
+misrepresenting the state if they are given the answers explicitly.
+Whenever clients try to copy the business logic rules, the chance of
+different clients inferring things differently increases. Different
+codebases will guess things differently, some will notice changes and
+others won't, and the need to deploy multiple clients in unison becomes
+a lot more common. It also generally leads to having a disparent user
+experience across different devices.
+
+Letting the server take control of such things can be a little scary,
+and it also depends on the relationship the client has with the API, the
+team developing it, and the intent of the client application. If the API
+is a third-party, letting them lead could cause some unexpected results.
+If the API was designed without the knowledge of the clients
+requirements, the API might not do a very good job of leading.
+
+=== But What About...
+
+There is a lot more to it than that, and the terms will come up plenty
+over the course of the book. Some chapters will only apply to one of
+these paradigms, but most chapters will cover general concepts that
+apply to one or more.

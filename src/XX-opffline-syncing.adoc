@@ -1,0 +1,5 @@
+
+Offline Syncing
+Check to see if they’re using UUIDs. Otherwise, invent your own UUID for it, and reference that. If they are, you can use that UUID everywhere.
+with a `sync: local`, `sync: complete` or sync: `failed` status. You can reference this item everywhere that way, and throw a popup saying “This item could not be synced, please go to Drafts to see why” if there was some error. Usually its just a case of “We tried X number of times and shit went every time” which is not so helpful.
+Show the buffer approach. Want this in Offline Drafts? It’ll go into your schedule when you’re online! <- Thats cool.

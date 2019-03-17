@@ -1,0 +1,16 @@
+
+	- What can go wrong
+Use runscope as a proxy whilst you’re developing, and do it in staging to see whats up. Honestly we’ve used it in production for a while too, and had clients retry on the direct URL if runscope was unavailable. This was never an issue but paranoia.
+	- Performance
+Make the most efficient HTTP calls you can. You might be making HTTP calls with a network library built into the language, or one built by somebody else. Either way, ensure it’s using HTTP/1.1 with keep alive on it, and if possible use a HTTP/2 client library.
+HTTP/1.1 keep alive can knock 20% off of repeated connections to the same host depending on how that connection is maintained.
+HTTP/2 is baller and async is cool. If they dont use HTTP/2 you can give yourself some with a proxy.
+APIs might vanish without a moments notice, maybe ask your backend friends to make a proxy or abstraction layer. Or ensure you have an SLA if its important. Google likes to kill its free APIs and startups can go bust at a moments notice.
+
+Protobuf required is forever or used to be, now yay optional everything
+https://developers.google.com/protocol-buffers/docs/pythontutorial
+
+Testing
+http://docs.guzzlephp.org/en/stable/testing.html
+
+Mock servers are pretty cool, theres also PHP VCR for capturing real responses and using them to generate stubs.

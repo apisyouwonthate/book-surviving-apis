@@ -1,0 +1,296 @@
+= Change Management
+
+Change Management in relation to APIs, is a collective term for making
+improvements over time. Hopefully the change is handled in a
+non-breaking fashion, giving you ample time to make necessary changes.
+
+There are a two main approaches to change.
+
+*Versioning* - Shoving a version number (v1, v2, v3) next to things, or
+in some odd cases the version is a date. The version might apply to the
+entire API (global versioning), or a single resource (resource
+versioning).
+
+*Evolution* - Instead of versioning the whole API, or specific
+resources/endpoints, some APIs will instead chose to carefully evolve
+their interface over time.
+
+Let's go more in depth into these concepts, and how they come into
+effect in various API paradigms.
+
+== *# # # # # # # # # # # # # # #* # REST / "Endpoint-based" APIs
+
+<$Scr_H::2>**Global Versioning**
+
+<!$Scr_H::2>API endpoints are grouped (essentially "namespaced") under a
+version number, e.g.
+https://hostname/v1/companies[`https://hostname/v1/companies`], to make
+it clear that a `/v1/companies` has no relation whatsoever to a
+`/v2/companies`.
+
+In http://semver.org/[SemVer] terms, the version number in the URL is a
+major version. You should expect no breaking changes to occur in this
+major version, as that would be the job for a new major version. All
+resources should be copied from the old version to the new version,
+unless they're being discontinued.
+
+Most APIs will not bother with minor or patch versions, because minor
+and patch changes are backwards compatible. Adding new fields to
+responses, new optional fields to requests or new resources will not
+break implementations, so that can be done without needing a major
+version. Changing validation rules, removing fields, or drastic changes
+to relationships, are things that may require a new major version be
+created.
+
+Usually old versions will be maintained for a reasonable timeframe, but
+what's considered reasonable is completely up to the API maintainers. It
+could be one month, a year, or anything in between.
+
+=== Evolution
+
+API evolution is the concept of striving to maintain the "I" in API, the
+request/response body, query parameters, general functionality, etc.,
+only breaking them when you absolutely, absolutely, have to; then when
+you do, you manage that change with sensible warnings to clients. It's
+the idea that API developers bending over backwards to maintain a
+contract, no matter how annoying that might be, is often more
+financially and logistically viable than dumping the workload onto a
+wide array of clients. No version numbers exist in the URL, headers, or
+query string, and no two versions of the same resource will exist at any
+given time. There is only the "current version".
+
+Just like in global versioning, backwards compatible changes like adding
+new methods to existing resources, new fields to responses, new optional
+fields to requests, new resources, etc. These can happen any time,
+without clients needing to change anything. For example, splitting
+"name" into "first_name" and "last_name". The "name" field would still
+appear in responses along with the new first_name and last_name fields,
+and could still be sent. This is a perfect evolution, because nothing
+broke for the client, and the server supports the new functionality -
+allowing folks to be specific about their first and last names instead
+of the server guessing by splitting on space or something silly.
+
+Where evolution differs from global versioning, is that instead of
+creating a whole new namespace (forcing clients that don't even use the
+specific changing resources to update/test code at great time and
+expense), a single new resource is made to replace the existing resource
+when adding new fields is not going to cover the use-case.
+
+For example, a carpooling company that has "matches" as a relationship
+between "drivers" and "passengers", suggesting folks who could ride
+together, containing properties like "passenger_id" and "driver_id".
+They realized they need to support carpools with multiple drivers (i.e.
+Frank and Sally both take it in turns to drive), so this whole matches
+concept is garbage.
+
+At a lot of startups, this sort of conceptual change is common. No
+number of new properties is going to help out here, as the whole "one
+record = one match = one driver + one passenger" concept is foiled.
+
+Deprecating the whole concept of "matches", a new concept of "riders" is
+created. This resource tracks folks far beyond just being "matched",
+through the whole lifecycle of the carpool, thanks to a `status`
+property containing pending, active, inactive, blocked, etc.
+
+By creating the `/riders` endpoint, this resource can have a brand new
+representation. The API maintainers may well be converting matches to
+riders - or riders to matches - in the background, but clients don't
+need to care about that. Clients can then use either one, allowing them
+the change to upgrade at their own pace.
+
+== GraphQL
+
+GraphQL also uses the evolution approach, and this works the same as the
+REST / "Endpoint-based" API evolution approach. GraphQL APIs following
+evolution carefully will try to avoid breaking changes, sticking to
+backwards compatible changes like adding optional fields to mutations
+and queries, new arguments on fields, new relationships, etc.
+
+When these backwards compatible changes are not going to be enough to
+provide the new functionality required, new mutations and new types
+might be created: just like the matches and riders example above. In
+another system, maybe a "Company" becomes an "Account" if that is more
+appropriate to the constantly changing business language, but maybe
+Company2 is created if not. This should only be done when the existing
+type is utterly unable to bend to the new rules of the context, and
+simply suggesting new fields cannot satisfy requirements.
+
+Global versioning is not possible in GraphQL. When raised with Facebook
+the topic was closed with a WONTFIX, so you will not have to worry about
+that.
+
+== gRPC
+
+TODO
+
+=== Deprecations
+
+Regardless of the type of API you are interacting with, and which
+approach it takes to change management, deprecation is going to be an
+important part of keeping up with the change. Any time a change is not
+just additive, deprecation will be used to communicate a breaking
+change.
+
+Deprecation is the art of telling people to stop using a thing, because
+that thing is probably going away at some point. Even if there are no
+solid plans to delete the thing entirely, the thing might be deprecated
+just because it sucks to work with, but usually it's because it has been
+replaced with a better idea.
+
+Sadly there are no promises the team in charge will deprecate things
+cautiously. Some API providers act like jerks and just arbitrarily
+change things, remove things, and break stuff. Closing APIs down with no
+warning (or poor warning) is utterly disgraceful behavior, but it does
+happen. Facebook especially like to pull the rug out on their API users.
+Sometimes breaking changes are introduced accidentally.
+
+Usually a more reasonable approach is taken, and API providers will
+communicate change in a variety of ways. There are a few common methods
+to keeping up with the changing happening to an API integrated into your
+codebase.
+
+== Low-Tech General Solutions
+
+As ludicrous as it might sound, the entire extent of some API providers
+attempts to communicate upcoming change is "write a blog about it and
+hope you notice."
+
+These blog articles explain things like "Hey we're closing off the free
+access to this API", or "We are replacing this Foo API with a Bar API,
+and you have 3 months to stop using the Foo API before we shut it down".
+Fingers crossed you see it!
+
+This low-tech approach has no real solutions I can think of, other
+than... subscribe to the api providers engineering blog on RSS, and - so
+long as the RSS reader you're using doesn't get shut down - you might
+notice the article. If they have a newsletter then subscribe to that,
+maybe with a "devs@" email address or team-specific email address, to
+improve the bus factor on this. You don't want the announcement going to
+a member of the team who's quit, then the API breaks just because the
+rest of the team didn't know about the change.
+
+APIs requiring authentication will usually ask for an email address in
+return for the authentication credentials (API keys, access tokens,
+etc.) This gives API providers one more way to get in touch about
+change, and again, make sure it's not the email of a manager or team
+lead, but a distribution email address for the team.
+
+== REST / Endpoint-based APIs
+
+If an API is using global versioning, then they might deprecate all the
+endpoints under `/v1/` at the same time, and suggest you use all the
+`/v2/` endpoints. If they're using evolution they might suggest that
+`/companies` is going away, and you should start to work with
+`/accounts` instead. The suggestions here may come in the form of
+low-tech announcements, but they can also be communicated in-band.
+
+=== Deprecated Endpoints
+
+There is a a proposed standard:
+https://tools.ietf.org/html/draft-wilde-sunset-header-05[Sunset Header],
+which at the time of writing is at draft 05. APIs can add a simple
+header to the HTTP response, to let clients know the endpoint is nearing
+the end of its life.
+
+Supporting Sunset is as simple as sniffing for the `sunset` header, and
+it contains a https://tools.ietf.org/html/rfc7231#section-7.1.1.1[HTTP
+date] which looks a little like this:
+
+....
+Sunset: Sat, 31 Dec 2018 23:59:59 GMT
+....
+
+The proposed standard also allows responses to contain a HTTP `link`
+header, with `rel=sunset`. The link can be a link to anything, the
+endpoint replacing it, a link to some human readable documentation, a
+blog post, whatever.
+
+Keep an eye out for sunset headers and their accompanying links coming
+back in responses your code is getting, and log, or alert, or pass to a
+dashboard accordingly. If you are using Ruby or PHP there are already
+easy to use middleware for the most popular HTTP clients:
+
+* *PHP:*
+https://github.com/hskrasek/guzzle-sunset[hskrasek/guzzle-sunset]
+* *Ruby:*
+https://github.com/wework/faraday-sunset[wework/faraday-sunset]
+
+Sunset is on
+https://github.com/dret/I-D/tree/master/sunset-header[GitHub], and the
+issue tracker is used for discussion around it's development. Some API
+gateways like https://tyk.io[Tyk] are building in support, and it is
+going to become far more wide-spread over time. If you make an
+implementation for your favorite HTTP client please get in touch with
+@apisyouwonthate on Twitter.
+
+Another approach commonly used by API providers is to provide SDKs, and
+if they are kept up to date they will fling out deprecation warnings
+about resources that are going away.
+
+When you get these notifications, check the errors for what to do next,
+or go to their documentation to figure it out, or shout at their
+customer support for not making it clear what you're meant to be doing
+next and they'll do a better job next time.
+
+=== Deprecating Properties
+
+Other than the entire endpoint going away, specific properties _may_
+over time be deprecated. This is less common in global versioning as
+they would just remove those in the next global version. It is not a
+regular occurrence in evolution as they too would just wait until the
+creation of a new resource for the concept, but it can happen if a
+property absolutely has to go away.
+
+JSON is the main content type in use these days, which does not have a
+type system built in. There is no way to mark a JSON field as deprecated
+in just JSON, and no standards exist to help, even JSON Schema still has
+this on the todo list.
+
+Again SDKs can mark things as deprecated over time, especially those
+built with OpenAPI v3.0.0 or later. OpenAPI added the `deprecated: true`
+keyword, so SDKs can now look for this and fire off deprecation warnings
+for clients using that property in their code. Keeping up to date is
+important, so make sure something like https://snyk.io/[Snyk] or
+https://greenkeeper.io/[Greenkeeper] is implemented to keep tabs on
+dependencies.
+
+== GraphQL
+
+GraphQL pushes hard for evolution in its marketing and most advice in
+the ecosystem, which is awesome. They do not have a huge amount of
+documentation covering deprecations, and much of it comes from
+third-parties like Apollo, but it's certainly possible.
+
+=== Deprecating Types
+
+Instead of endpoints, GraphQL has types. There is no first class support
+for deprecating types in GraphQL at the time of writing, so an API
+developer is unable to evolve the concept through adding new properties,
+a new type will pop up somewhere. A low-tech solution like a blog or
+email announcement may be used to communicate this new type, and the
+deprecation of the old type, as there is no way to do it in band.
+Another solution is to deprecate all the properties in the type, and
+mark in the reason that the whole type is going away.
+
+=== Deprecating Properties
+
+The API provider will add the `@deprecated` keyword to the type:
+
+....
+type User {
+  name: String @deprecated(reason: "Property 'name' was split into 'firstname' and 'lastname'")
+  firstname: String
+  lastname: String
+}
+....
+
+When looking at a GraphQL API through GraphiQL, the documentation that
+it autogenerates will show deprecated fields, visually separated from
+the other fields (smart!)
+
+image::images/ScreenShot2018-06-02at20822PM.png%20width=555px%20height=659px[image]
+
+This image is from https://medium.com/@kevinsimper/[Kevin Simper]'s
+awesome article:
+https://medium.com/@kevinsimper/how-to-deprecate-fields-in-graphql-52fbd03fb9d7[_How
+to deprecate fields in GraphQL_].

@@ -1,0 +1,287 @@
+= Authentication
+
+Generally the idea of Authentication is to require that clients provide
+some sort of unique information, with the goal of proving the request is
+coming from a user or application that actually exists, and is allowed
+to make that request. The unique information is usually referred to as
+"credentials" and these will be given to you by developers on the team
+in charge of the API. If the API belongs to another company you can
+often sign up for "API Access" or "API Keys" on their website somewhere.
+
+Authentication primarily allows APIs to restrict access to various
+endpoints, but it also offers APIs the chance to track users, give
+endpoints user context (GET /feed should only return the _current users_
+feed), filter data, or even throttle and deactivate accounts that overdo
+it.
+
+Some are completely public with no keys at all. Completely open APIs
+with no keys seem to be getting rarer over time, as APIs get more
+important, do far more, and are increasingly dynamic.
+
+To get the specifics for a particular API, their documentation is a
+fantastic place to start. Usually API documentation will contain an
+"Authentication" section in their docs, and this will usually be towards
+the start.
+
+image::images/stripe-authentication.png%20width=768px%20height=601px[image]
+
+Screenshot from https://stripe.com/docs/api/curl#authentication[Stripe:
+Authentication]
+
+Here Stripe are making it quite clear where you can find your API keys,
+and talk about two approaches to sending them.
+
+What confuses many folks when faced with HTTP Authentication, is that
+most of the time the authentication happens on every single HTTP
+request.
+
+That is right: Every. Single. Request.
+
+This sounds bizarre at first, as we are so often used to the concept of
+"Users logs in, then they have a session and can do logged in stuff
+until they log out or the session expires" being the one paradigm for
+how users login. That paradigm certainly exists for some APIs, but its
+rare, and for plenty of good reasons.
+
+To cut a long story short, servers are happier when they do not need to
+remember who a specific user is. For example, if the API actually has
+multiple application servers all running behind load balancers, a client
+could hit a different server with each request they make. If cookies
+were used, then the user would be logged out every time the load
+balancer routed them to a different application server, unless it went
+to the trouble of maintaining "sticky sessions" to keep the user hitting
+the same server. That is all well and good until that application server
+is replaced by another instance on deployment... should users really be
+logged out due to a deployment?
+
+For this, and many other reasons (like not having to worry about
+logouts), HTTP Authentication tokens are passed on every single request
+made.
+
+Stripe have already mentioned HTTP Basic Auth and Bearer, which are two
+very similar approaches to authentication in HTTP. There are quite a
+damn lot of authentication strategies you could bump into, and whilst
+you do not need to know them all, you will probably want to read the
+appropriate section when an API you are looking at uses it:
+
+* HTTP Basic
+* HTTP Digest Auth
+* Bearer
+* OAuth 1.0a
+* OAuth 2.0
+* JWTs
+
+WARNING: This chapter is incomplete.
+
+// TODO Explain how to work with them all. Ugh it's gonna take a while.
+
+
+
+## Basic
+
+Digest is an approach to authentication similar to Basic, but is designed to improve on the security concerns.
+Instead of transmitting passwords in plain text, it will calculate a MD5 hash and send that. Unlike the
+Base64-based passwords used in the basic auth, MD5 is a one-way hash meaning you cannot simply take the hash
+and calculate the original password without trying out a lot of different combinations.
+> HA1 = MD5(A1) = MD5(username:realm:password)
+> HA2 = MD5(A2) = MD5(method:digestURI)
+> response = MD5(HA1:nonce:HA2)
+The `nonce` is a unique number, which can contain (but should not be only) a timestamp. This helps to avoid
+replay attacks as the same hash will not be usable later on.
+**Pros**
+* Password is not transmitted in plain text
+* The use of `nonce` helps negate rainbow table attacks
+* Generally speaking, more secure than basic auth
+* Easier to implement than some approaches
+**Cons**
+* Harder than basic auth to implement **well**
+* Easy to implement badly
+* Still insecure over HTTP
+* Just like basic auth, passwords can still be stored by the browser
+* Uses MD5
+**MD5... 4... 3... 2... 1... HACKED**
+MD5 is well accepted by many people today to be extremely crackable in most scenarios. Digest authentication has
+not improved since its creation in 1993. While the calculation process should help negate many of
+these issues, a lousy implementation of digest authentication will be open to some weird attack vectors that will
+remain unknown until after the fact.
+Digest is certainly more secure than basic. It is great over SSL - definitely a good choice for an internal API
+if you have more time to spend implementing - but it still requires the username and password to be sent repeatedly,
+meaning it _is_ potentially hackable if the hacker has enough encrypted requests available to process.
+
+## Digest
+
+Digest is an approach to authentication similar to Basic, but is designed to improve on the security concerns.
+Instead of transmitting passwords in plain text, it will calculate a MD5 hash and send that. Unlike the
+Base64-based passwords used in the basic auth, MD5 is a one-way hash meaning you cannot simply take the hash
+and calculate the original password without trying out a lot of different combinations.
+> HA1 = MD5(A1) = MD5(username:realm:password)
+> HA2 = MD5(A2) = MD5(method:digestURI)
+> response = MD5(HA1:nonce:HA2)
+The `nonce` is a unique number, which can contain (but should not be only) a timestamp. This helps to avoid
+replay attacks as the same hash will not be usable later on.
+**Pros**
+* Password is not transmitted in plain text
+* The use of `nonce` helps negate rainbow table attacks
+* Generally speaking, more secure than basic auth
+* Easier to implement than some approaches
+**Cons**
+* Harder than basic auth to implement **well**
+* Easy to implement badly
+* Still insecure over HTTP
+* Just like basic auth, passwords can still be stored by the browser
+* Uses MD5
+**MD5... 4... 3... 2... 1... HACKED**
+MD5 is well accepted by many people today to be extremely crackable in most scenarios. Digest authentication has
+not improved since its creation in 1993. While the calculation process should help negate many of
+these issues, a lousy implementation of digest authentication will be open to some weird attack vectors that will
+remain unknown until after the fact.
+Digest is certainly more secure than basic. It is great over SSL - definitely a good choice for an internal API
+if you have more time to spend implementing - but it still requires the username and password to be sent repeatedly,
+meaning it _is_ potentially hackable if the hacker has enough encrypted requests available to process.
+
+## Oauth 1a
+
+Not quite as popular these days, OAuth 1.0a was a big player on the web-based authentication scene and used by
+services such as Dropbox, Flickr, Twitter, Google, LinkedIn and Tumblr. Since then, most have moved over to OAuth 2,
+which we will discuss next. The two are very different beasts and should not be conflated.
+> OAuth provides a method for clients to access server resources on
+> behalf of a resource owner (such as a different client or an end-user).
+> It also provides a process for end-users to authorize third-party access
+> to their server resources without sharing their
+> credentials (typically, a username and password pair), using user-agent redirections.
+> -- **Source:** [Wikipedia](http://en.wikipedia.org/wiki/OAuth)
+Previously, we looked at authentication technologies that were essentially built into the browser, and were
+not particularly flexible in their usages. OAuth 1.0 was a great way for services such as social networks to
+implement web-based HTML login forms that looked the same as any other login form (were branded with logos,
+color schemes, etc) but could then send you back to the third party website for all sorts of awesome
+integration purposes.
+For example, when Twitter swapped from HTTP Basic integration to OAuth 1.0 it meant that instead of
+third-parties (iPhone apps, other websites, CMSs, whatever) asking end-users to enter their username and
+password (which would be saved somewhere in plain text), the third party could redirect the user to the Twitter
+website, get them to log in, and have them come back to their service to save a special token, instead of saving a
+password. OAuth 1.0a called these tokens an 'OAuth Token' and an 'OAuth Token Secret'.
+OAuth 1.0a was built to be very secure even when not running over SSL. That meant, of course, that it was
+incredibly complicated, having to set up signatures of which there were a few different algorithms, including
+HMAC-SHA1 and RSA-SHA1, or just plaintext. That got a bit tricky when trying to write client code, as you had to
+make sure you supported the right signature algorithm, and most of the PHP implementations out there (including
+my old CodeIgniter library) did not support them all.
+An average OAuth 1.0a signed HTTP request would look a little something like this:
+~~~~~~~~
+POST /moments/1/gift HTTP/1.1
+Host: api.example.org
+Authorization: OAuth realm="http://sp.example.org/",
+oauth_consumer_key="0685bd9184jfhq22",
+oauth_token="ad180jjd733klru7",
+oauth_signature_method="HMAC-SHA1",
+oauth_signature="wOJIO9A2W5mFwDgiDvZbTSMK%2FPY%3D",
+oauth_timestamp="137131200",
+oauth_nonce="4572616e48616d6d65724c61686176",
+oauth_version="1.0"
+Content-Type: application/json
+{ "user_id" : 2 }
+~~~~~~~~
+Ouch.
+Another complication was that there were different implementations: two-legged ("proper" and "not proper") and
+three-legged. This is incredibly confusing, so I will let Mashape explain in the [OAuth Bible: OAuth Flows].
+There was also xAuth (which is still OAuth 1.0a), designed for mobile and desktop applications that do
+not have easy access to a browser. It is much easier for a web application to spawn a popup with JavaScript, or to
+redirect a user, than it is for a mobile app. This made it a much handier way to get OAuth Tokens than the other
+implementations.
+In the end, if you got the OAuth Token and Secret, you would place the OAuth Token in the request as a
+header and use the secret to sign the signature, which would encrypt the request and make the whole thing nice
+and secure. If you can shove SSL on top of that, then you have got yourself a very secure setup - except for the
+fact that tokens would stay the same once created, so over time their security could be compromised. Somebody
+could recover the data from a laptop you sold them on eBay, or a potential hacker could packet sniff enough
+traffic signed with your signature to eventually programmatically guess the token and secret.
+**Pros**
+* Super secure, even without SSL
+* Does not send username/password in every request (plain text or hashed)
+* Stops third party applications wanting or storing your username and password
+* An attacker gaining an OAuth Token and even a Secret should still never be able to change your password, meaning you should be safe from account hijack
+**Cons**
+* Rather complicated to interact with, even if you have a well built client library. PHP never really had one, but [The League of Extraordinary Packages](http://thephpleague.com/) has recently [built a decent one](https://github.com/thephpleague/oauth1-client)
+* Limited number of ways to grant access. xAuth and Two/Three-legged flows ended up being rather restrictive
+* Tokens never changed, so security was essentially just a matter of how long and how much you used the service
+OAuth 1.0a would be a great technology to implement if you were building a website with a public user-based API... and you were building it in 2009-2010. Now, probably not.
+
+# OAuth 2
+
+OAuth 2 dropped the secret token, so users are simply getting an _access token_ now. It also dropped signature
+encryption. This was seen by many as a massive step backwards in security, but it was actually rather a wise
+move. The OAuth 1.0a spec made SSL optional, but OAuth 2.0 requires it. Relying on SSL to handle the encryption
+of the request is logical and drastically improves the implementation.
+Even a basic GET request in OAuth 1.0a was horrendous as you would always need to set up your consumers,
+signatures, etc., but with OAuth 2.0 you can simply do this:
+{lang=php,starting-line-number=1}
+~~~~~~~~
+file_get_contents('https://graph.facebook.com/me?access_token=vr5HmMkzlxKE70W1y4Mi');
+~~~~~~~~
+Or, as we saw back in [chapter 3](#chapter-3), you can usually pass access tokens to the server as an HTTP
+request header:
+~~~~~~~~
+POST /moments/1/gift HTTP/1.1
+Host: api.example.org
+Authorization: Bearer vr5HmMkzlxKE70W1y4Mi
+Content-Type: application/json
+{ "user_id" : 2 }
+~~~~~~~~
+That looks a little easier to work with than OAuth 1.0a, right?
+W> ### Headers vs. URL
+W> You should always try to use the `Authorization` header to send your tokens whenever possible. The query-string is
+W> secured when using SSL, but unless they are intentionally blocked then access tokens could start turning up in server
+W> logs and various other places. Also, browsers will store the full URL (including query-string) in history. This could
+W> easily compromise the integrity of users security if their computer is stolen or if a sibling decides to play a prank.
+**"Short"-life Tokens**
+As discussed, OAuth 1.0a also uses the same tokens essentially forever. OAuth 2.0's access tokens will (can)
+expire after an arbitrary period of time, which is defined by the OAuth server. When you request an access token, you will
+usually be provided with a _refresh token_ and an _expiry offset_, which is the number of seconds until the token
+expires. Some servers send you a unix time at which it expires. Folks like to do things different for some
+reason, but if you know what to look out for it is not so bad.
+Using the expire time you know when your access token will not be valid, so you can proactively create a CRON
+job that refreshes the access tokens, or you can wrap your HTTP requests in an exception handler that looks for
+a 'Not Authorized' error and then refreshes them as the OAuth 2.0 spec recommends.
+This extra "access tokens expire and you have to refresh them" step initially seems confusing and annoying,
+especially when you are used to "once I have this token it works forever". However, it is much more secure. OAuth 1.0a
+stopped you handing out your username and password by essentially giving you another username and password (the
+token and the secret), which worked for one specific client. Any good network admin will tell you that you should
+regularly change your password (at least once every month), and OAuth is no different as the more you use the same
+password/token the greater your chance of somebody finding out what it is.
+**Grant Types**
+One further massive benefit OAuth 2.0 provides over OAuth 1.0a is the ability to have multiple (even custom) grant
+types. Grant types are essentially a "mode" in which the OAuth 2.0 server will run, expecting different inputs and
+maybe providing different outputs. With this flexibility, you can create some amazing implementations.
+The most common OAuth 2.0 Grant Type that a user will be familiar with is `authorization_code`, which is a very OAuth
+1.0a-like flow.
+A client web app creates a link to the OAuth Server of the service they would like to log into (e.g. Facebook), and the
+user logs in. Facebook redirects the user back to the client web app's 'Callback URL' with a `?code=FOO` variable in
+the query string. The web app then takes that code and makes a second request to Facebook (usually a `POST`, but sometimes
+a `GET` depending on which popular API you look at) and Facebook then offers up an access token in the response.
+Some other popular APIs, like Google Apps, then provide `expires` and a refresh token too.
+This is just one approach and there are more. Due to this flexibility, OAuth 2.0 is good for pretty much any
+scenario when authenticating an API, be it a basic username password login on a single-page JavaScript app, a
+CRON job that has no database access, or a full blown user-redirect flow between different websites. The flexibility
+of custom grant types allows absolutely anything to be done.
+More on this in the 'Understanding OAuth 2.0 Grant Types' section below.
+**Erin Hammer**
+Often, I am asked why anyone would still use OAuth 2.0 after Erin Hammer (lead author and editor of the OAuth 2.0
+standard) [withdrew his name from the specification]. It certainly sent a ripple through the Internet, but I
+personally disagree wholeheartedly with the issues he raised.
+1. OAuth 2.0 is less secure if you do not use SSL/TSL. Correct. So use them.
+2. People have implemented OAuth 2.0 badly (looking at you Facebook/Google/most providers), but when implemented well it is lovely. Use a pre-built standard compliant implementation.
+3. He thinks refresh tokens are annoying, but I think they are great.
+His departure from the project is no major loss. I am sure the IETF are bikeshedding hard,
+but after using both for years, I am much happier with OAuth 2.0 and really wish [Twitter would get on with a
+full upgrade] so I never have to use OAuth 1.0a again.
+_Generally speaking,_ OAuth 2.0 is a good fit for a huge majority of situations, provided you **use SSL** and
+implement a **well-tested** existing solution for your OAuth 2.0 Server. Trying to do this yourself can be
+incredibly hard and may well lead to you getting super-hacked. Even Facebook
+have trouble here to this day because they rolled their own solution based on a really early draft of the
+specification.
+[withdrew his name from the specification]: http://hueniverse.com/2012/07/26/oauth-2-0-and-the-road-to-hell/
+[Twitter would get on with a full upgrade]: https://dev.twitter.com/discussions/397
+
+## Others
+
+* **OpenID** - https://openid.net/
+* **Hawk** - https://github.com/hueniverse/hawk
+* **Oz** - https://github.com/hueniverse/oz

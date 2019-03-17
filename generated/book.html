@@ -448,47 +448,96 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_do_we_really_need_to_read_a_book">Do we really need to read a book?</a></li>
 <li><a href="#_external_apis">External APIs</a></li>
 <li><a href="#_breaking_down_the_monolith">Breaking Down the Monolith</a></li>
-<li><a href="#_transportation_layers">.1. Transportation Layers</a></li>
-<li><a href="#_common_status_codes">.2. Common Status Codes</a></li>
-<li><a href="#_sdks">.3. SDKs</a></li>
-<li><a href="#_rpc_rest_and_graphql">.4. RPC, REST and GraphQL</a></li>
-<li><a href="#_remote_procedure_call_rpc">.5. Remote Procedure Call (RPC)</a></li>
-<li><a href="#_representational_state_transfer_rest">.6. Representational State Transfer (REST)</a></li>
-<li><a href="#_graphql">.7. GraphQL</a></li>
-<li><a href="#_inferring_state_from_arbitrary_fields">.8. Inferring State from Arbitrary Fields</a></li>
-<li><a href="#_available_actions">.9. Available Actions</a></li>
-<li><a href="#_you_cannot_always_be_a_skinny_client">.10. You Cannot Always Be a Skinny Client</a></li>
-<li><a href="#_authentication">.11. Authentication</a></li>
-<li><a href="#_common_pitfalls">.12. Common Pitfalls</a></li>
-<li><a href="#_throttling_your_api_calls">.13. Throttling Your API Calls</a></li>
-<li><a href="#_am_i_being_rate_limited">.14. Am I Being Rate Limited?</a></li>
-<li><a href="#_user_experience_pitfalls">.15. User Experience Pitfalls</a></li>
-<li><a href="#_caching">.16. Caching</a></li>
-<li><a href="#_caching_and_performance">.17. Caching and Performance</a></li>
-<li><a href="#_caching_in_relation_to_apis">.18. Caching in relation to APIs</a></li>
-<li><a href="#_implementing_http_clientcaching">.19. Implementing HTTP Client Caching</a></li>
-<li><a href="#_conditional_validation">.20. Conditional Validation</a></li>
-<li><a href="#_which_paradigm_is_in_use">.21. Which Paradigm is in use?</a></li>
-<li><a href="#_look_for_cache_control_and_etag">.22. Look for Cache-Control and Etag</a></li>
-<li><a href="#_add_client_caching_middleware">.23. Add Client Caching Middleware</a></li>
-<li><a href="#_identify_no_cache_requests">.24. Identify no-cache Requests</a></li>
-<li><a href="#_check_for_network_caching">.25. Check for Network Caching</a></li>
-<li><a href="#_dont_let_apis_be_slow">.26. Don&#8217;t Let APIs Be Slow</a></li>
-<li><a href="#_validation">.27. Validation</a></li>
-<li><a href="#_json_schema">.28. JSON Schema</a></li>
-<li><a href="#_what_about_validation_hell">.29. What about Validation Hell?</a></li>
-<li><a href="#_protobuff">.30. Protobuff</a></li>
-<li><a href="#_timeouts_retries_and_circuit_breakers">.31. Timeouts, Retries, and Circuit Breakers</a></li>
-<li><a href="#_other_peoples_problems">.32. Other People&#8217;s Problems</a></li>
-<li><a href="#_set_timeouts_in_the_http_client">.33. Set Timeouts in the HTTP Client</a></li>
-<li><a href="#_change_management">.34. Change Management</a></li>
-<li><a href="#_rest_endpoint_based_apis">.35. <strong># # # # # # # # # # # # # # #</strong> # REST / "Endpoint-based" APIs</a></li>
-<li><a href="#_graphql_2">.36. GraphQL</a></li>
-<li><a href="#_grpc">.37. gRPC</a></li>
-<li><a href="#_low_tech_general_solutions">.38. Low-Tech General Solutions</a></li>
-<li><a href="#_rest_endpoint_based_apis_2">.39. REST / Endpoint-based APIs</a></li>
-<li><a href="#_graphql_3">.40. GraphQL</a></li>
-<li><a href="#_coming_soon">.41. Coming Soon</a></li>
+</ul>
+</li>
+<li><a href="#_transportation_layers">1. Transportation Layers</a>
+<ul class="sectlevel2">
+<li><a href="#_http_basics">1.1. HTTP Basics</a></li>
+<li><a href="#_http_methods">1.2. HTTP Methods</a></li>
+<li><a href="#_http_status_codes">1.3. HTTP Status Codes</a></li>
+<li><a href="#_http_headers">1.4. HTTP Headers</a></li>
+</ul>
+</li>
+<li><a href="#_sdks">2. SDKs</a>
+<ul class="sectlevel2">
+<li><a href="#_ensuring_sdk_quality">2.1. Ensuring SDK Quality</a></li>
+</ul>
+</li>
+<li><a href="#_rpc_rest_and_graphql">3. RPC, REST and GraphQL</a>
+<ul class="sectlevel2">
+<li><a href="#_remote_procedure_call_rpc">3.1. Remote Procedure Call (RPC)</a></li>
+<li><a href="#_representational_state_transfer_rest">3.2. Representational State Transfer (REST)</a></li>
+<li><a href="#_graphql">3.3. GraphQL</a></li>
+<li><a href="#_inferring_state_from_arbitrary_fields">3.4. Inferring State from Arbitrary Fields</a></li>
+<li><a href="#_available_actions">3.5. Available Actions</a></li>
+<li><a href="#_you_cannot_always_be_a_skinny_client">3.6. You Cannot Always Be a Skinny Client</a></li>
+</ul>
+</li>
+<li><a href="#_authentication">4. Authentication</a>
+<ul class="sectlevel2">
+<li><a href="#_basic">4.1. Basic</a></li>
+<li><a href="#_digest">4.2. Digest</a></li>
+<li><a href="#_oauth_1a">4.3. Oauth 1a</a></li>
+</ul>
+</li>
+<li><a href="#_oauth_2">5. OAuth 2</a>
+<ul class="sectlevel2">
+<li><a href="#_others">5.1. Others</a></li>
+</ul>
+</li>
+<li><a href="#_common_pitfalls">6. Common Pitfalls</a>
+<ul class="sectlevel2">
+<li><a href="#_connection_failures">6.1. Connection Failures</a></li>
+<li><a href="#_rate_limiting">6.2. Rate Limiting</a></li>
+<li><a href="#_error_codes_and_error_messages">6.3. Error Codes and Error Messages</a></li>
+</ul>
+</li>
+<li><a href="#_user_experience_pitfalls">7. User Experience Pitfalls</a>
+<ul class="sectlevel2">
+<li><a href="#_progressive_data_presentation">7.1. Progressive Data Presentation</a></li>
+<li><a href="#_everything_is_a_hierarchy">7.2. Everything is a Hierarchy</a></li>
+<li><a href="#_connectivity">7.3. Connectivity</a></li>
+<li><a href="#_dealing_with_errors">7.4. Dealing with errors</a></li>
+<li><a href="#_undo_functionality">7.5. Undo Functionality</a></li>
+</ul>
+</li>
+<li><a href="#_caching">8. Caching</a>
+<ul class="sectlevel2">
+<li><a href="#_caching_and_performance">8.1. Caching and Performance</a></li>
+<li><a href="#_caching_in_relation_to_apis">8.2. Caching in relation to APIs</a></li>
+<li><a href="#_implementing_http_clientcaching">8.3. Implementing HTTP Client Caching</a></li>
+<li><a href="#_conditional_validation">8.4. Conditional Validation</a></li>
+<li><a href="#_which_paradigm_is_in_use">8.5. Which Paradigm is in use?</a></li>
+<li><a href="#_look_for_cache_control_and_etag">8.6. Look for Cache-Control and Etag</a></li>
+<li><a href="#_add_client_caching_middleware">8.7. Add Client Caching Middleware</a></li>
+<li><a href="#_identify_no_cache_requests">8.8. Identify no-cache Requests</a></li>
+<li><a href="#_check_for_network_caching">8.9. Check for Network Caching</a></li>
+<li><a href="#_dont_let_apis_be_slow">8.10. Don&#8217;t Let APIs Be Slow</a></li>
+</ul>
+</li>
+<li><a href="#_validation">9. Validation</a>
+<ul class="sectlevel2">
+<li><a href="#_client_validation_via_contracts">9.1. Client-Validation via Contracts</a></li>
+<li><a href="#_json_schema">9.2. JSON Schema</a></li>
+<li><a href="#_what_about_validation_hell">9.3. What about Validation Hell?</a></li>
+<li><a href="#_protobuff">9.4. Protobuff</a></li>
+</ul>
+</li>
+<li><a href="#_timeouts_retries_and_circuit_breakers">10. Timeouts, Retries, and Circuit Breakers</a>
+<ul class="sectlevel2">
+<li><a href="#_other_peoples_problems">10.1. Other People&#8217;s Problems</a></li>
+<li><a href="#_set_timeouts_in_the_http_client">10.2. Set Timeouts in the HTTP Client</a></li>
+</ul>
+</li>
+<li><a href="#_change_management">11. Change Management</a>
+<ul class="sectlevel2">
+<li><a href="#_rest_endpoint_based_apis">11.1. <strong># # # # # # # # # # # # # # #</strong> # REST / "Endpoint-based" APIs</a></li>
+<li><a href="#_graphql_2">11.2. GraphQL</a></li>
+<li><a href="#_grpc">11.3. gRPC</a></li>
+<li><a href="#_low_tech_general_solutions">11.4. Low-Tech General Solutions</a></li>
+<li><a href="#_rest_endpoint_based_apis_2">11.5. REST / Endpoint-based APIs</a></li>
+<li><a href="#_graphql_3">11.6. GraphQL</a></li>
+<li><a href="#_coming_soon">11.7. Coming Soon</a></li>
 </ul>
 </li>
 </ul>
@@ -727,8 +776,11 @@ handles the UI for many of them.</p>
 covered, let’s look at how.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_transportation_layers">.1. Transportation Layers</h3>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_transportation_layers">1. Transportation Layers</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>To send anything to or fetch anything from an API, we&#8217;re going to need a
 "transport layer" to do it. Transport layers are conceptually about
@@ -803,8 +855,8 @@ are doing, HTTP APIs are probably going to be what you bump into 80-90%
 of the time, with WebSockets or AMQP popping up now and then. As such, a
 hefty chunk of the book will be covering HTTP APIs.</p>
 </div>
-<div class="sect3">
-<h4 id="_http_basics">.1.1. HTTP Basics</h4>
+<div class="sect2">
+<h3 id="_http_basics">1.1. HTTP Basics</h3>
 <div class="paragraph">
 <p>To avoid getting all academic and theoretical, learning by doing might
 be the way to go with understanding HTTP.</p>
@@ -815,20 +867,20 @@ programming languages have one built in, but before we get into all of
 that, we can just use the command line. If you have curl available you
 can do this, otherwise a quick <code>brew install curl</code> will help.</p>
 </div>
-<div class="literalblock">
+<div class="listingblock">
 <div class="content">
-<pre>curl -X GET http://example.com
+<pre class="highlight"><code>$ curl -X GET http://example.com
 &lt;!doctype html&gt;
 &lt;html&gt;
 &lt;head&gt;
     &lt;title&gt;Example Domain&lt;/title&gt;
     &lt;meta charset="utf-8" /&gt;
-    ...</pre>
+    ...</code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p>Right there, we made a request using the GET method (of course -x means
-"method"), to the URL <a href="http://example.com" class="bare">http://example.com</a>, and we got a HTML response. If
+"method"), to the URL <code><a href="http://example.com" class="bare">http://example.com</a></code>, and we got a HTML response. If
 this was some JSON, and if we were doing it in a programming language,
 we would be off to a reasonable start!</p>
 </div>
@@ -846,7 +898,7 @@ actually wraps curl).</p>
 promise-based HTTP interactions. Their README example shows the most
 basic of API interactions, and it looks a bit like this:</p>
 </div>
-<div class="literalblock">
+<div class="listingblock">
 <div class="content">
 <pre>axios.get('https://api.example.org/companies/12345')
   .then(function (response) {
@@ -886,7 +938,7 @@ you&#8217;re talking about.</p>
 <div class="paragraph">
 <p>The Axios example above would produce a HTTP request like this:</p>
 </div>
-<div class="literalblock">
+<div class="listingblock">
 <div class="content">
 <pre>GET /companies/12345 HTTP/1.1
 Host: [api.example.org](http://api.example.org)</pre>
@@ -896,7 +948,7 @@ Host: [api.example.org](http://api.example.org)</pre>
 <p>The response may well be something successful, and we might get JSON
 back to play with:</p>
 </div>
-<div class="literalblock">
+<div class="listingblock">
 <div class="content">
 <pre>HTTP/1.1 200 OK
 Date: Mon, 18 Dec 2018 12:30:00 GMT
@@ -909,7 +961,7 @@ Connection: Closed
 <div class="paragraph">
 <p>It could also be a total failure:</p>
 </div>
-<div class="literalblock">
+<div class="listingblock">
 <div class="content">
 <pre>HTTP/1.1 401 Unauthorized
 Date: Mon, 18 Dec 2018 12:30:00 GMT
@@ -929,8 +981,8 @@ or fail, you&#8217;ll need to programatically be aware of the "status code" in
 the HTTP response.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_http_methods">.1.2. HTTP Methods</h4>
+<div class="sect2">
+<h3 id="_http_methods">1.2. HTTP Methods</h3>
 <div class="paragraph">
 <p>We have made a GET request, because they are nice an easy. There are
 plenty more methods out there, which all have their own specific meaning
@@ -976,8 +1028,8 @@ GET and POST. If it&#8217;s GraphQL, it&#8217;s all going to happen over POST.</
 <p>Confused? I know. More on all of that later.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_http_status_codes">.1.3. HTTP Status Codes</h4>
+<div class="sect2">
+<h3 id="_http_status_codes">1.3. HTTP Status Codes</h3>
 <div class="paragraph">
 <p>A status code is a category of success or failure, with specific codes
 being provided for a range of situations, that are essentially metadata
@@ -985,7 +1037,7 @@ supplementing the body returned from the API. Back in the early 2000s
 when AJAX was first a thing, it was far too common for people to ignore
 everything other than the body, and return some XML or JSON saying:</p>
 </div>
-<div class="literalblock">
+<div class="listingblock">
 <div class="content">
 <pre>{ "success": true }</pre>
 </div>
@@ -1001,9 +1053,8 @@ definition. Most server-side languages, frameworks, etc., default to
 <p>Status codes are grouped into a few different categories:, with the
 first number being an identifier of the category of thing that happened.</p>
 </div>
-</div>
 <div class="sect3">
-<h4 id="_2xx_is_all_about_success">.1.4. 2xx is all about success</h4>
+<h4 id="_2xx_is_all_about_success">1.3.1. 2xx is all about success</h4>
 <div class="paragraph">
 <p>Whatever your application tried to do was successful, up to the point
 that the response was sent. A 200 OK means you got your answer, a 201
@@ -1015,7 +1066,7 @@ it was all looking good so far.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_3xx_is_all_about_redirection">.1.5. 3xx is all about redirection</h4>
+<h4 id="_3xx_is_all_about_redirection">1.3.2. 3xx is all about redirection</h4>
 <div class="paragraph">
 <p>These are all about sending the calling application somewhere else for
 the actual resource. The best known of these are the <code>303 See Other</code> and
@@ -1025,14 +1076,14 @@ the content, so if you see a 3xx check for that.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_4xx_is_all_about_client_errors">.1.6. 4xx is all about client errors</h4>
+<h4 id="_4xx_is_all_about_client_errors">1.3.3. 4xx is all about client errors</h4>
 <div class="paragraph">
 <p>With these status codes, APIs indicate that the client has done
 something invalid and needs to fix the request before resending it.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_5xx_is_all_about_service_errors">.1.7. 5xx is all about service errors</h4>
+<h4 id="_5xx_is_all_about_service_errors">1.3.4. 5xx is all about service errors</h4>
 <div class="paragraph">
 <p>With these status codes, the API is indicating that something went wrong
 in their side. For example, a database connection failed, or another
@@ -1041,9 +1092,8 @@ The server can even specify when the client should retry, using a
 <code>Retry-After</code> HTTP header.</p>
 </div>
 </div>
-</div>
-<div class="sect2">
-<h3 id="_common_status_codes">.2. Common Status Codes</h3>
+<div class="sect3">
+<h4 id="_common_status_codes">1.3.5. Common Status Codes</h4>
 <div class="paragraph">
 <p>Arguments between developers will continue for the rest of time over the
 exact appropriate code to use in any given situation, but these are the
@@ -1108,8 +1158,10 @@ again</p>
 <a href="http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml">iana.org</a>
 for a more formal list) when you see one that&#8217;s not familiar.</p>
 </div>
-<div class="sect3">
-<h4 id="_http_headers">.2.1. HTTP Headers</h4>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_http_headers">1.4. HTTP Headers</h3>
 <div class="paragraph">
 <p>Headers have been mentioned a few times, and they&#8217;re another great
 feature for HTTP.</p>
@@ -1180,9 +1232,8 @@ response.</p>
 <p>Headers can do a whole lot more than just switch content types, but we
 will look at relevant headers in relevant content as we go.</p>
 </div>
-</div>
 <div class="sect3">
-<h4 id="_playing_around_with_http">.2.2. Playing around with HTTP</h4>
+<h4 id="_playing_around_with_http">1.4.1. Playing around with HTTP</h4>
 <div class="paragraph">
 <p>Mucking about with a HTTP client in a console, like <code>node -i</code> or <code>ruby
 console</code> will get you quite a long way, and you can get a feel for how
@@ -1236,8 +1287,11 @@ so maybe start there.</p>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_sdks">.3. SDKs</h3>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sdks">2. SDKs</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Assuming you&#8217;ve been tasked with integrating with an API, the first
 thing to do is look for a Software Development Kit (SDK). An SDK is
@@ -1262,11 +1316,11 @@ this book.</p>
 a good SDK you would not need to know, or care. You simply grab the
 authentication token and put it into the code:</p>
 </div>
-<div class="literalblock">
+<div class="listingblock">
 <div class="content">
-<pre>var stripe = require("stripe")(
+<pre class="highlight"><code class="language-javacript" data-lang="javacript">const stripe = require("stripe")(
   "sk_test_BQokikJOvBiI2HlWgH4olfQ2"
-);</pre>
+);</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1277,8 +1331,8 @@ library/package/plugin, if it cannot do everything you require, and has
 little room for extension, sometimes it is easier to skip it and do
 things yourself.</p>
 </div>
-<div class="sect3">
-<h4 id="_ensuring_sdk_quality">.3.1. Ensuring SDK Quality</h4>
+<div class="sect2">
+<h3 id="_ensuring_sdk_quality">2.1. Ensuring SDK Quality</h3>
 <div class="paragraph">
 <p>To use an SDK for the API you are trying to integrate, there needs to be
 an SDK for the programming language you are using, and it needs to be
@@ -1294,8 +1348,8 @@ for the resources and endpoints your application might require.</p>
 <div class="paragraph">
 <p>To ensure the SDK is of good quality, check for a few things.</p>
 </div>
-<div class="olist arabic">
-<ol class="arabic">
+<div class="ulist">
+<ul>
 <li>
 <p>Does it have unit tests?</p>
 </li>
@@ -1311,7 +1365,7 @@ for the resources and endpoints your application might require.</p>
 <li>
 <p>Does it have outstanding pull requests with no feedback?</p>
 </li>
-</ol>
+</ul>
 </div>
 <div class="paragraph">
 <p>For examples of great SDKs, again, check out
@@ -1324,9 +1378,9 @@ PHP, Python, Ruby, and JavaScript!</p>
 each SDK and its usage separately, with code examples that show how to
 carry out certain tasks in those languages.</p>
 </div>
-<div class="literalblock">
+<div class="listingblock">
 <div class="content">
-<pre>var stripe = require("stripe")(
+<pre class="highlight"><code class="language-javacript" data-lang="javacript">const stripe = require("stripe")(
   "sk_test_BQokikJOvBiI2HlWgH4olfQ2"
 );
 stripe.disputes.update(
@@ -1341,7 +1395,7 @@ stripe.disputes.update(
   function(err, dispute) {
     // asynchronously called
   }
-);</pre>
+);</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1356,8 +1410,10 @@ keep trucking and learning about making these calls yourself.</p>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_rpc_rest_and_graphql">.4. RPC, REST and GraphQL</h3>
+</div>
+<div class="sect1">
+<h2 id="_rpc_rest_and_graphql">3. RPC, REST and GraphQL</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Before getting too much further, understanding the differences between
 these difference concepts is going to be vital. Every API in the world
@@ -1369,9 +1425,8 @@ will fall under RPC, REST, or a "query language."</p>
 favor and read them anyway. About 99% of people get this wrong, so you
 can get be in the top 1% with a quick read.</p>
 </div>
-</div>
 <div class="sect2">
-<h3 id="_remote_procedure_call_rpc">.5. Remote Procedure Call (RPC)</h3>
+<h3 id="_remote_procedure_call_rpc">3.1. Remote Procedure Call (RPC)</h3>
 <div class="paragraph">
 <p>RPC is the earliest, simplest form of API interaction. It is about
 executing a block of code on another server, and when implemented in
@@ -1474,7 +1529,7 @@ for as an option too.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_representational_state_transfer_rest">.6. Representational State Transfer (REST)</h3>
+<h3 id="_representational_state_transfer_rest">3.2. Representational State Transfer (REST)</h3>
 <div class="paragraph">
 <p>REST is a network paradigm described by Roy Fielding in
 <a href="https://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm">a
@@ -1670,7 +1725,7 @@ bit of elbow grease.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_graphql">.7. GraphQL</h3>
+<h3 id="_graphql">3.3. GraphQL</h3>
 <div class="paragraph">
 <p>Listing GraphQL as a direct comparison to these other two concepts is a
 little odd, as GraphQL is essentially RPC, with a lot of good ideas from
@@ -1789,7 +1844,7 @@ HTTP clients, and most of things you do with any other HTTP API will not
 work here, with GraphQL instead requiring its own special client tools.</p>
 </div>
 <div class="sect3">
-<h4 id="_skinnyfat_clients">.7.1. Skinny/Fat Clients</h4>
+<h4 id="_skinnyfat_clients">3.3.1. Skinny/Fat Clients</h4>
 <div class="paragraph">
 <p>There is one more piece of theory we need to get our heads around to
 really understand the differences between these API paradigms/concepts.
@@ -1812,7 +1867,7 @@ trying to send as little data as possible.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_inferring_state_from_arbitrary_fields">.8. Inferring State from Arbitrary Fields</h3>
+<h3 id="_inferring_state_from_arbitrary_fields">3.4. Inferring State from Arbitrary Fields</h3>
 <div class="paragraph">
 <p>At the day job, an upstream API decided originally suggested that
 clients should check for <code>location_uuid == nil</code> to infer the membership
@@ -1840,7 +1895,7 @@ don&#8217;t need to guess everything.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_available_actions">.9. Available Actions</h3>
+<h3 id="_available_actions">3.5. Available Actions</h3>
 <div class="paragraph">
 <p>Working out the current state is bad enough, but working out what to do
 "next" when you have a record can be really tough. For example, a
@@ -1896,16 +1951,16 @@ required for the client to make the change.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_you_cannot_always_be_a_skinny_client">.10. You Cannot Always Be a Skinny Client</h3>
+<h3 id="_you_cannot_always_be_a_skinny_client">3.6. You Cannot Always Be a Skinny Client</h3>
 <div class="paragraph">
 <p>Neither approach is definitely good or bad in their entirety, it&#8217;s
-simply the case that skinny clients have fewer changes of
+simply the case that skinny clients have fewer chances of
 misrepresenting the state if they are given the answers explicitly.
 Whenever clients try to copy the business logic rules, the chance of
 different clients inferring things differently increases. Different
 codebases will guess things differently, some will notice changes and
 others won&#8217;t, and the need to deploy multiple clients in unison becomes
-a lot more common. It also generally leads to having a broken user
+a lot more common. It also generally leads to having a disparent user
 experience across different devices.</p>
 </div>
 <div class="paragraph">
@@ -1917,7 +1972,7 @@ If the API was designed without the knowledge of the clients
 requirements, the API might not do a very good job of leading.</p>
 </div>
 <div class="sect3">
-<h4 id="_but_what_about">.10.1. But What About&#8230;&#8203;</h4>
+<h4 id="_but_what_about">3.6.1. But What About&#8230;&#8203;</h4>
 <div class="paragraph">
 <p>There is a lot more to it than that, and the terms will come up plenty
 over the course of the book. Some chapters will only apply to one of
@@ -1926,8 +1981,11 @@ apply to one or more.</p>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_authentication">.11. Authentication</h3>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_authentication">4. Authentication</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Generally the idea of Authentication is to require that clients provide
 some sort of unique information, with the goal of proving the request is
@@ -2029,12 +2087,252 @@ appropriate section when an API you are looking at uses it:</p>
 </li>
 </ul>
 </div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Warning</div>
+</td>
+<td class="content">
+This chapter is incomplete.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_basic">4.1. Basic</h3>
 <div class="paragraph">
-<p>TODO Explain how to work with them all. Ugh it&#8217;s gonna take a while.</p>
+<p>Digest is an approach to authentication similar to Basic, but is designed to improve on the security concerns.
+Instead of transmitting passwords in plain text, it will calculate a MD5 hash and send that. Unlike the
+Base64-based passwords used in the basic auth, MD5 is a one-way hash meaning you cannot simply take the hash
+and calculate the original password without trying out a lot of different combinations.
+&gt; HA1 = MD5(A1) = MD5(username:realm:password)
+&gt; HA2 = MD5(A2) = MD5(method:digestURI)
+&gt; response = MD5(HA1:nonce:HA2)
+The <code>nonce</code> is a unique number, which can contain (but should not be only) a timestamp. This helps to avoid
+replay attacks as the same hash will not be usable later on.
+<strong>Pros</strong>
+* Password is not transmitted in plain text
+* The use of <code>nonce</code> helps negate rainbow table attacks
+* Generally speaking, more secure than basic auth
+* Easier to implement than some approaches
+<strong>Cons</strong>
+* Harder than basic auth to implement <strong>well</strong>
+* Easy to implement badly
+* Still insecure over HTTP
+* Just like basic auth, passwords can still be stored by the browser
+* Uses MD5
+<strong>MD5&#8230;&#8203; 4&#8230;&#8203; 3&#8230;&#8203; 2&#8230;&#8203; 1&#8230;&#8203; HACKED</strong>
+MD5 is well accepted by many people today to be extremely crackable in most scenarios. Digest authentication has
+not improved since its creation in 1993. While the calculation process should help negate many of
+these issues, a lousy implementation of digest authentication will be open to some weird attack vectors that will
+remain unknown until after the fact.
+Digest is certainly more secure than basic. It is great over SSL - definitely a good choice for an internal API
+if you have more time to spend implementing - but it still requires the username and password to be sent repeatedly,
+meaning it <em>is</em> potentially hackable if the hacker has enough encrypted requests available to process.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_common_pitfalls">.12. Common Pitfalls</h3>
+<h3 id="_digest">4.2. Digest</h3>
+<div class="paragraph">
+<p>Digest is an approach to authentication similar to Basic, but is designed to improve on the security concerns.
+Instead of transmitting passwords in plain text, it will calculate a MD5 hash and send that. Unlike the
+Base64-based passwords used in the basic auth, MD5 is a one-way hash meaning you cannot simply take the hash
+and calculate the original password without trying out a lot of different combinations.
+&gt; HA1 = MD5(A1) = MD5(username:realm:password)
+&gt; HA2 = MD5(A2) = MD5(method:digestURI)
+&gt; response = MD5(HA1:nonce:HA2)
+The <code>nonce</code> is a unique number, which can contain (but should not be only) a timestamp. This helps to avoid
+replay attacks as the same hash will not be usable later on.
+<strong>Pros</strong>
+* Password is not transmitted in plain text
+* The use of <code>nonce</code> helps negate rainbow table attacks
+* Generally speaking, more secure than basic auth
+* Easier to implement than some approaches
+<strong>Cons</strong>
+* Harder than basic auth to implement <strong>well</strong>
+* Easy to implement badly
+* Still insecure over HTTP
+* Just like basic auth, passwords can still be stored by the browser
+* Uses MD5
+<strong>MD5&#8230;&#8203; 4&#8230;&#8203; 3&#8230;&#8203; 2&#8230;&#8203; 1&#8230;&#8203; HACKED</strong>
+MD5 is well accepted by many people today to be extremely crackable in most scenarios. Digest authentication has
+not improved since its creation in 1993. While the calculation process should help negate many of
+these issues, a lousy implementation of digest authentication will be open to some weird attack vectors that will
+remain unknown until after the fact.
+Digest is certainly more secure than basic. It is great over SSL - definitely a good choice for an internal API
+if you have more time to spend implementing - but it still requires the username and password to be sent repeatedly,
+meaning it <em>is</em> potentially hackable if the hacker has enough encrypted requests available to process.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_oauth_1a">4.3. Oauth 1a</h3>
+<div class="paragraph">
+<p>Not quite as popular these days, OAuth 1.0a was a big player on the web-based authentication scene and used by
+services such as Dropbox, Flickr, Twitter, Google, LinkedIn and Tumblr. Since then, most have moved over to OAuth 2,
+which we will discuss next. The two are very different beasts and should not be conflated.
+&gt; OAuth provides a method for clients to access server resources on
+&gt; behalf of a resource owner (such as a different client or an end-user).
+&gt; It also provides a process for end-users to authorize third-party access
+&gt; to their server resources without sharing their
+&gt; credentials (typically, a username and password pair), using user-agent redirections.
+&gt;&#8201;&#8212;&#8201;<strong>Source:</strong> [Wikipedia](<a href="http://en.wikipedia.org/wiki/OAuth" class="bare">http://en.wikipedia.org/wiki/OAuth</a>)
+Previously, we looked at authentication technologies that were essentially built into the browser, and were
+not particularly flexible in their usages. OAuth 1.0 was a great way for services such as social networks to
+implement web-based HTML login forms that looked the same as any other login form (were branded with logos,
+color schemes, etc) but could then send you back to the third party website for all sorts of awesome
+integration purposes.
+For example, when Twitter swapped from HTTP Basic integration to OAuth 1.0 it meant that instead of
+third-parties (iPhone apps, other websites, CMSs, whatever) asking end-users to enter their username and
+password (which would be saved somewhere in plain text), the third party could redirect the user to the Twitter
+website, get them to log in, and have them come back to their service to save a special token, instead of saving a
+password. OAuth 1.0a called these tokens an 'OAuth Token' and an 'OAuth Token Secret'.
+OAuth 1.0a was built to be very secure even when not running over SSL. That meant, of course, that it was
+incredibly complicated, having to set up signatures of which there were a few different algorithms, including
+HMAC-SHA1 and RSA-SHA1, or just plaintext. That got a bit tricky when trying to write client code, as you had to
+make sure you supported the right signature algorithm, and most of the PHP implementations out there (including
+my old CodeIgniter library) did not support them all.
+An average OAuth 1.0a signed HTTP request would look a little something like this:
+<sub>~</sub><sub>~</sub>~~
+POST /moments/1/gift HTTP/1.1
+Host: api.example.org
+Authorization: OAuth realm="http://sp.example.org/",
+oauth_consumer_key="0685bd9184jfhq22",
+oauth_token="ad180jjd733klru7",
+oauth_signature_method="HMAC-SHA1",
+oauth_signature="wOJIO9A2W5mFwDgiDvZbTSMK%2FPY%3D",
+oauth_timestamp="137131200",
+oauth_nonce="4572616e48616d6d65724c61686176",
+oauth_version="1.0"
+Content-Type: application/json
+{ "user_id" : 2 }
+<sub>~</sub><sub>~</sub>~~
+Ouch.
+Another complication was that there were different implementations: two-legged ("proper" and "not proper") and
+three-legged. This is incredibly confusing, so I will let Mashape explain in the [OAuth Bible: OAuth Flows].
+There was also xAuth (which is still OAuth 1.0a), designed for mobile and desktop applications that do
+not have easy access to a browser. It is much easier for a web application to spawn a popup with JavaScript, or to
+redirect a user, than it is for a mobile app. This made it a much handier way to get OAuth Tokens than the other
+implementations.
+In the end, if you got the OAuth Token and Secret, you would place the OAuth Token in the request as a
+header and use the secret to sign the signature, which would encrypt the request and make the whole thing nice
+and secure. If you can shove SSL on top of that, then you have got yourself a very secure setup - except for the
+fact that tokens would stay the same once created, so over time their security could be compromised. Somebody
+could recover the data from a laptop you sold them on eBay, or a potential hacker could packet sniff enough
+traffic signed with your signature to eventually programmatically guess the token and secret.
+<strong>Pros</strong>
+* Super secure, even without SSL
+* Does not send username/password in every request (plain text or hashed)
+* Stops third party applications wanting or storing your username and password
+* An attacker gaining an OAuth Token and even a Secret should still never be able to change your password, meaning you should be safe from account hijack
+<strong>Cons</strong>
+* Rather complicated to interact with, even if you have a well built client library. PHP never really had one, but [The League of Extraordinary Packages](<a href="http://thephpleague.com/" class="bare">http://thephpleague.com/</a>) has recently [built a decent one](<a href="https://github.com/thephpleague/oauth1-client" class="bare">https://github.com/thephpleague/oauth1-client</a>)
+* Limited number of ways to grant access. xAuth and Two/Three-legged flows ended up being rather restrictive
+* Tokens never changed, so security was essentially just a matter of how long and how much you used the service
+OAuth 1.0a would be a great technology to implement if you were building a website with a public user-based API&#8230;&#8203; and you were building it in 2009-2010. Now, probably not.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_oauth_2">5. OAuth 2</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>OAuth 2 dropped the secret token, so users are simply getting an <em>access token</em> now. It also dropped signature
+encryption. This was seen by many as a massive step backwards in security, but it was actually rather a wise
+move. The OAuth 1.0a spec made SSL optional, but OAuth 2.0 requires it. Relying on SSL to handle the encryption
+of the request is logical and drastically improves the implementation.
+Even a basic GET request in OAuth 1.0a was horrendous as you would always need to set up your consumers,
+signatures, etc., but with OAuth 2.0 you can simply do this:
+{lang=php,starting-line-number=1}
+<sub>~</sub><sub>~</sub>~~
+file_get_contents('https://graph.facebook.com/me?access_token=vr5HmMkzlxKE70W1y4Mi');
+<sub>~</sub><sub>~</sub>~~
+Or, as we saw back in [chapter 3](<mark>chapter-3), you can usually pass access tokens to the server as an HTTP
+request header:
+<sub>~</sub><sub>~</sub>~~
+POST /moments/1/gift HTTP/1.1
+Host: api.example.org
+Authorization: Bearer vr5HmMkzlxKE70W1y4Mi
+Content-Type: application/json
+{ "user_id" : 2 }
+<sub>~</sub><sub>~</sub>~~
+That looks a little easier to work with than OAuth 1.0a, right?
+W&gt; #</mark># Headers vs. URL
+W&gt; You should always try to use the <code>Authorization</code> header to send your tokens whenever possible. The query-string is
+W&gt; secured when using SSL, but unless they are intentionally blocked then access tokens could start turning up in server
+W&gt; logs and various other places. Also, browsers will store the full URL (including query-string) in history. This could
+W&gt; easily compromise the integrity of users security if their computer is stolen or if a sibling decides to play a prank.
+<strong>"Short"-life Tokens</strong>
+As discussed, OAuth 1.0a also uses the same tokens essentially forever. OAuth 2.0&#8217;s access tokens will (can)
+expire after an arbitrary period of time, which is defined by the OAuth server. When you request an access token, you will
+usually be provided with a <em>refresh token</em> and an <em>expiry offset</em>, which is the number of seconds until the token
+expires. Some servers send you a unix time at which it expires. Folks like to do things different for some
+reason, but if you know what to look out for it is not so bad.
+Using the expire time you know when your access token will not be valid, so you can proactively create a CRON
+job that refreshes the access tokens, or you can wrap your HTTP requests in an exception handler that looks for
+a 'Not Authorized' error and then refreshes them as the OAuth 2.0 spec recommends.
+This extra "access tokens expire and you have to refresh them" step initially seems confusing and annoying,
+especially when you are used to "once I have this token it works forever". However, it is much more secure. OAuth 1.0a
+stopped you handing out your username and password by essentially giving you another username and password (the
+token and the secret), which worked for one specific client. Any good network admin will tell you that you should
+regularly change your password (at least once every month), and OAuth is no different as the more you use the same
+password/token the greater your chance of somebody finding out what it is.
+<strong>Grant Types</strong>
+One further massive benefit OAuth 2.0 provides over OAuth 1.0a is the ability to have multiple (even custom) grant
+types. Grant types are essentially a "mode" in which the OAuth 2.0 server will run, expecting different inputs and
+maybe providing different outputs. With this flexibility, you can create some amazing implementations.
+The most common OAuth 2.0 Grant Type that a user will be familiar with is <code>authorization_code</code>, which is a very OAuth
+1.0a-like flow.
+A client web app creates a link to the OAuth Server of the service they would like to log into (e.g. Facebook), and the
+user logs in. Facebook redirects the user back to the client web app&#8217;s 'Callback URL' with a <code>?code=FOO</code> variable in
+the query string. The web app then takes that code and makes a second request to Facebook (usually a <code>POST</code>, but sometimes
+a <code>GET</code> depending on which popular API you look at) and Facebook then offers up an access token in the response.
+Some other popular APIs, like Google Apps, then provide <code>expires</code> and a refresh token too.
+This is just one approach and there are more. Due to this flexibility, OAuth 2.0 is good for pretty much any
+scenario when authenticating an API, be it a basic username password login on a single-page JavaScript app, a
+CRON job that has no database access, or a full blown user-redirect flow between different websites. The flexibility
+of custom grant types allows absolutely anything to be done.
+More on this in the 'Understanding OAuth 2.0 Grant Types' section below.
+<strong>Erin Hammer</strong>
+Often, I am asked why anyone would still use OAuth 2.0 after Erin Hammer (lead author and editor of the OAuth 2.0
+standard) [withdrew his name from the specification]. It certainly sent a ripple through the Internet, but I
+personally disagree wholeheartedly with the issues he raised.
+1. OAuth 2.0 is less secure if you do not use SSL/TSL. Correct. So use them.
+2. People have implemented OAuth 2.0 badly (looking at you Facebook/Google/most providers), but when implemented well it is lovely. Use a pre-built standard compliant implementation.
+3. He thinks refresh tokens are annoying, but I think they are great.
+His departure from the project is no major loss. I am sure the IETF are bikeshedding hard,
+but after using both for years, I am much happier with OAuth 2.0 and really wish [Twitter would get on with a
+full upgrade] so I never have to use OAuth 1.0a again.
+<em>Generally speaking,</em> OAuth 2.0 is a good fit for a huge majority of situations, provided you <strong>use SSL</strong> and
+implement a <strong>well-tested</strong> existing solution for your OAuth 2.0 Server. Trying to do this yourself can be
+incredibly hard and may well lead to you getting super-hacked. Even Facebook
+have trouble here to this day because they rolled their own solution based on a really early draft of the
+specification.
+[withdrew his name from the specification]: <a href="http://hueniverse.com/2012/07/26/oauth-2-0-and-the-road-to-hell/" class="bare">http://hueniverse.com/2012/07/26/oauth-2-0-and-the-road-to-hell/</a>
+[Twitter would get on with a full upgrade]: <a href="https://dev.twitter.com/discussions/397" class="bare">https://dev.twitter.com/discussions/397</a></p>
+</div>
+<div class="sect2">
+<h3 id="_others">5.1. Others</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>OpenID</strong> - <a href="https://openid.net/" class="bare">https://openid.net/</a></p>
+</li>
+<li>
+<p><strong>Hawk</strong> - <a href="https://github.com/hueniverse/hawk" class="bare">https://github.com/hueniverse/hawk</a></p>
+</li>
+<li>
+<p><strong>Oz</strong> - <a href="https://github.com/hueniverse/oz" class="bare">https://github.com/hueniverse/oz</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_common_pitfalls">6. Common Pitfalls</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Getting the happy path coded up is super easy. Usually the happy path is
 something like "I expect a quick response, with valid JSON, in the
@@ -2043,8 +2341,8 @@ just ride my bike to work in NYC without two taxi drivers, a truck, a
 whole family of tourists, cops on horses, a dog walker, and a raccoon,
 all trying to kill me."</p>
 </div>
-<div class="sect3">
-<h4 id="_connection_failures">.12.1. Connection Failures</h4>
+<div class="sect2">
+<h3 id="_connection_failures">6.1. Connection Failures</h3>
 <div class="paragraph">
 <p>Connection failures can happen for all sorts of reasons:</p>
 </div>
@@ -2103,8 +2401,8 @@ screen.</p>
 <p>Timeouts are also a concern, but more on those later.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_rate_limiting">.12.2. Rate Limiting</h4>
+<div class="sect2">
+<h3 id="_rate_limiting">6.2. Rate Limiting</h3>
 <div class="paragraph">
 <p>Another common situation to run into is rate limiting: the API telling
 you to calm down a bit, and slow down how many requests are being made
@@ -2151,10 +2449,8 @@ APIs</strong></a></p>
 <div class="paragraph">
 <p>All fair reasons, but for the client it can be a little pesky.</p>
 </div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_throttling_your_api_calls">.13. Throttling Your API Calls</h3>
+<div class="sect3">
+<h4 id="_throttling_your_api_calls">6.2.1. Throttling Your API Calls</h4>
 <div class="paragraph">
 <p>There are a lot of ways to go about throttling your API calls, and it
 very much depends on where the calls are being made from. One of the
@@ -2215,8 +2511,8 @@ avoid hitting rate limits is a good start, but nothing is perfect, and
 the API might lower its limits for some reason.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_am_i_being_rate_limited">.14. Am I Being Rate Limited?</h3>
+<div class="sect3">
+<h4 id="_am_i_being_rate_limited">6.2.2. Am I Being Rate Limited?</h4>
 <div class="paragraph">
 <p>The appropriate HTTP status code for rate limiting has been argued over
 about as much as tabs vs spaces, but there is a clear winner now;
@@ -2266,8 +2562,9 @@ headers can also be a thing to check for. Either way, when you&#8217;re sure
 it&#8217;s a rate limit error, you can move onto the next step: figuring out
 how long to wait before trying again.</p>
 </div>
+</div>
 <div class="sect3">
-<h4 id="_proprietary_headers">.14.1. Proprietary Headers</h4>
+<h4 id="_proprietary_headers">6.2.3. Proprietary Headers</h4>
 <div class="paragraph">
 <p>Github here are using some proprietary headers, all beginning with
 <code>X-RateLimit-</code>. These are not at all standard (you can tell by the
@@ -2295,7 +2592,7 @@ have it expire on the reset provided in
 </div>
 </div>
 <div class="sect3">
-<h4 id="_retry_after">.14.2. Retry-After</h4>
+<h4 id="_retry_after">6.2.4. Retry-After</h4>
 <div class="paragraph">
 <p>According to the RFCs for HTTP/1.1 (the obsoleted and irrelevant RFC
 2616, and the replacement RFC 7230-7235), the header
@@ -2353,8 +2650,9 @@ retry requests. This can be useful for anyone considering implementing
 rate limiting detection code, even if you aren&#8217;t a Ruby fan.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_error_codes_and_error_messages">.14.3. Error Codes and Error Messages</h4>
+</div>
+<div class="sect2">
+<h3 id="_error_codes_and_error_messages">6.3. Error Codes and Error Messages</h3>
 <div class="paragraph">
 <p>Error codes are usually strings or integers that act as a unique index
 to a corresponding human-readable error message with more information
@@ -2501,8 +2799,10 @@ have to do.</p>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_user_experience_pitfalls">.15. User Experience Pitfalls</h3>
+</div>
+<div class="sect1">
+<h2 id="_user_experience_pitfalls">7. User Experience Pitfalls</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Connecting to and using the APIs that enable your application are only
 part of the story.  Creating and managing a design that is both
@@ -2523,8 +2823,8 @@ reason, do your best to utilise user experience patterns which help
 users feel empowered when everything is working correctly, and
 well-informed when API calls fail.</p>
 </div>
-<div class="sect3">
-<h4 id="_progressive_data_presentation">.15.1. Progressive Data Presentation</h4>
+<div class="sect2">
+<h3 id="_progressive_data_presentation">7.1. Progressive Data Presentation</h3>
 <div class="paragraph">
 <p>The vast majority of the time, your API will probably be working
 perfectly well, but not providing data to your application quickly
@@ -2603,12 +2903,18 @@ click on it, something on the page loads just above where you&#8217;re about
 to click, causing the page to reflow so that you click the <em>[Sign Out]</em>
 button instead of that one simple thing you wanted to do?</p>
 </div>
+<div class="imageblock">
+<div class="content">
+<img src="images/S_k6WSKNySHGUMBOC1KMQ9OmVQPiwMK0hihDgAh-vniaHc93CTp0o0vGAw7RGwOFBW9aReRXn_NnCORv3tCHC7ezxLnyAxH-HOWWAe_6DivGdbTYJ6sW4JKgpynjzJZOrHqhnIf3.png" alt="image">
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/67RMsY5tJyo4IBxIX1jwhQlOzqi8KSlnmvteq2AWfiQJ9Oe9zPdAujvXMHozpo2q9Du96DBVje8FiZ-vkSaf9keXDfKIvaWEcAheIf5g7tKLTXvuaY2Yp2ahnvQf4TDvHvlZgg0m.png" alt="67RMsY5tJyo4IBxIX1jwhQlOzqi8KSlnmvteq2AWfiQJ9Oe9zPdAujvXMHozpo2q9Du96DBVje8FiZ vkSaf9keXDfKIvaWEcAheIf5g7tKLTXvuaY2Yp2ahnvQf4TDvHvlZgg0m">
+</div>
+</div>
 <div class="paragraph">
-<p>| :----- | :----- | |
-image::images/S_k6WSKNySHGUMBOC1KMQ9OmVQPiwMK0hihDgAh-vniaHc93CTp0o0vGAw7RGwOFBW9aReRXn_NnCORv3tCHC7ezxLnyAxH-HOWWAe_6DivGdbTYJ6sW4JKgpynjzJZOrHqhnIf3.png%20width=270px%20height=547px[image]
-|
-image::images/67RMsY5tJyo4IBxIX1jwhQlOzqi8KSlnmvteq2AWfiQJ9Oe9zPdAujvXMHozpo2q9Du96DBVje8FiZ-vkSaf9keXDfKIvaWEcAheIf5g7tKLTXvuaY2Yp2ahnvQf4TDvHvlZgg0m.png[67RMsY5tJyo4IBxIX1jwhQlOzqi8KSlnmvteq2AWfiQJ9Oe9zPdAujvXMHozpo2q9Du96DBVje8FiZ-vkSaf9keXDfKIvaWEcAheIf5g7tKLTXvuaY2Yp2ahnvQf4TDvHvlZgg0m.png]
-| [<em>Yeah, holy shit, right? Me too.  Our goal here is to avoid this.</em>  ]</p>
+<p>Yeah, holy shit, right? Me too.  Our goal here is to avoid this.</p>
 </div>
 <div class="paragraph">
 <p>There&#8217;s a few great, proven patterns we can use to avoid that kind of
@@ -2616,14 +2922,13 @@ rage-inducing experience. While you&#8217;re waiting on data to come back from
 an API, render content placeholders on screen.</p>
 </div>
 <div class="paragraph">
-<p>image::images/ilbsF0NRBcwl6FTgzHe_fkI-VkMDRPYqiGWNWae2qS1hAPwtvQ01HfJpsvxxknKNK29Pug7ea_XKCJZrJjw6H6OEQuxSAMnHTyugSuq_2nFR4LaX7w9gQuzENKANJjY_ak171SWW.png[<em>Facebook
+<p>image::images/ilbsF0NRBcwl6FTgzHe_fkI-VkMDRPYqiGWNWae2qS1hAPwtvQ01HfJpsvxxknKNK29Pug7ea_XKCJZrJjw6H6OEQuxSAMnHTyugSuq_2nFR4LaX7w9gQuzENKANJjY_ak171SWW.png[_Facebook
 does a great job of this - while timeline content is loading, animated
 data placeholders are displayed in a way that makes the application feel
-alive.</em>]</p>
-</div>
+alive.]</p>
 </div>
 <div class="sect3">
-<h4 id="_progressive_data_loading">.15.2. Progressive data loading</h4>
+<h4 id="_progressive_data_loading">7.1.1. Progressive data loading</h4>
 <div class="paragraph">
 <p>Users are able to anticipate where new content will load on screen.
 Gradients which represent usernames and post content are subtly
@@ -2669,8 +2974,9 @@ libraries, packages, and plugins that support this sort of behavior.
 (Angular).</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_everything_is_a_hierarchy">.15.3. Everything is a Hierarchy</h4>
+</div>
+<div class="sect2">
+<h3 id="_everything_is_a_hierarchy">7.2. Everything is a Hierarchy</h3>
 <div class="paragraph">
 <p>Let&#8217;s be clear: while it is easy to discuss, this is <em>not</em> an inherently
 straightforward task for a product team (even a one-person team) to
@@ -2698,8 +3004,8 @@ hierarchy of data being presented to the user becomes advantageous for
 us if we have some idea of what actions a user might be looking to
 accomplish on a page.  </p>
 </div>
-<div class="sect4">
-<h5 id="_first_the_sublime_a_logical_hierarchy">First: The sublime, a Logical Hierarchy</h5>
+<div class="sect3">
+<h4 id="_first_the_sublime_a_logical_hierarchy">7.2.1. First: The sublime, a Logical Hierarchy</h4>
 <div class="paragraph">
 <p>In practice, this isn&#8217;t difficult to get started on. For a given
 interface, make a list of all of the <em>types of information</em> on the
@@ -2727,8 +3033,8 @@ content first, and progress from there based on how important it is to
 your reader.]</p>
 </div>
 </div>
-<div class="sect4">
-<h5 id="_then_which_data_is_most_expensive">Then: Which data is most expensive?</h5>
+<div class="sect3">
+<h4 id="_then_which_data_is_most_expensive">7.2.2. Then: Which data is most expensive?</h4>
 <div class="paragraph">
 <p>Once you&#8217;ve got your <em>logical hierarchy</em> sorted, it&#8217;s time to take a
 realistic look at the types of data that are contained in each layer of
@@ -2744,8 +3050,8 @@ delay loading these until more critical information in your hierarchy is
 available.</p>
 </div>
 </div>
-<div class="sect4">
-<h5 id="_next_bring_in_the_harsh_realities_of_development">Next: Bring in the harsh realities of development</h5>
+<div class="sect3">
+<h4 id="_next_bring_in_the_harsh_realities_of_development">7.2.3. Next: Bring in the harsh realities of development</h4>
 <div class="paragraph">
 <p>At this point, you&#8217;ll have an idea of the order in which data <em>should</em>
 be loaded&#8201;&#8212;&#8201;ideally. You will inevitably find that this isn&#8217;t
@@ -2792,8 +3098,8 @@ experience to make things feel smoother and more intuitive.</p>
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_connectivity">.15.4. Connectivity</h4>
+<div class="sect2">
+<h3 id="_connectivity">7.3. Connectivity</h3>
 <div class="paragraph">
 <p>There are many different ways in which your users might lose
 connectivity while using your app. If we anticipate what these may be,
@@ -2801,8 +3107,8 @@ given the context of a particular app, we can build interfaces which
 convey what&#8217;s gone wrong, and give opportunities or suggestions to
 remedy the situation.</p>
 </div>
-<div class="sect4">
-<h5 id="_completely_offline">Completely offline</h5>
+<div class="sect3">
+<h4 id="_completely_offline">7.3.1. Completely offline</h4>
 <div class="paragraph">
 <p>What happens when your app loses its connection to the internet? When
 you detect a loss of connectivity, have a strategy on-hand for
@@ -2872,11 +3178,8 @@ information you&#8217;ve stored - none of which requires a connection to the
 internet.</p>
 </div>
 </div>
-<div class="sect4">
-<h5 id="_temporarily_offline">Temporarily offline</h5>
-<div class="paragraph">
-<p>Temporarily offline Temporarily offline <mark>#</mark></p>
-</div>
+<div class="sect3">
+<h4 id="_temporarily_offline">7.3.2. Temporarily offline</h4>
 <div class="paragraph">
 <p>Imagine that your site is being viewed from a mobile phone. Your user
 enters an elevator or a tunnel, and connectivity drops temporarily right
@@ -2911,8 +3214,8 @@ todo items, along with the user who wrote them. <em>Sorry I didn&#8217;t get you
 a birthday present, mum!</em></p>
 </div>
 </div>
-<div class="sect4">
-<h5 id="_some_services_or_endpoints_are_offline">Some services or endpoints are offline</h5>
+<div class="sect3">
+<h4 id="_some_services_or_endpoints_are_offline">7.3.3. Some services or endpoints are offline</h4>
 <div class="paragraph">
 <p>What happens if the API you&#8217;re trying to access is down for maintenance?
 Most modern applications take advantage of <em>many</em> external services. If
@@ -2956,8 +3259,8 @@ always look better than the browser or mobile OS&#8217;s broken image
 placeholder.  </p>
 </div>
 </div>
-<div class="sect4">
-<h5 id="_api_retries">API retries</h5>
+<div class="sect3">
+<h4 id="_api_retries">7.3.4. API retries</h4>
 <div class="paragraph">
 <p>It can be easy to forget that there are times when API requests might
 fail the first time they&#8217;re sent. Many front-end frameworks allow
@@ -3009,14 +3312,14 @@ whether the problem they&#8217;re having is local to them or not.</p>
 <p>Amazon AWS:
 <a href="https://status.aws.amazon.com/">https://status.aws.amazon.com</a></p>
 </li>
+<li>
+<p>Strava: <a href="https://status.strava.com/">https://status.strava.com</a></p>
+</li>
 </ul>
 </div>
-<div class="paragraph">
-<p>Strava: <a href="https://status.strava.com/">https://status.strava.com</a></p>
 </div>
-</div>
-<div class="sect4">
-<h5 id="_the_tricky_inverse_limiting_debouncing_buffering_requests">The tricky inverse - limiting / debouncing / buffering requests</h5>
+<div class="sect3">
+<h4 id="_the_tricky_inverse_limiting_debouncing_buffering_requests">7.3.5. The tricky inverse - limiting / debouncing / buffering requests</h4>
 <div class="paragraph">
 <p>When firing off API requests, you should take care to make sure that
 your interface won&#8217;t allow users to send the <em>same</em> request again while
@@ -3051,8 +3354,8 @@ creating the same credit card charge more than once.]</p>
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_dealing_with_errors">.15.5. Dealing with errors</h4>
+<div class="sect2">
+<h3 id="_dealing_with_errors">7.4. Dealing with errors</h3>
 <div class="paragraph">
 <p>Errors provide important feedback to users when something goes wrong. As
 the developer, your job is to make sure the errors you&#8217;re sending along
@@ -3123,8 +3426,8 @@ back up your story.</p>
 for how (infuriatingly) often your users encounter a given bug.</em></p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_undo_functionality">.15.6. Undo Functionality</h4>
+<div class="sect2">
+<h3 id="_undo_functionality">7.5. Undo Functionality</h3>
 <div class="paragraph">
 <p>If you&#8217;re doing something semi-permanent, make sure you give users the
 ability to undo or cancel actions whenever possible.</p>
@@ -3164,15 +3467,18 @@ error messages as necessary.  You can also store the information needed
 to undo that action here. Finally, this can be presented back to your
 users as a historical log of their activity on your service.</p>
 </div>
-<div class="paragraph">
-<p>image::images/jSwNPVB9cZ-xQMpljZyRHcbBn1kcbFTnw_Vm_dTXqFvP3tT61H3WQjzuFNtBe0fCmVnPX8Y6M19v56-Hh7km8hXy5N8pCc5ABQSh7jLz14hUjAe7dUrSGr8pxOMXALnV_UHBK43E.png[<em>Stripe
-provides an Events log to customers using their service, which can be
-extremely helpful in tracking down failed and missing payments.</em>]</p>
+<div class="imageblock">
+<div class="content">
+<img src="images/jSwNPVB9cZ-xQMpljZyRHcbBn1kcbFTnw_Vm_dTXqFvP3tT61H3WQjzuFNtBe0fCmVnPX8Y6M19v56-Hh7km8hXy5N8pCc5ABQSh7jLz14hUjAe7dUrSGr8pxOMXALnV_UHBK43E.png" alt="jSwNPVB9cZ xQMpljZyRHcbBn1kcbFTnw Vm dTXqFvP3tT61H3WQjzuFNtBe0fCmVnPX8Y6M19v56 Hh7km8hXy5N8pCc5ABQSh7jLz14hUjAe7dUrSGr8pxOMXALnV UHBK43E">
+</div>
+<div class="title">Figure 2. Stripe provides an Events log to customers using their service, which can be extremely helpful in tracking down failed and missing payments.</div>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_caching">.16. Caching</h3>
+</div>
+<div class="sect1">
+<h2 id="_caching">8. Caching</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Caching is a huge topic, and there&#8217;s a lot of different types of caching
 which makes discussing it tricky. The most basic definition of caching
@@ -3197,9 +3503,8 @@ performant) or plain-old SQL can be used to cache data. Frontend
 applications running in a web browser often use
 <a href="https://developer.mozilla.org/en-US/docs/Web/API/Storage/LocalStorage">LocalStorage</a>.</p>
 </div>
-</div>
 <div class="sect2">
-<h3 id="_caching_and_performance">.17. Caching and Performance</h3>
+<h3 id="_caching_and_performance">8.1. Caching and Performance</h3>
 <div class="paragraph">
 <p>Often caching is misused by inexperienced developers to try and make
 slow code look like fast code. This leads other folks to consider
@@ -3214,7 +3519,7 @@ just not making those requests. This is what caching is about.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_caching_in_relation_to_apis">.18. Caching in relation to APIs</h3>
+<h3 id="_caching_in_relation_to_apis">8.2. Caching in relation to APIs</h3>
 <div class="paragraph">
 <p>For the rest of this chapter we&#8217;re going to skip talking about caching
 in a general way, and talk about caching as it relates to API requests
@@ -3251,7 +3556,7 @@ framework, or paradigm, that respects the specification and doesn&#8217;t
 build in its own contradicting conventions on top.</p>
 </div>
 <div class="sect3">
-<h4 id="_application_caching">.18.1. Application Caching</h4>
+<h4 id="_application_caching">8.2.1. Application Caching</h4>
 <div class="paragraph">
 <p>So you&#8217;re writing a client application, and you like the idea of
 skipping duplicate requests for a few reasons. Maybe you want to avoid
@@ -3327,7 +3632,7 @@ look at HTTP caching to see how it all works.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_caching">.18.2. HTTP Caching</h4>
+<h4 id="_http_caching">8.2.2. HTTP Caching</h4>
 <div class="paragraph">
 <p>HTTP caching is one of the best parts of the HTTP specification. At it
 most simple it&#8217;s just telling various actors (like an API client) how
@@ -3501,7 +3806,7 @@ concepts in more detail.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_client_caching">.18.3. Client Caching</h4>
+<h4 id="_client_caching">8.2.3. Client Caching</h4>
 <div class="paragraph">
 <p>Client caching when leveraging the HTTP standard is no different from
 how caching works for Javascript, images, etc. There are some headers
@@ -3524,7 +3829,7 @@ to use the application caching approach we discussed before.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_implementing_http_clientcaching">.19. Implementing HTTP Client Caching</h3>
+<h3 id="_implementing_http_clientcaching">8.3. Implementing HTTP Client Caching</h3>
 <div class="paragraph">
 <p>At work we built an upstream "Permissions" API, which would talk to a
 lot of other systems to see if a user should be allowed to complete the
@@ -3617,7 +3922,7 @@ load on the server, and speed things up for the client in many cases.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_conditional_validation">.20. Conditional Validation</h3>
+<h3 id="_conditional_validation">8.4. Conditional Validation</h3>
 <div class="paragraph">
 <p>Caching based entirely on time is not always the most helpful, but that
 does not mean client caching should be thrown out. Basic time-based
@@ -3667,7 +3972,7 @@ job. Luckily, there are solutions built in pretty much every single
 language.</p>
 </div>
 <div class="sect3">
-<h4 id="_ruby">.20.1. Ruby</h4>
+<h4 id="_ruby">8.4.1. Ruby</h4>
 <div class="literalblock">
 <div class="content">
 <pre>client = Faraday.new do |builder|
@@ -3682,7 +3987,7 @@ end</pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_php">.20.2. PHP</h4>
+<h4 id="_php">8.4.2. PHP</h4>
 <div class="literalblock">
 <div class="content">
 <pre>use GuzzleHttp\Client;
@@ -3705,7 +4010,7 @@ $client = new Client(['handler' =&gt; $stack]);</pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_python">.20.3. Python</h4>
+<h4 id="_python">8.4.3. Python</h4>
 <div class="literalblock">
 <div class="content">
 <pre>import requests
@@ -3720,7 +4025,7 @@ cache for requests library</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_javascript_browser">.20.4. JavaScript (Browser)</h4>
+<h4 id="_javascript_browser">8.4.4. JavaScript (Browser)</h4>
 <div class="literalblock">
 <div class="content">
 <pre>// Download a resource with cache busting, to bypass the cache
@@ -3740,7 +4045,7 @@ Replacement for XMLHttpRequest build into most modern browsers</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_javascript_node">.20.5. JavaScript (Node)</h4>
+<h4 id="_javascript_node">8.4.5. JavaScript (Node)</h4>
 <div class="literalblock">
 <div class="content">
 <pre>const http = require('http');
@@ -3762,7 +4067,7 @@ mode</em>">, and therefore alternatives must be used.</em></p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_go">.20.6. Go</h4>
+<h4 id="_go">8.4.6. Go</h4>
 <div class="literalblock">
 <div class="content">
 <pre>proxy := &amp;httputil.ReverseProxy{
@@ -3831,7 +4136,7 @@ there.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_sometimes_http_caching_is_inefficient">.20.7. Sometimes HTTP Caching is Inefficient</h4>
+<h4 id="_sometimes_http_caching_is_inefficient">8.4.7. Sometimes HTTP Caching is Inefficient</h4>
 <div class="paragraph">
 <p>If you are making multiple calls to APIs with large responses to create
 one composite resource (one local thing made out of multiple remote
@@ -3916,7 +4221,7 @@ you know how to work with it.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_network_caching">.20.8. Network Caching</h4>
+<h4 id="_network_caching">8.4.8. Network Caching</h4>
 <div class="paragraph">
 <p>The same conventions that govern HTTP client caching caching also govern
 HTTP network caching; in that the majority of it is operated through the
@@ -4109,7 +4414,7 @@ like quite the faff.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_the_plan">.20.9. The Plan!</h4>
+<h4 id="_the_plan">8.4.9. The Plan!</h4>
 <div class="paragraph">
 <p>Ok that was admittedly a lot of information thrown around, so let us
 take a step back, and figure out how you can get some caching on your
@@ -4119,7 +4424,7 @@ need a little help on.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_which_paradigm_is_in_use">.21. Which Paradigm is in use?</h3>
+<h3 id="_which_paradigm_is_in_use">8.5. Which Paradigm is in use?</h3>
 <div class="paragraph">
 <p>If gRPC or any other type of RPC API, there will not have any caching
 metadata to hook onto for automated client caching. Don&#8217;t even worry
@@ -4136,7 +4441,7 @@ caching, but it is still not guaranteed. To find out&#8230;&#8203;</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_look_for_cache_control_and_etag">.22. Look for Cache-Control and Etag</h3>
+<h3 id="_look_for_cache_control_and_etag">8.6. Look for Cache-Control and Etag</h3>
 <div class="paragraph">
 <p>If the API you are talking to does not have a Cache-Control header,
 maybe politely ask the API developers to consider it. They might think
@@ -4153,7 +4458,7 @@ work, and you&#8217;ll almost certainly get that feature implemented.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_add_client_caching_middleware">.23. Add Client Caching Middleware</h3>
+<h3 id="_add_client_caching_middleware">8.7. Add Client Caching Middleware</h3>
 <div class="paragraph">
 <p>Find a middleware for your HTTP client of choice, and if that client
 does not support middleware you should switch out for one that does.
@@ -4173,7 +4478,7 @@ Memcache, and if it is front end then check out Local Storage.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_identify_no_cache_requests">.24. Identify no-cache Requests</h3>
+<h3 id="_identify_no_cache_requests">8.8. Identify no-cache Requests</h3>
 <div class="paragraph">
 <p>Figure out which parts - if any - of your application require the
 freshest possible data, and add Cache-Control: no-cache on there to
@@ -4181,7 +4486,7 @@ force revalidation on that request.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_check_for_network_caching">.25. Check for Network Caching</h3>
+<h3 id="_check_for_network_caching">8.9. Check for Network Caching</h3>
 <div class="paragraph">
 <p>Look for hints in the documentation that network caching has been setup,
 and if there is nothing there scout around the responses for X-Cache
@@ -4204,7 +4509,7 @@ basically no overhead.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_dont_let_apis_be_slow">.26. Don&#8217;t Let APIs Be Slow</h3>
+<h3 id="_dont_let_apis_be_slow">8.10. Don&#8217;t Let APIs Be Slow</h3>
 <div class="paragraph">
 <p>If the API is offering cached responses of ~50ms but the uncached
 responses are taking 500ms, you should have a chat with their
@@ -4219,8 +4524,11 @@ identifying which questions they already have answers to, but that does
 not mean API developers can stop worrying about performance.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_validation">.27. Validation</h3>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_validation">9. Validation</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Whenever an API client attempts an operation (creating a REST resource,
 triggering an RPC procedure, etc.) there are usually some validation
@@ -4243,7 +4551,7 @@ disabling the submit button until the local data looks good.</p>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="images/validation-ui-boxes.png%20width=645px%20height=116px" alt="image">
+<img src="images/validation-ui-boxes.png" alt="image">
 </div>
 </div>
 <div class="paragraph">
@@ -4305,8 +4613,8 @@ doomed to suffer this sort of fate, but there are ways to mitigate this
 problem. Depending on the type of API, you can probably find a way to
 synchronize validation between client and server.</p>
 </div>
-<div class="sect3">
-<h4 id="_client_validation_via_contracts">.27.1. Client-Validation via Contracts</h4>
+<div class="sect2">
+<h3 id="_client_validation_via_contracts">9.1. Client-Validation via Contracts</h3>
 <div class="paragraph">
 <p>Well built APIs generally offer a copy of their contracts in a
 programmatically accessible format. The idea is that validation rules
@@ -4351,9 +4659,8 @@ systems are able to provide, saving a trip over the wire, and hopefully
 avoiding validation hell.</p>
 </div>
 </div>
-</div>
 <div class="sect2">
-<h3 id="_json_schema">.28. JSON Schema</h3>
+<h3 id="_json_schema">9.2. JSON Schema</h3>
 <div class="paragraph">
 <p>JSON Schema is a layer of metadata for JSON, that is written in JSON.
 Unlike some formats which are knocked out by one particularly large
@@ -4658,7 +4965,7 @@ boxes, or disable the submit button until the local data looks good!</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_what_about_validation_hell">.29. What about Validation Hell?</h3>
+<h3 id="_what_about_validation_hell">9.3. What about Validation Hell?</h3>
 <div class="paragraph">
 <p>Earlier validation hell was mentioned, and JSON Schema is supposed to
 avoid it. But how? The API client now has this JSON Schema file locally,
@@ -4719,7 +5026,7 @@ application to notice the new validation essentially immediately.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_protobuff">.30. Protobuff</h3>
+<h3 id="_protobuff">9.4. Protobuff</h3>
 <div class="paragraph">
 <p>If you are interacting with an API using Protobuf, setting up a payload
 is as easy as writing code. Protobuf has types defined in <code>.proto</code>
@@ -4794,8 +5101,11 @@ person.id = "1234"        # raises TypeError</pre>
 UI feedback if the client has a UI.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_timeouts_retries_and_circuit_breakers">.31. Timeouts, Retries, and Circuit Breakers</h3>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_timeouts_retries_and_circuit_breakers">10. Timeouts, Retries, and Circuit Breakers</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Whenever possible it is best to make calls to other APIs asynchronously.
 Doing something in the background and letting the user know it is done
@@ -4851,9 +5161,8 @@ conversions will occur, so its important to keep as much of the user
 experience functioning as well as possible, for as long as possible,
 even when upstream dependencies are having a rough time.</p>
 </div>
-</div>
 <div class="sect2">
-<h3 id="_other_peoples_problems">.32. Other People&#8217;s Problems</h3>
+<h3 id="_other_peoples_problems">10.1. Other People&#8217;s Problems</h3>
 <div class="paragraph">
 <p>You own service A, and are making calls to service B. What happens when
 service B has a bad day, and instead of responding within the usual
@@ -4921,7 +5230,7 @@ other stuff to do." This concept is known as a "timeout".</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_set_timeouts_in_the_http_client">.33. Set Timeouts in the HTTP Client</h3>
+<h3 id="_set_timeouts_in_the_http_client">10.2. Set Timeouts in the HTTP Client</h3>
 <div class="paragraph">
 <p>HTTP clients usually do not set a timeout by default, but accept
 configuration to control various aspects of timeout settings.</p>
@@ -5017,7 +5326,7 @@ interesting issues&#8230;&#8203; hopefully fetch() gets proper timeouts before t
 long.</p>
 </div>
 <div class="sect3">
-<h4 id="_some_must_die_so_others_may_live">.33.1. Some Must Die, So Others May Live</h4>
+<h4 id="_some_must_die_so_others_may_live">10.2.1. Some Must Die, So Others May Live</h4>
 <div class="paragraph">
 <p>Any time spent waiting for a request that may never come is time that
 could be spent doing something useful. When the HTTP call is coming from
@@ -5074,7 +5383,7 @@ resources waiting for responses which probably aren&#8217;t going to come.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_picking_timeouts">.33.2. Picking Timeouts</h4>
+<h4 id="_picking_timeouts">10.2.2. Picking Timeouts</h4>
 <div class="paragraph">
 <p>If the server is a third party company, you might have a service-level
 agreement stating: "Our API will always respond in 150ms". Great, set it
@@ -5130,7 +5439,7 @@ probably good enough.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_retrying_slow_requests">.33.3. Retrying Slow Requests</h4>
+<h4 id="_retrying_slow_requests">10.2.3. Retrying Slow Requests</h4>
 <div class="paragraph">
 <p>If it&#8217;s a web process&#8230;&#8203; well, 2s+ is certainly no good, especially
 seeing as it might fail anyway. Waiting around for this unstable
@@ -5184,7 +5493,7 @@ it is configurable.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_circuit_breakers">.33.4. Circuit Breakers</h4>
+<h4 id="_circuit_breakers">10.2.4. Circuit Breakers</h4>
 <div class="paragraph">
 <p>Timeouts are a great way to avoid unexpected hangs from slowing a
 service down too much, and retries are a great solution to having
@@ -5245,8 +5554,11 @@ controlled more centrally.</p>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_change_management">.34. Change Management</h3>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_change_management">11. Change Management</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Change Management in relation to APIs, is a collective term for making
 improvements over time. Hopefully the change is handled in a
@@ -5270,9 +5582,8 @@ their interface over time.</p>
 <p>Let&#8217;s go more in depth into these concepts, and how they come into
 effect in various API paradigms.</p>
 </div>
-</div>
 <div class="sect2">
-<h3 id="_rest_endpoint_based_apis">.35. <strong># # # # # # # # # # # # # # #</strong> # REST / "Endpoint-based" APIs</h3>
+<h3 id="_rest_endpoint_based_apis">11.1. <strong># # # # # # # # # # # # # # #</strong> # REST / "Endpoint-based" APIs</h3>
 <div class="paragraph">
 <p>&lt;$Scr_H::2&gt;<strong>Global Versioning</strong></p>
 </div>
@@ -5305,7 +5616,7 @@ what&#8217;s considered reasonable is completely up to the API maintainers. It
 could be one month, a year, or anything in between.</p>
 </div>
 <div class="sect3">
-<h4 id="_evolution">.35.1. Evolution</h4>
+<h4 id="_evolution">11.1.1. Evolution</h4>
 <div class="paragraph">
 <p>API evolution is the concept of striving to maintain the "I" in API, the
 request/response body, query parameters, general functionality, etc.,
@@ -5366,7 +5677,7 @@ the change to upgrade at their own pace.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_graphql_2">.36. GraphQL</h3>
+<h3 id="_graphql_2">11.2. GraphQL</h3>
 <div class="paragraph">
 <p>GraphQL also uses the evolution approach, and this works the same as the
 REST / "Endpoint-based" API evolution approach. GraphQL APIs following
@@ -5391,12 +5702,12 @@ that.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_grpc">.37. gRPC</h3>
+<h3 id="_grpc">11.3. gRPC</h3>
 <div class="paragraph">
 <p>TODO</p>
 </div>
 <div class="sect3">
-<h4 id="_deprecations">.37.1. Deprecations</h4>
+<h4 id="_deprecations">11.3.1. Deprecations</h4>
 <div class="paragraph">
 <p>Regardless of the type of API you are interacting with, and which
 approach it takes to change management, deprecation is going to be an
@@ -5428,7 +5739,7 @@ codebase.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_low_tech_general_solutions">.38. Low-Tech General Solutions</h3>
+<h3 id="_low_tech_general_solutions">11.4. Low-Tech General Solutions</h3>
 <div class="paragraph">
 <p>As ludicrous as it might sound, the entire extent of some API providers
 attempts to communicate upcoming change is "write a blog about it and
@@ -5459,7 +5770,7 @@ lead, but a distribution email address for the team.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_rest_endpoint_based_apis_2">.39. REST / Endpoint-based APIs</h3>
+<h3 id="_rest_endpoint_based_apis_2">11.5. REST / Endpoint-based APIs</h3>
 <div class="paragraph">
 <p>If an API is using global versioning, then they might deprecate all the
 endpoints under <code>/v1/</code> at the same time, and suggest you use all the
@@ -5469,7 +5780,7 @@ endpoints under <code>/v1/</code> at the same time, and suggest you use all the
 low-tech announcements, but they can also be communicated in-band.</p>
 </div>
 <div class="sect3">
-<h4 id="_deprecated_endpoints">.39.1. Deprecated Endpoints</h4>
+<h4 id="_deprecated_endpoints">11.5.1. Deprecated Endpoints</h4>
 <div class="paragraph">
 <p>There is a a proposed standard:
 <a href="https://tools.ietf.org/html/draft-wilde-sunset-header-05">Sunset Header</a>,
@@ -5533,7 +5844,7 @@ next and they&#8217;ll do a better job next time.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_deprecating_properties">.39.2. Deprecating Properties</h4>
+<h4 id="_deprecating_properties">11.5.2. Deprecating Properties</h4>
 <div class="paragraph">
 <p>Other than the entire endpoint going away, specific properties <em>may</em>
 over time be deprecated. This is less common in global versioning as
@@ -5560,7 +5871,7 @@ dependencies.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_graphql_3">.40. GraphQL</h3>
+<h3 id="_graphql_3">11.6. GraphQL</h3>
 <div class="paragraph">
 <p>GraphQL pushes hard for evolution in its marketing and most advice in
 the ecosystem, which is awesome. They do not have a huge amount of
@@ -5568,7 +5879,7 @@ documentation covering deprecations, and much of it comes from
 third-parties like Apollo, but it&#8217;s certainly possible.</p>
 </div>
 <div class="sect3">
-<h4 id="_deprecating_types">.40.1. Deprecating Types</h4>
+<h4 id="_deprecating_types">11.6.1. Deprecating Types</h4>
 <div class="paragraph">
 <p>Instead of endpoints, GraphQL has types. There is no first class support
 for deprecating types in GraphQL at the time of writing, so an API
@@ -5581,7 +5892,7 @@ mark in the reason that the whole type is going away.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_deprecating_properties_2">.40.2. Deprecating Properties</h4>
+<h4 id="_deprecating_properties_2">11.6.2. Deprecating Properties</h4>
 <div class="paragraph">
 <p>The API provider will add the <code>@deprecated</code> keyword to the type:</p>
 </div>
@@ -5613,7 +5924,7 @@ to deprecate fields in GraphQL</em></a>.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_coming_soon">.41. Coming Soon</h3>
+<h3 id="_coming_soon">11.7. Coming Soon</h3>
 <div class="paragraph">
 <p>This book is a still an ongoing process, and more chapters will be
 coming. Much like <em>Build APIs You Won&#8217;t Hate</em>, I&#8217;l be aiming for one
@@ -5622,9 +5933,6 @@ the book complete:</p>
 </div>
 <div class="ulist">
 <ul>
-<li>
-<p>Likely Errors</p>
-</li>
 <li>
 <p>API Proxies</p>
 </li>
@@ -5662,7 +5970,7 @@ touch:</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-03-11 00:50:30 +0100
+Last updated 2019-03-17 17:41:40 +0100
 </div>
 </div>
 </body>
