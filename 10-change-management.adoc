@@ -268,9 +268,10 @@ for deprecating types in GraphQL at the time of writing, so an API
 developer is unable to evolve the concept through adding new properties,
 a new type will pop up somewhere. A low-tech solution like a blog or
 email announcement may be used to communicate this new type, and the
-deprecation of the old type, as there is no way to do it in band.
-Another solution is to deprecate all the properties in the type, and
-mark in the reason that the whole type is going away.
+deprecation of the old type, as there is no formal way to do it.
+
+One possible solution is to deprecate all the properties in the type, and mark
+in the reason that the whole type is going away.
 
 === Deprecating Properties
 

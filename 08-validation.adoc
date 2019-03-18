@@ -106,7 +106,7 @@ company, JSON Schema is a web standard being worked on by smart
 developers from all sorts of companies like Cloudflare, Microsoft, and
 they even let me stick my oar in a bit.
 
-The idea is to point our which fields might exist, which are required or
+The idea is to point out which fields might exist, which are required or
 optional, what data format they use, and other validation rules can be
 added on top of that basic premise. The metadata lives in .json files,
 which might look a bit like this:
@@ -327,7 +327,7 @@ mailto:https://www.npmjs.com/package/json-pointer[json-pointer] npm
 package), and find the relevant property object. From there we now have
 access to the human readable title, and we can build out some human
 readable errors based off of the various properties returned. This code
-might be a little odd looking, but we support a few types of error quite
+might be a little odd looking, but it supports a few types of error quite
 nicely. Consider the following inputs.
 
 ....

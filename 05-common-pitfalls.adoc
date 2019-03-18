@@ -12,7 +12,7 @@ all trying to kill me."
 Connection failures can happen for all sorts of reasons:
 
 * Mobile user gets on the subway
-* Laptop user switches wifi networks which has a captive portal login
+* Laptop user switches WiFi networks, and the new one has a captive portal login
 * API rate limiting has decided your client is too chatty
 * API deployment caused temporary instability
 * AWS is down again
