@@ -12,14 +12,25 @@ versioning, client-caching, state management, differences between how you
 interact with RPC, REST and GraphQL, using JSON Schema for local validation, and
 all sorts of other awesome stuff that nobody ever bothered to mention to you.
 
+## Structure
+
+The book skeleton is in `book.adoc´. Add new chapters by adding an empty line and
+a new include:
+
+```adoc
+include::10-change-management.adoc[]
+
+include::11-some-new-chapter.adoc[]
+```
+
 ## Contributing
 
 If you can see this repo, you are welcome to contribute! Please send pull
 requests with ideas, improvements, fixes, whatever you like.
 
+``` bash
+make
 ```
-$ make
-````
 
 That should let you know if anything goes wrong, and will output the HTML
 generated book in `generated/book.html`.
