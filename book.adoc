@@ -1,6 +1,5 @@
 = Surviving Other Peoples APIs
-Philip Sturgeon <phil@apisyouwonthate.com>;
-Mike Bifulco <mbifulco@live.com>
+Philip Sturgeon <phil@apisyouwonthate.com>; Mike Bifulco <mbifulco@live.com>
 :doctype: book
 :creator: Philip Sturgeon and Mike Bifulco
 :front-cover-image: image:cover.jpeg[Front Cover,1050,1600]
