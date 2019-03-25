@@ -259,12 +259,12 @@ language, a little like SQL - if that is something you are familiar
 with. You ask for specific resources and specific fields, and it will
 return that data in the response.
 
-image::images/graphql-query.png%20width=714px%20height=194px[image]
+image::images/graphql-query.png[]
 
 It has Mutations for creates, updates, deletes, etc. and again they are
 exactly RPC.
 
-image::images/graphql-mutations.png%20width=715px%20height=272px[image]
+image::images/graphql-mutations.png[]
 
 GraphQL has many fantastic features and benefits, which are all bundled
 in one package, with a nice marketing site. If you are trying to learn

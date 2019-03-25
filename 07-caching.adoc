@@ -474,10 +474,9 @@ cacheReq.on('request', req => req.end());
 http://www.npmjs.com/package/cacheable-request[cacheable-request] - Wrap
 native HTTP requests with RFC compliant cache support
 
-_*Note:* Despite_ _NodeJS having a_
-https://www.npmjs.com/package/whatwg-fetch[_Fetch API polyfill_]__, it__
-https://github.com/github/fetch/issues/438[_does not support cache
-mode_]__, and therefore alternatives must be used.__
+NOTE: Despite NodeJS having a https://www.npmjs.com/package/whatwg-fetch[Fetch
+API polyfill], it https://github.com/github/fetch/issues/438[does not
+support cache mode], and therefore alternatives must be used.
 
 === Go
 
@@ -582,6 +581,7 @@ The recommendation from the GraphQL documentation suggests the
 responsibility of caching falls on clients to implement their own
 application caching:
 
+[source,GraphQL.org,http://graphql.org/learn/caching/]
 ____
 In an endpoint-based API, clients can use HTTP caching to easily avoid
 refetching resources, and for identifying when two resources are the
@@ -589,8 +589,7 @@ same. The URL in these APIs is a globally unique identifier that the
 client can leverage to build a cache. In GraphQL, though, there's no
 URL-like primitive that provides this globally unique identifier for a
 given object. It's hence a best practice for the API to expose such an
-identifier for clients to use. --- *Source:*
-http://graphql.org/learn/caching/[*graphql.org*]
+identifier for clients to use.
 ____
 
 This is advertised like a feature, but as we discussed already having a
@@ -645,12 +644,12 @@ The basic idea looks a little like this:
 image::images/1HVrgB2mX7EC8tz523pkxaA.png[image]
 
 A request being returned early by a cache
-server. --- book.varnish-software.com
+server. -- book.varnish-software.com
 
 image::images/143stxceFqvz0WDO_2KmOVg.png[image]
 
 A request failing to find a match (a.k.a cache miss), and being passed
-on to the API server to fulfill. ---  book.varnish-software.com
+on to the API server to fulfill. -- book.varnish-software.com
 
 Varnish and Squid are two common tools, and Fastly is a hosted version
 of Varnish. Hopefully the API developers will mention they use a network

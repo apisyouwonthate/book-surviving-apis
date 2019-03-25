@@ -23,10 +23,8 @@ fantastic place to start. Usually API documentation will contain an
 "Authentication" section in their docs, and this will usually be towards
 the start.
 
-image::images/stripe-authentication.png%20width=768px%20height=601px[image]
-
-Screenshot from https://stripe.com/docs/api/curl#authentication[Stripe:
-Authentication]
+.Screenshot from https://stripe.com/docs/api/curl#authentication[Stripe: Authentication]
+image::images/stripe-authentication.png[]
 
 Here Stripe are making it quite clear where you can find your API keys,
 and talk about two approaches to sending them.

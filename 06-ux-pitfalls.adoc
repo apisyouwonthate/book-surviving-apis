@@ -91,51 +91,49 @@ to click, causing the page to reflow so that you click the _[Sign Out]_
 button instead of that one simple thing you wanted to do?
 
 
-image::images/S_k6WSKNySHGUMBOC1KMQ9OmVQPiwMK0hihDgAh-vniaHc93CTp0o0vGAw7RGwOFBW9aReRXn_NnCORv3tCHC7ezxLnyAxH-HOWWAe_6DivGdbTYJ6sW4JKgpynjzJZOrHqhnIf3.png[image]
+image::images/S_k6WSKNySHGUMBOC1KMQ9OmVQPiwMK0hihDgAh-vniaHc93CTp0o0vGAw7RGwOFBW9aReRXn_NnCORv3tCHC7ezxLnyAxH-HOWWAe_6DivGdbTYJ6sW4JKgpynjzJZOrHqhnIf3.png[]
 
 image::images/67RMsY5tJyo4IBxIX1jwhQlOzqi8KSlnmvteq2AWfiQJ9Oe9zPdAujvXMHozpo2q9Du96DBVje8FiZ-vkSaf9keXDfKIvaWEcAheIf5g7tKLTXvuaY2Yp2ahnvQf4TDvHvlZgg0m.png[]
 
-Yeah, holy shit, right? Me too.  Our goal here is to avoid this.
+Yeah, holy shit, right? Me too. Our goal here is to avoid this.
 
 There's a few great, proven patterns we can use to avoid that kind of
 rage-inducing experience. While you're waiting on data to come back from
 an API, render content placeholders on screen.
 
-image::images/ilbsF0NRBcwl6FTgzHe_fkI-VkMDRPYqiGWNWae2qS1hAPwtvQ01HfJpsvxxknKNK29Pug7ea_XKCJZrJjw6H6OEQuxSAMnHTyugSuq_2nFR4LaX7w9gQuzENKANJjY_ak171SWW.png[_Facebook
-does a great job of this - while timeline content is loading, animated
-data placeholders are displayed in a way that makes the application feel
-alive.]
+Facebook does a great job of this - while timeline content is loading, animated
+data placeholders are displayed in a way that makes the application feel alive.
+
+image::images/ilbsF0NRBcwl6FTgzHe_fkI-VkMDRPYqiGWNWae2qS1hAPwtvQ01HfJpsvxxknKNK29Pug7ea_XKCJZrJjw6H6OEQuxSAMnHTyugSuq_2nFR4LaX7w9gQuzENKANJjY_ak171SWW.png[]
 
 === Progressive data loading
 
-Users are able to anticipate where new content will load on screen.
-Gradients which represent usernames and post content are subtly
-animated, which prevents users from thinking something has gone wrong.
-If you're viewing facebook from a device with a decent connection to the
-web, this can all happen _incredibly_ quickly, but the end result is an
-interface which feels like it is responding to your request for more
-content (by scrolling down the page).
+Users are able to anticipate where new content will load on screen. Gradients
+which represent usernames and post content are subtly animated, which prevents
+users from thinking something has gone wrong. If you're viewing facebook from a
+device with a decent connection to the web, this can all happen _incredibly_
+quickly, but the end result is an interface which feels like it is responding to
+your request for more content (by scrolling down the page).
 
-If a particular request is taking a long time to complete, inform you
-users that you're still loading a response. If your user closes your app
-or page due to slow loading, you both lose. This can be as simple as
-changing a loading status from "Loading..." to "Still waiting..." after
-a few moments.
+If a particular request is taking a long time to complete, inform you users that
+you're still loading a response. If your user closes your app or page due to
+slow loading, you both lose. This can be as simple as changing a loading status
+from "Loading..." to "Still waiting..." after a few moments.
 
-| :-----: | :----- | |
-image::images/UgWt87j8RiIwvZxJiScQ3dc5yl5OZdcluCAjoT8vBxq4PaNw0OUJjvxuytot9pPxCpd335aVz_j7f8WEPWHns1V-VFvEdwEUSExopqnFwopK_DvtYJjgr97F_PCOW18To4dxqfLF.png[UgWt87j8RiIwvZxJiScQ3dc5yl5OZdcluCAjoT8vBxq4PaNw0OUJjvxuytot9pPxCpd335aVz_j7f8WEPWHns1V-VFvEdwEUSExopqnFwopK_DvtYJjgr97F_PCOW18To4dxqfLF.png]
-|
-image::images/-ag_XYI2hOXdFR2zyzr2IhUDeNgjaHarWfb5R_aJqnXEbxaeV1NyF7g-A2E59wsX9JbruPqkwrGFjU1sM2wKsvDeQqv20oYo3E8dJbIhXxiZzLYduOjgfZWrTPv1qARbSAFf62HC.png[-ag_XYI2hOXdFR2zyzr2IhUDeNgjaHarWfb5R_aJqnXEbxaeV1NyF7g-A2E59wsX9JbruPqkwrGFjU1sM2wKsvDeQqv20oYo3E8dJbIhXxiZzLYduOjgfZWrTPv1qARbSAFf62HC.png]
-| [ _Netflix loads each show individually, maintaining their position in
-the grid on-screen while others load.  You'll never accidentally tap the
-wrong show!_]
 
-| :----- | :----- | |
-image::images/GaWUvaBgbzwiwNPrOEQbHgct0Of4vyWY_CgQ2RqQ42QGCEwBW_pUwTgoSGrx1T8ETWNEJDx2OLXAkO3unKv39A7BOADUKCS5BWMpEjNhDzjBHhk1q-BNjttQL6ej0SYGS5iq7BV8.png[GaWUvaBgbzwiwNPrOEQbHgct0Of4vyWY_CgQ2RqQ42QGCEwBW_pUwTgoSGrx1T8ETWNEJDx2OLXAkO3unKv39A7BOADUKCS5BWMpEjNhDzjBHhk1q-BNjttQL6ej0SYGS5iq7BV8.png]
-|
-image::images/ORjlc4hExKOKlqmnZPrHQU5DSB1AxzKxAA-oZuDexZn88D0Vj6pdJ9ltrTOFgF1zvPRf6QfWTcDd_hpGJBtAsF9qTHaHOIkI-9y3E4ShJqwWJMdAfF-XIQx3XUMYoQ-g9SnFixKv.png[ORjlc4hExKOKlqmnZPrHQU5DSB1AxzKxAA-oZuDexZn88D0Vj6pdJ9ltrTOFgF1zvPRf6QfWTcDd_hpGJBtAsF9qTHaHOIkI-9y3E4ShJqwWJMdAfF-XIQx3XUMYoQ-g9SnFixKv.png]
-| [ _The BBC's website loads images last, but holds their position in
-the layout until images are loaded._]
+image::images/ux-netflix.png[]
+
+image::images/-ag_XYI2hOXdFR2zyzr2IhUDeNgjaHarWfb5R_aJqnXEbxaeV1NyF7g-A2E59wsX9JbruPqkwrGFjU1sM2wKsvDeQqv20oYo3E8dJbIhXxiZzLYduOjgfZWrTPv1qARbSAFf62HC.png[]
+
+Netflix loads each show individually, maintaining their position in the grid
+on-screen while others load.  You'll never accidentally tap the wrong show!
+
+image::images/ux-bbc-loading.png[]
+
+image::images/ux-bbc.png[]
+
+The BBC's website loads images last, but holds their position in
+the layout until images are loaded.
 
 Lucky for you, some of these effects are fairly easy to accomplish on
 your own.  What's even better is that with a quick search of your
@@ -373,14 +371,15 @@ things.  In other cases, after letting users know that something is
 temporarily offline, it might be better to get it out of their way - and
 to hide it until that service comes back online.
 
-| :----- | :----- | |
-image::images/D_We7cjrdNaDQsN7JC7Mb48Ezc5I3DCxS0nvE9tXD9-DYT2F46qVmnxfuhtMgySVbMzDY6KJSDltW_vTiX8ZMJkj04TIsIQMTZd3iw1VlhYd2wXn3GksRoCe_DJH1TCaLibhTamQ.png[D_We7cjrdNaDQsN7JC7Mb48Ezc5I3DCxS0nvE9tXD9-DYT2F46qVmnxfuhtMgySVbMzDY6KJSDltW_vTiX8ZMJkj04TIsIQMTZd3iw1VlhYd2wXn3GksRoCe_DJH1TCaLibhTamQ.png]
-|
-image::images/LGPlkPb5tUSWVTWgyEKZa8FqD5FEY918RG2CSATDiOh6QmLDFTMlkUJSESLw9-JQczmsjvOMy2mRKOQsJgzp87wvtXvp2W3n6SBA4bWv1h5dNeg3xdKdDm_xwodnbqAngiKJkmTP.png[LGPlkPb5tUSWVTWgyEKZa8FqD5FEY918RG2CSATDiOh6QmLDFTMlkUJSESLw9-JQczmsjvOMy2mRKOQsJgzp87wvtXvp2W3n6SBA4bWv1h5dNeg3xdKdDm_xwodnbqAngiKJkmTP.png]
-| [_While booking a parking space recently, Spothero.com's mapping
+
+While booking a parking space recently, Spothero.com's mapping
 service went down.  Instead of giving me a frustratingly useless map
 interface, it let me know the service was down, and hid the view option
-until the map service came back.  Brilliant!_]
+until the map service came back.  Brilliant!
+
+image::images/ux-spothero.png[]
+
+image::images/ux-spothero-map-gone.png[]
 
 In some cases, you may be able to provide a good fallback: if your video
 hosting CDN is down, and you have the luxury of a backup CDN, switch to
@@ -462,9 +461,8 @@ Key].  This allows you to annotate your request with a unique key, so
 that even if your request is sent to an API multiple times, it will only
 ever be executed once.
 
-image::images/Pasted_Image_2_27_19__1_33_PM.png%20width=1068px%20height=489px[Stripe's
-Idempotentcy strategy helps stop API consumers from accidentally
-creating the same credit card charge more than once.]
+.Stripe's Idempotentcy strategy helps stop API consumers from accidentally creating the same credit card charge more than once.
+image::images/ux-idempotency-key.png[Screenshot from the stripe.com API documentation showing an example of the idempotency key.]
 
 == Dealing with errors
 
@@ -499,7 +497,7 @@ support staff, provide as much detail as possible so that they can find,
 remedy, and fix any problems they may be tasked with supporting.
 
 .Giving your support team as much information as possible can make your helpdesk experience feel like magic.
-image::images/dkdulA3AvTQPgxxCa0F7fOv1c3ExQUNoctyCblFw_9D5nDkdRGqsOMiW4hwJDndP8xfAg6ANv7fatNxFfyDWa7qd1LkM2Hi_ZuQW8wrb9TL-WhcSq-ING0X6Qf0Q-hoEuPqndEv3.png[]
+image::images/ux-errors.png[]
 
 You can also use bug tracking services like
 https://logrocket.com/[LogRocket] or https://sentry.io/[Sentry] to
@@ -516,20 +514,16 @@ disenfranchised with your product will always be easy to sell to the
 powers-that-be in your organization, particularly if you have data to
 back up your story.
 
-image::images/l3SYa1oVU1nW1PsKp3m2x0q_QBN3jtguqd-XzbSpHR8-Duf8dtug1xW4c5hfb7yRoKHC-XF4yl8gNcRk3ttfWEeMmWImOiiKscf4de0MeDhwamSQNLo-fI-zZS7OqCMpTir4fjM8.png[l3SYa1oVU1nW1PsKp3m2x0q_QBN3jtguqd-XzbSpHR8-Duf8dtug1xW4c5hfb7yRoKHC-XF4yl8gNcRk3ttfWEeMmWImOiiKscf4de0MeDhwamSQNLo-fI-zZS7OqCMpTir4fjM8.png]
-_An example error report sent to a slack channel via Incoming Webhook.
- Seeing errors happening in real time will help your team feel empathy
-for how (infuriatingly) often your users encounter a given bug._
+.An example error report sent to a slack channel via Incoming Webhook. Seeing errors happening in real time will help your team feel empathy for how (infuriatingly) often your users encounter a given bug.
+image::images/ux-bug-track.png[]
 
 == Undo Functionality
 
 If you're doing something semi-permanent, make sure you give users the
 ability to undo or cancel actions whenever possible.
 
-image::images/kbAIVEbDTsPgYJSD_dn3LhYzBHGG7TWRYAQP4y7AGS8-alNKbQdEoSAyMkgUM5ztCoXQJDQp6kfLWw99DHhR7bwN-DFVBx_8GoN42Fc7YrDqYg5SwB8ExWxJxif0ux9Mn-Lvzfvh.png[_This
-toast notification from Gmail serves as an action confirmation and an
-undo opportunity for a few moments before your email goes out into the
-world._]
+.Toast notification from Gmail serves as an action confirmation and an undo opportunity for a few moments before your email goes out into the world.
+image::images/ux-undo.png[]
 
 Undo can be accomplished both proactively and reactively.  Proactive
 undo scenarios are extremely common; most often, this comes in the form
@@ -557,4 +551,4 @@ to undo that action here. Finally, this can be presented back to your
 users as a historical log of their activity on your service.
 
 .Stripe provides an Events log to customers using their service, which can be extremely helpful in tracking down failed and missing payments.
-image::images/jSwNPVB9cZ-xQMpljZyRHcbBn1kcbFTnw_Vm_dTXqFvP3tT61H3WQjzuFNtBe0fCmVnPX8Y6M19v56-Hh7km8hXy5N8pCc5ABQSh7jLz14hUjAe7dUrSGr8pxOMXALnV_UHBK43E.png[]
+image::images/ux-events.png[]
