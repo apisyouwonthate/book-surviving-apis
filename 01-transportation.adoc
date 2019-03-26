@@ -75,7 +75,7 @@ programming languages have one built in, but before we get into all of
 that, we can just use the command line. If you have curl available you
 can do this, otherwise a quick `brew install curl` will help.
 
-[source]
+[source,bash]
 ----
 $ curl -X GET http://example.com
 <!doctype html>
@@ -139,7 +139,7 @@ The Axios example above would produce a HTTP request like this:
 
 ----
 GET /companies/12345 HTTP/1.1
-Host: [api.example.org](http://api.example.org)
+Host: api.example.org
 ----
 
 The response may well be something successful, and we might get JSON

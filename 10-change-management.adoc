@@ -289,7 +289,7 @@ When looking at a GraphQL API through GraphiQL, the documentation that
 it autogenerates will show deprecated fields, visually separated from
 the other fields (smart!)
 
-image::images/ScreenShot2018-06-02at20822PM.png%20width=555px%20height=659px[image]
+image::images/ScreenShot2018-06-02at20822PM.png[image]
 
 This image is from https://medium.com/@kevinsimper/[Kevin Simper]'s
 awesome article:
