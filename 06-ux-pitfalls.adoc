@@ -90,18 +90,16 @@ click on it, something on the page loads just above where you're about
 to click, causing the page to reflow so that you click the _[Sign Out]_
 button instead of that one simple thing you wanted to do?
 
-
-image:images/S_k6WSKNySHGUMBOC1KMQ9OmVQPiwMK0hihDgAh-vniaHc93CTp0o0vGAw7RGwOFBW9aReRXn_NnCORv3tCHC7ezxLnyAxH-HOWWAe_6DivGdbTYJ6sW4JKgpynjzJZOrHqhnIf3.png[] image:images/67RMsY5tJyo4IBxIX1jwhQlOzqi8KSlnmvteq2AWfiQJ9Oe9zPdAujvXMHozpo2q9Du96DBVje8FiZ-vkSaf9keXDfKIvaWEcAheIf5g7tKLTXvuaY2Yp2ahnvQf4TDvHvlZgg0m.png[]
 .Yeah, holy shit, right? Me too. Our goal here is to avoid this
+image::images/ux-pay-bill-before.png[]
+image:images/ux-pay-bill-after.png[]
 
 There's a few great, proven patterns we can use to avoid that kind of
 rage-inducing experience. While you're waiting on data to come back from
 an API, render content placeholders on screen.
 
-Facebook does a great job of this - while timeline content is loading, animated
-data placeholders are displayed in a way that makes the application feel alive.
-
-image::images/ilbsF0NRBcwl6FTgzHe_fkI-VkMDRPYqiGWNWae2qS1hAPwtvQ01HfJpsvxxknKNK29Pug7ea_XKCJZrJjw6H6OEQuxSAMnHTyugSuq_2nFR4LaX7w9gQuzENKANJjY_ak171SWW.png[]
+.Facebook does a great job of this - while timeline content is loading, animated data placeholders are displayed in a way that makes the application feel alive.
+image::images/ux-facebook-progressive-load.png[]
 
 === Progressive data loading
 
@@ -121,7 +119,7 @@ from "Loading..." to "Still waiting..." after a few moments.
 .Netflix loads each show individually, maintaining their position in the grid on-screen while others load.  You'll never accidentally tap the wrong show!
 image::images/ux-netflix.png[]
 
-image::images/-ag_XYI2hOXdFR2zyzr2IhUDeNgjaHarWfb5R_aJqnXEbxaeV1NyF7g-A2E59wsX9JbruPqkwrGFjU1sM2wKsvDeQqv20oYo3E8dJbIhXxiZzLYduOjgfZWrTPv1qARbSAFf62HC.png[]
+image::images/ux-netflix-2.png[]
 
 .The BBC's website loads images last, but holds their position in the layout until images are loaded.
 image::images/ux-bbc-loading.png[]
@@ -256,7 +254,7 @@ you detect a loss of connectivity, have a strategy on-hand for
 presenting that to your users.
 
 .Intercom provides a helpful notification when users are offline, without disabling every action on the page. 
-image::images/xqlC7YltuqwQvsUOaLRsCgVxv7BPqUX_CEcm8XeyzIsWwc-5aXsOTT3NMchVhX6Y-30_kShzY2fOZCQmST4RcYfdxLtgX3jXtgNxwtqv2SqB9w2Vs8GIhzIjtiKfCp6UkWLZ-Gyu.png[]
+image::images/ux-intercom-notification.png[]
 
 You may also be able to cache actions while your users are offline.
  You've probably experienced this before with your mail client of
