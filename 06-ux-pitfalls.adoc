@@ -64,9 +64,9 @@ network, like the Chrome devtools
 https://developers.google.com/web/tools/chrome-devtools/device-mode/#network[network
 throttling utility].
 
-image::images/kqT4aUbVDMxfPZL7bzZ9nauIu-5Wdfh32A7HUSDlmxFPnDwwY9ksVJut_3URh09MyvUde_ovUpPQJoOhRci7O2_igKzyTcH-E8kmS7imrN2D5u_HS1HMMhgf6YX9lnrhxQ1AyjFw.png[_Chrome
-DevTools can simulate different bandwidth options on your site.  It's an
-eye-opening experience._]
+.Chrome DevTools can simulate different bandwidth options on your site.  It's an eye-opening experience.
+image::images/ux-chrome-dev-tools.png[]
+
 
 This, of course, begs the question: what can we do to make the page
 loading experience better for our users? A good place to start is to
@@ -91,11 +91,8 @@ to click, causing the page to reflow so that you click the _[Sign Out]_
 button instead of that one simple thing you wanted to do?
 
 
-image::images/S_k6WSKNySHGUMBOC1KMQ9OmVQPiwMK0hihDgAh-vniaHc93CTp0o0vGAw7RGwOFBW9aReRXn_NnCORv3tCHC7ezxLnyAxH-HOWWAe_6DivGdbTYJ6sW4JKgpynjzJZOrHqhnIf3.png[]
-
-image::images/67RMsY5tJyo4IBxIX1jwhQlOzqi8KSlnmvteq2AWfiQJ9Oe9zPdAujvXMHozpo2q9Du96DBVje8FiZ-vkSaf9keXDfKIvaWEcAheIf5g7tKLTXvuaY2Yp2ahnvQf4TDvHvlZgg0m.png[]
-
-Yeah, holy shit, right? Me too. Our goal here is to avoid this.
+image:images/S_k6WSKNySHGUMBOC1KMQ9OmVQPiwMK0hihDgAh-vniaHc93CTp0o0vGAw7RGwOFBW9aReRXn_NnCORv3tCHC7ezxLnyAxH-HOWWAe_6DivGdbTYJ6sW4JKgpynjzJZOrHqhnIf3.png[] image:images/67RMsY5tJyo4IBxIX1jwhQlOzqi8KSlnmvteq2AWfiQJ9Oe9zPdAujvXMHozpo2q9Du96DBVje8FiZ-vkSaf9keXDfKIvaWEcAheIf5g7tKLTXvuaY2Yp2ahnvQf4TDvHvlZgg0m.png[]
+.Yeah, holy shit, right? Me too. Our goal here is to avoid this
 
 There's a few great, proven patterns we can use to avoid that kind of
 rage-inducing experience. While you're waiting on data to come back from
@@ -121,19 +118,17 @@ slow loading, you both lose. This can be as simple as changing a loading status
 from "Loading..." to "Still waiting..." after a few moments.
 
 
+.Netflix loads each show individually, maintaining their position in the grid on-screen while others load.  You'll never accidentally tap the wrong show!
 image::images/ux-netflix.png[]
 
 image::images/-ag_XYI2hOXdFR2zyzr2IhUDeNgjaHarWfb5R_aJqnXEbxaeV1NyF7g-A2E59wsX9JbruPqkwrGFjU1sM2wKsvDeQqv20oYo3E8dJbIhXxiZzLYduOjgfZWrTPv1qARbSAFf62HC.png[]
 
-Netflix loads each show individually, maintaining their position in the grid
-on-screen while others load.  You'll never accidentally tap the wrong show!
-
+.The BBC's website loads images last, but holds their position in the layout until images are loaded.
 image::images/ux-bbc-loading.png[]
 
 image::images/ux-bbc.png[]
 
-The BBC's website loads images last, but holds their position in
-the layout until images are loaded.
+
 
 Lucky for you, some of these effects are fairly easy to accomplish on
 your own.  What's even better is that with a quick search of your
@@ -185,16 +180,11 @@ likely that the single most important thing on a given screen should be
 the biggest/boldest thing, and located somewhere near the very top of
 the content area of the page.
 
-image::images/progressive-data-loading.png[For example, if you are showing a
-feed of articles, and next to that feed of data are some suggestions for
-things to read next, and a list of trending articles, then feed is
-probably the primary data, the suggestions might be secondary, and the
-service which shares trending articles might be down, so that could be
-tertiary.]
+.For example, if you are showing a feed of articles, and next to that feed of data are some suggestions for things to read next, and a list of trending articles, then feed is probably the primary data, the suggestions might be secondary, and the service which shares trending articles might be down, so that could be tertiary.
+image::images/progressive-data-loading.png[]
 
-image::images/progressive-data-loading-annotated.png[Load the most pertinent
-content first, and progress from there based on how important it is to
-your reader.]
+.Load the most pertinent content first and progress from there based on how important it is to your reader
+image::images/progressive-data-loading-annotated.png[]
 
 === Then: Which data is most expensive?
 
@@ -265,10 +255,8 @@ What happens when your app loses its connection to the internet? When
 you detect a loss of connectivity, have a strategy on-hand for
 presenting that to your users.
 
-image::images/xqlC7YltuqwQvsUOaLRsCgVxv7BPqUX_CEcm8XeyzIsWwc-5aXsOTT3NMchVhX6Y-30_kShzY2fOZCQmST4RcYfdxLtgX3jXtgNxwtqv2SqB9w2Vs8GIhzIjtiKfCp6UkWLZ-Gyu.png[image]
-
-Intercom provides a helpful notification when users are offline, without
-disabling every action on the page.
+.Intercom provides a helpful notification when users are offline, without disabling every action on the page. 
+image::images/xqlC7YltuqwQvsUOaLRsCgVxv7BPqUX_CEcm8XeyzIsWwc-5aXsOTT3NMchVhX6Y-30_kShzY2fOZCQmST4RcYfdxLtgX3jXtgNxwtqv2SqB9w2Vs8GIhzIjtiKfCp6UkWLZ-Gyu.png[]
 
 You may also be able to cache actions while your users are offline.
  You've probably experienced this before with your mail client of
