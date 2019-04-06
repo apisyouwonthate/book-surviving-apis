@@ -43,23 +43,55 @@ Just kidding.  There’s unfortunately no such thing as multi-threading in JavaS
 
 So in short, there’s no way for you to execute code for one application on two different execution threads using JavaScript.  Bummer. However, there are many libraries available which will allow you to write and execute code as if it was abstracted natively.  One such library is async, which offers a great set of helper functions which you can use for a wide array of 
 
-== You’ll like async/await, I Promise
+== You’ll like async/await`, I Promise
 While JavaScript has no multithreading, there are ways for you to defer of execution of code.  In JavaScript parlance, this is called a Promise.  Promise syntax may look complex at first blush, but will quickly become familiar as you use it.  Let’s take a look at a quick example:
 
-.Basic Promise execution helps defer execution of your code until an asynchronous request completes.
-image::images/async-promise-demo.png[]
+[source,javascript]
+----
+import BlogEngine from './api/BlogEngine';
+
+const loadComments = new Promise((resolve, reject) => {
+  // run an asynchronous API call
+  BlogEngine.loadCommentsForPost({ id: '12345' })
+    .then(comments => {
+      // Everything worked! Return this promise with the comments we got back.
+      resolve(comments);
+    })
+    .error(err => {
+      // something went wrong - send the error back
+      reject(new Error(err));
+    });
+});
+----
+Basic Promise execution helps defer execution of your code until an asynchronous request completes.
 
 A `new Promise` is created and fed a single argument: an anonymous `function` which has two parameters, `resolve` and `reject` (which you may sometimes see as `res` and `rej`).  These two functions are called to indicate that the asynchronous code being executed inside this promise has either completed successfully (`resolve()`) or failed for some reason (`reject()`).
 
 There’s one important thing to look out for when you’re implementing logic using Promises.  They are asynchronous, funny enough.  Let’s use a simplified example to illustrate the challenge:
 
-.The asynchronous nature of promises can cause difficult-to-spot trouble
-image::images/async-promise-problem.png[]
+[source,javascript]
+----
+import BlogEngine from './api/BlogEngine';
 
+const loadComments = postId => new Promise((resolve, reject) => {
+  BlogEngine.loadCommentsForPost({ id: postId })
+    .then(comments => resolve(comments));
+});
+----
+The asynchronous nature of promises can cause difficult-to-spot trouble
 
-.Example from earlier, re-implemented with async/await
-image::images/async-await-demo.png[]
-
+[source,javascript]
+----
+const loadComments = async () => {
+  try {
+    const comments = await BlogEngine.loadCommentsForPost({ id: '12345' });
+    return comments;
+  } catch (err) {
+    return new Error(err);
+  }
+};
+----
+Example from earlier, re-implemented with async/await
 
 Discuss async / await syntax and parity with promise syntax
 Be careful! https://twitter.com/dan_abramov/status/1099634166642196481 
@@ -80,7 +112,3 @@ State driven UI, and why it’s great - UI as turning machine
 How to design for multiple possible loading states (loading posts, loading content, loading images, etc etc)
 When to use Promise.all, and some pitfalls with its use (try/catch trap)
 Just because you can, doesn’t mean you need to await execution
-
-
-
-
