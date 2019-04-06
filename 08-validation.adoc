@@ -394,8 +394,7 @@ not be too bad. The whole "multiple devices being used to try to make
 profile changes and getting clobbered by a maxLength change" scenario we
 have been discussing actually would not really be an issue if the cache
 was reasonably short, but if it was set to days or longer you could be
-in trouble. The link:#client-caching[Caching chapter] will help make
-more sense of this.
+in trouble.
 
 Some APIs version their schema files, and as such new versions _should_
 be published as a new URL.

@@ -43,7 +43,7 @@ applications can be tough. HTTP is like snowboarding: you can learn the
 basics in a very short amount of time, get cocky, and go smashing off at
 high speed, until you inevitably break three ribs... At 12 years old,
 HTTP seemed rather clear, and I thought I had a grasp on how it worked.
-Almost two decades later I'm still learning about features, headers, and
+Almost two decades later and new features are popping up, headers, and
 options, that were either added back then, or by more recent RFCs.
 
 These are some of the learnings the book will be covering, as HTTP gets

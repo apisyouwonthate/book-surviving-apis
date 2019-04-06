@@ -4,7 +4,7 @@ install:
 	brew bundle
 	bundle install
 
-build: build-html build-pdf build-epub
+build: build-html build-pdf build-epub build-mobi
 
 build-html:
 	rm -rf generated/html/*
@@ -15,7 +15,7 @@ build-pdf:
 	asciidoctor-pdf book.adoc -D generated
 
 build-epub:
-	rm -rf generated/epub
-	export XML_CATALOG_FILES=/usr/local/etc/xml/catalog
-	a2x -v -fepub -dbook --no-xmllint book.adoc
-	mkdir generated/epub && mv book.epub generated/epub/
+	asciidoctor-epub3 -D generated book.adoc
+
+build-mobi:
+	asciidoctor-epub3 -D generated -a ebook-format=kf8 book.adoc

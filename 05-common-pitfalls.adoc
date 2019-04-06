@@ -62,10 +62,11 @@ just because the company providing the API has grown beyond their
 wildest dreams, and want to charge money for increasing the rate limit
 for high capacity users.
 
-Often the rate limit will be associated to an "API key" or "access
-token" (see link:#authentication[Authentication]), and our friends over
-at Nordic APIs very nicely explain some other rate limiting strategies:
+Often the rate limit will be associated to an API key or access token, so it can
+be tied to a specific account. Our friends over at Nordic APIs very nicely
+explain some other rate limiting strategies:
 
+[quote,Kristopher Sandoval,https://nordicapis.com/stemming-the-flood-how-to-rate-limit-an-api/]
 ____
 Server rate limits are a good choice as well. By setting rates on
 specific servers, developers can make sure that common use servers, such
@@ -78,9 +79,7 @@ behavior-based limiting; for instance, a developer would expect the
 number of requests during midnight in North America to be lower than the
 baseline daytime rate, and any behavior contrary to this without a good
 reason would suggest questionable activity. By limiting the region for a
-period of time, this can be prevented. *---*
-https://nordicapis.com/stemming-the-flood-how-to-rate-limit-an-api/[*Nordic
-APIs*]
+period of time, this can be prevented.
 ____
 
 All fair reasons, but for the client it can be a little pesky.
@@ -146,7 +145,7 @@ about as much as tabs vs spaces, but there is a clear winner now;
 https://tools.ietf.org/html/rfc6585[RFC 6585] defines it as 429, so APIs
 should be using 429.
 
-image::images/429.jpg[image]
+image::images/429.jpg[]
 
 Twitter's API existed for a few years before this standard, and they
 chose "420 - Enhance Your Calm". They've dropped this and moved over to
@@ -154,7 +153,7 @@ chose "420 - Enhance Your Calm". They've dropped this and moved over to
 since. You cannot rule out bumping into a copycat API, still using that
 outdated unofficial status.
 
-image::images/420.jpg[image]
+image::images/420.jpg[]
 
 Google also got a little "creative" with their status code utilization.
 For a long time were using 403 for their rate limiting, but I have no
