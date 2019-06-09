@@ -155,11 +155,16 @@ outdated unofficial status.
 
 image::images/420.jpg[]
 
-Google also got a little "creative" with their status code utilization.
-For a long time were using 403 for their rate limiting, but I have no
-idea if they are still doing that. GitHub v3 (a RESTful API that was
-replaced with a GraphQL, but is still floating around) _is_ still using
-403:
+Google also got a little "creative" with their status code utilization. For a
+long time were using 403 for their rate limiting, but I have no idea if they are
+still doing that. Bitbucket are still using 403 in their Server REST API.
+
+[quote,REST Resources Provided By: Bitbucket Server,https://docs.atlassian.com/bitbucket-server/rest/5.12.3/bitbucket-rest.html]
+____
+Actions are usually "forbidden" if they involve breaching the licensed user limit of the server, or degrading the authenticated user's permission level. See the individual resource documentation for more details.
+____
+
+GitHub v3 API has a 403 rate limit too:
 
 ....
 HTTP/1.1 403 Forbidden

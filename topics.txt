@@ -9,11 +9,3 @@ APIs might vanish without a moments notice, maybe ask your backend friends to ma
 
 Protobuf required is forever or used to be, now yay optional everything
 https://developers.google.com/protocol-buffers/docs/pythontutorial
-
-Testing
-http://docs.guzzlephp.org/en/stable/testing.html
-
-Mock (nock) vs VCR
-so nock is good for when you want to control the response, because you own it. you know that whole thing about dont mock what you dont own? If you create the mock for an external API, and they change their API, you dont know that they changed, so your code says it works and its broken. :smile: snapshot for HTTP is exactly right, it records a real thing that you can then use, and you can configure it to expire after a while, or on a special run, so it refreshes those snapshots.
-
-Mock servers are pretty cool, theres also PHP VCR for capturing real responses and using them to generate stubs.

@@ -367,7 +367,7 @@ attempting to integrate with a new API via one of these tools first is a
 good way to make sure things work as you expect, then it can be
 integrated in code.
 
-image::images/paw.png[image]
+image::images/paw.png[Paw HTTP client]
 
 Screenshot of Paw from paw.rest
 

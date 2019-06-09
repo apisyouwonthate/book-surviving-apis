@@ -186,11 +186,10 @@ low-tech announcements, but they can also be communicated in-band.
 
 === Deprecated Endpoints
 
-There is a a proposed standard:
-https://tools.ietf.org/html/draft-wilde-sunset-header-05[Sunset Header],
-which at the time of writing is at draft 05. APIs can add a simple
-header to the HTTP response, to let clients know the endpoint is nearing
-the end of its life.
+A HTTP standard was created to solve this: https://tools.ietf.org/html/rfc8594[RFC 8594: Sunset Header]
+
+APIs can add a simple header to the HTTP response, to let clients know the
+endpoint is nearing the end of its life.
 
 Supporting Sunset is as simple as sniffing for the `sunset` header, and
 it contains a https://tools.ietf.org/html/rfc7231#section-7.1.1.1[HTTP
@@ -200,10 +199,9 @@ date] which looks a little like this:
 Sunset: Sat, 31 Dec 2018 23:59:59 GMT
 ....
 
-The proposed standard also allows responses to contain a HTTP `link`
-header, with `rel=sunset`. The link can be a link to anything, the
-endpoint replacing it, a link to some human readable documentation, a
-blog post, whatever.
+The standard also allows responses to contain a HTTP `link` header, with
+`rel=sunset`. The link can be a link to anything, the endpoint replacing it, a
+link to some human readable documentation, a blog post, whatever.
 
 Keep an eye out for sunset headers and their accompanying links coming
 back in responses your code is getting, and log, or alert, or pass to a
@@ -215,13 +213,8 @@ https://github.com/hskrasek/guzzle-sunset[hskrasek/guzzle-sunset]
 * *Ruby:*
 https://github.com/wework/faraday-sunset[wework/faraday-sunset]
 
-Sunset is on
-https://github.com/dret/I-D/tree/master/sunset-header[GitHub], and the
-issue tracker is used for discussion around it's development. Some API
-gateways like https://tyk.io[Tyk] are building in support, and it is
-going to become far more wide-spread over time. If you make an
-implementation for your favorite HTTP client please get in touch with
-@apisyouwonthate on Twitter.
+Some API gateways like https://tyk.io[Tyk] mentioned building in support while
+it was still in draft, and it is going to become far more wide-spread over time.
 
 Another approach commonly used by API providers is to provide SDKs, and
 if they are kept up to date they will fling out deprecation warnings
@@ -243,16 +236,15 @@ property absolutely has to go away.
 
 JSON is the main content type in use these days, which does not have a
 type system built in. There is no way to mark a JSON field as deprecated
-in just JSON, and no standards exist to help, even JSON Schema still has
-this on the todo list.
+in just JSON, but those using OpenAPI v3.0 or JSON Schema have a `deprecated: true`
+keyword.
 
-Again SDKs can mark things as deprecated over time, especially those
-built with OpenAPI v3.0.0 or later. OpenAPI added the `deprecated: true`
-keyword, so SDKs can now look for this and fire off deprecation warnings
-for clients using that property in their code. Keeping up to date is
-important, so make sure something like https://snyk.io/[Snyk] or
-https://greenkeeper.io/[Greenkeeper] is implemented to keep tabs on
-dependencies.
+Clients can check against the spec programmatically, or the API developer teams
+can bake warnings into their SDKs; if a client application hits a property the
+SDK knows is deprecated, it can fire off deprecation warnings into the logs, or
+other reporting systems. Keeping up to date is important, so make sure something
+like https://dependabot.io/[Dependabot] or https://greenkeeper.io/[Greenkeeper]
+is implemented to keep tabs on dependencies.
 
 == GraphQL
 

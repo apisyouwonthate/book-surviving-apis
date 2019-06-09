@@ -1,0 +1,277 @@
+= Testing
+
+One problem with building applications that talk to external dependencies like APIs,
+is that the applications are talking to external dependencies. That opens up a whole can
+works when it comes to testing the application.
+
+You may well have heard developers saying: don't let tests hit external dependencies!
+
+Some folks take that to various different extremes, and don't even let their
+tests talk to a database they control. That might make sense in some situation,
+and not in others, but something pretty much everyone agrees on is that a test
+suite hitting an actual API over the wire is not ideal.
+
+If the test suite is hitting a production API, you could end up sending "funny"
+(offensive) test emails to a bunch of customers.
+
+If a special testing API exists, then multiple developers hitting that test
+server could cause state to bleed from one test to another, causing race
+conditions, false positives, false negatives, or all sorts of nonsense.
+
+Trying to reset an external API back to a specific state for each test is a
+fools errand. If you somehow manage it, your test suite now requires the
+internet, meaning anyone of your team is gonna be screwed next time they try
+working from a coffee shop, busy conference, plane, etc.
+
+Here are a bunch of solutions that not only help you cut the cord, but help you
+get the application into specific states, improving the quality of your tests.
+
+## Mocking Code Dependencies with Unit Tests
+
+Hopefully your application is not littered with HTTP calls to this API or their
+SDK directly, because that would be some tight coupling and make it reeeeal hard
+to switch the API for another one if the company yank it for some reason.
+
+// TODO did we talk about not coupling your code to external dependencies? This seems like
+// it should be a thing.
+
+You probably have some thin layer wrapping their logic, giving you the chance to
+swap things out without changing too much of your own code. Maybe it looks a bit
+like this:
+
+```ruby
+class Geocoder
+  def address(str)
+    google_sdk.geocode(str)
+  end
+end
+```
+
+The application code has `VenueService` which is talking to `Geocoder` and using
+the `address` method, which pops off to the Google Maps API to do the thing.
+
+To avoid the test suite hitting the external API, the most likely move is to
+mock the `Geocoder` in the `VenueService` tests.
+
+```ruby
+RSpec.describe VenueService do
+
+  describe '.update' do
+    it 'will geocode address ' do
+      allow(Geocoder).to receive(:address).with('123 Main Street') do
+        {
+          lat: 23.534,
+          lon: 45.432
+        }
+      }
+      subject.update(address: '123 Main Street')
+      expect(subject.lat).to eql(23.534)
+      expect(subject.lon).to eql(45.432)
+    end
+  end
+end
+```
+
+Basically what we have here is a test (using RSpec but whatever it's all the
+same) which describes how the `VenueService` should work. The `update` method is
+being tested, and the `Geocoder` is being set up (monkey patched 🙈) to
+respond in a certain way.
+
+For the `VenueService` unit tests this is fine, because the intent is to make
+sure `VenueService` works with what we think `Geocoder` is going to return. Unit
+tests for `VenueService` only focus on that class, so what can we do to make sure
+Geocoder is working properly?
+
+Well, unit testing that class is one option, but it's not really doing much
+other than talking to the Google Map SDK, and we really dont want to mock that.
+Why? Because we don't own it, and mocking things you dont own is making guesses
+that might not be correct now, and might not be correct later. The Google Maps
+SDK might change, and if all we have are tests saying that the SDK works one
+way, but really it works another way, then you are in false positive world: a
+broken application with a lovely green test suite.
+
+_This will often be less of a problem for typed languages like Go, TypeScript,
+PHP 7, etc., but changes can happen which those type systems do not notice. For
+example, a `foo` property can still be a string, but suddenly have different
+contents within that string._
+
+Integration tests are very important to make sure things work altogether.
+
+."2 unit tests, 0 integration tests" via https://twitter.com/vincentdnl/status/953005793141551108[Vincent Déniel]
+image::images/11-unit-v-integration.jpg[A set of stairs with arrows on directing people to walk, but each floor has the arrows pointing in the opposite direction.]
+
+## Web Mocking in Integration Tests
+
+Integration tests will be a bit more realistic as they hit more real code, so
+the behaviour is closer to what is actually likely to happen in production. This
+does mean integration tests can be slower than unit tests.
+
+Some developers avoid integration tests for this reason, but that is reckless
+and daft premature optimization. Would you rather work on speeding up a slow but
+reliable test suite, or have a broken production with an untrustworthy test
+suite.
+
+As integration tests hit more code, some folks think hitting the external APIs is
+just going to happen, but not the case! There is a tactic called "record and replay",
+and it is available in pretty much every programming language in one form or another.
+
+One approach for more realistic HTTP interactions in integration tests is to use
+something like https://github.com/bblimke/webmock[WebMock] for Ruby,
+https://github.com/nock/nock[Nock] for JavaScript, or the baked in
+https://golang.org/pkg/net/http/httptest/[httptest] in Go.
+
+These tools are another type of mock, unlike the two other types of mocking
+discussed so far. Instead of mocking a class in your programming language, they
+mock a HTTP server. They are also very different from API specification based
+mocking tools like http://github.com/stoplightio/prism/[Prism], which will be
+discussed a bit later.
+
+Web mocking tools and can be configured to respond in certain ways depending on
+what URL, HTTP method, or body params are sent to it, depending on how complex
+things want to get. Most of the time this is used for simple stuff.
+
+Here's an example taken from the CLI-tool https://github.com/stoplightio/spectral[Spectral].
+
+```js
+const invalidOas3SpecPath = resolve(__dirname, '__fixtures__/openapi-3.0-no-contact.yaml');
+
+describe('when loading specification files from web', () => {
+  test.nock('http://foo.local', api =>
+    api.get('/openapi').replyWithFile(200, validOas3SpecPath, {
+      'Content-Type': 'application/yaml',
+    }),
+  )
+  .stdout()
+  .command(['lint', 'http://foo.local/openapi'])
+  .it('outputs no issues', ctx => {
+    expect(ctx.stdout).toContain('No errors or warnings found!');
+  });
+});
+```
+
+This test is setting up a server on the arbitrary fake hostname
+`http://foo.local`, with a GET path `/openapi` that returns a YAML file with
+some specific content.
+
+Then other tests can confirm what Spectral will do if it tries to load an
+unsupported file type, the response contains a 404 status code, or any other
+number of edge cases.
+
+Web mocking is great for when you want to control the response, but once again
+you should only mock things you own. Using this approach for the Google Maps API
+example would only be confirming that the Geocoder works with an assumption of
+what the Google Maps API is going to do. When things change in the API there is
+no programmatic way to know about it.
+
+Even if the change is noticed, updating these mock setups can be time consuming. What
+we really want is something like Jest Snapshots, but for HTTP requests...
+
+## Record & Replay in Integration Tests
+
+Record & Replay has been around for years, and I did not discover it until I started using
+Ruby, using a tool called http://relishapp.com/vcr/vcr[VCR] ("Video Cassette Recorder").
+
+_For younger developers a VCR is like Blueray but terrible quality and the data
+is printed on a chunk of plastic you shove in a box under your TV. It was mostly
+used for recording telly you weren't able to watch at the time, which is no
+longer a thing._
+
+VCR explains the goals nicely, so I will use their words:
+
+> Record your test suite's HTTP interactions and replay them during future test
+> runs for fast, deterministic, accurate tests.
+
+The basic approach is to put your test suite in "record mode", which will actually make
+real requests to the external services, but then it records the response. All the headers,
+body content, status code, the whole thing.
+
+Then when the test suite is run not in record mode, it will reuse the recorded
+responses instead of going over the wire, meaning it is quick, always going to
+give the same result, and the entire response is being used, so you know it is
+accurate.
+
+```ruby
+require 'rubygems'
+require 'test/unit'
+require 'vcr'
+
+VCR.configure do |config|
+  config.cassette_library_dir = "fixtures/vcr_cassettes"
+  config.hook_into :webmock
+end
+
+class VCRTest < Test::Unit::TestCase
+  def test_example_dot_com
+    VCR.use_cassette("synopsis") do
+      response = Net::HTTP.get_response(URI('http://www.iana.org/domains/reserved'))
+      assert_match /Example domains/, response.body
+    end
+  end
+end
+```
+
+This is a rather verbose Ruby example for clarity. It includes the config which
+would normally be tucked away in a helper, and it is manually using a cassette
+block, but the idea is this: You can define multiple cassettes, and switch them
+out to see the code working differently.
+
+How exactly it works under the hood might be a bit too much of how the sausage is made,
+but it is very clever so I am going to nerd out a little. In Ruby once again there is
+some monkey patching going on. It knows to look out for common HTTP clients, and
+actually messes with their definitions a little (only in the test suite). This sounds a bit
+scary, but it means VCR can hijack the HTTP requests and use the recorded versions instead.
+
+Most of these record & replay tools can be configured to use the more static web
+mocking tools mentioned previously. Ruby VCR for example can use webmock, just
+think of VCR as a helper for creating these accurate web mocks.
+
+Another convenient thing about record & replay is the ability to have expiring
+cassettes. You can configure these recordings to automatically expire (vanish)
+after a certain amount of time, and then the test suite goes back into record
+mode. Or you can have them throw warnings, and hope some developers actually pay
+attention. This can be very annoying, but you would not believe how often I have
+seen client application developers use year old stubs with fields that did
+not exist anymore.
+
+When recorded responses expire, clients need to go over the wire and record new
+responses. This can be tricky if as the API might have different data now. Some
+amount of effort can go into getting good data on the API for recording, which
+might be a case of building a sort of seed script. This annoyance is worth it in
+the long run, but certainly takes some getting used to.
+
+Expiring recordings go hand in hand with Change Management, especially `Sunset`
+and `Deprecated` headers. If your applications are using reasonably up-to-date
+recordings, then your test suite can start throwing deprecating warnings, and
+loudly report about the code hitting is URLs marked for removal with `Sunset`.
+
+The Ruby VCR was initially inspired by [Chris Young's
+NetRecorder](https://github.com/chrisyoung/netrecorder) are the inspiration for
+a lot of other record and replay tools, and they maintain an impressive list of
+ports to other languages:
+
+* [Betamax](https://github.com/sigmavirus24/betamax) (Python)
+* [VCR.py](https://github.com/kevin1024/vcrpy) (Python)
+* [Betamax](https://github.com/thegreatape/betamax) (Go)
+* [DVR](https://github.com/orchestrate-io/dvr) (Go)
+* [Go VCR](https://github.com/dnaeon/go-vcr) (Go)
+* [Betamax](https://github.com/wjlroe/betamax) (Clojure)
+* [vcr-clj](https://github.com/ifesdjeen/vcr-clj) (Clojure)
+* [scotch](https://github.com/mleech/scotch) (C#/.NET)
+* [Betamax.NET](https://github.com/mfloryan/Betamax.Net) (C#/.NET)
+* [ExVCR](https://github.com/parroty/exvcr) (Elixir)
+* [HAVCR](https://github.com/cordawyn/havcr) (Haskell)
+* [Mimic](https://github.com/acoulton/mimic) (PHP/Kohana)
+* [PHP-VCR](https://github.com/php-vcr/php-vcr) (PHP)
+* [Polly.js](https://netflix.github.io/pollyjs/) (JavaScript/Node)
+* [Nock-VCR](https://github.com/carbonfive/nock-vcr) (JavaScript/Node)
+* [Sepia](https://github.com/linkedin/sepia) (JavaScript/Node)
+* [VCR.js](https://github.com/elcuervo/vcr.js) (JavaScript)
+* [yakbak](https://github.com/flickr/yakbak) (JavaScript/Node)
+* [NSURLConnectionVCR](https://bitbucket.org/martijnthe/nsurlconnectionvcr) (Objective-C)
+* [VCRURLConnection](https://github.com/dstnbrkr/VCRURLConnection) (Objective-C)
+* [DVR](https://github.com/venmo/DVR) (Swift)
+* [VHS](https://github.com/diegoeche/vhs) (Erlang)
+* [Betamax](https://github.com/betamaxteam/betamax) (Java)
+* [http_replayer](https://github.com/ucarion/http_replayer) (Rust)
+* [OkReplay](https://github.com/airbnb/okreplay) (Java/Android)
+* [vcr](https://github.com/ropensci/vcr) (R)
