@@ -57,7 +57,7 @@ mock the `Geocoder` in the `VenueService` tests.
 RSpec.describe VenueService do
 
   describe '.update' do
-    it 'will geocode address ' do
+    it 'will geocode address to lat lon' do
       allow(Geocoder).to receive(:address).with('123 Main Street') do
         {
           lat: 23.534,
@@ -275,3 +275,34 @@ ports to other languages:
 * [http_replayer](https://github.com/ucarion/http_replayer) (Rust)
 * [OkReplay](https://github.com/airbnb/okreplay) (Java/Android)
 * [vcr](https://github.com/ropensci/vcr) (R)
+
+If you are a JavaScript user then check out [Polly.js](https://netflix.github.io/pollyjs/), comically
+written by Netflix. It has some great config options.
+
+```js
+polly.configure({
+  recordIfMissing: true,
+  recordIfExpired: false,
+  recordFailedRequests: false,
+
+  expiresIn: null,
+  timing: Timing.fixed(0),
+
+  matchRequestsBy: {
+    method: true,
+    headers: true,
+    body: true,
+    order: true,
+  }
+})
+```
+
+The `recordIfMissing` is a good option, which means when folks add new tests it will try to record
+the request when it is run the first time. This can catch developers out if they
+are not expecting it, and can lead to a rubbish response being recorded so they have to delete and
+try again, but again it is worth getting used to.
+
+Another one I like is `recordFailedRequests: true`. This is yet another reminder
+that if the API is ignoring HTTP conventions like status codes, this will not
+work. Ask the API developers to stop ignoring conventions and build their APIs
+properly. Maybe send them a copy of _Build APIs You Won't Hate_. if they need convincing.
