@@ -287,3 +287,14 @@ This image is from https://medium.com/@kevinsimper/[Kevin Simper]'s
 awesome article:
 https://medium.com/@kevinsimper/how-to-deprecate-fields-in-graphql-52fbd03fb9d7[_How
 to deprecate fields in GraphQL_].
+
+
+// TODO Worth noting that in the case of using something like stripe’s npm package,
+// change management is essentially handled by paying attention to package
+// versions. (Bearing in mind that occasionally an old API version will be
+// deprecated, etc). Introduce and talk about SemVer here - this is something that
+// many front end peeps will only have a foggy idea about From a
+// people-reality-management standpoint, this might be a good place to talk about
+// interacting with API maintainers on github, etc. I’ve had to ask for better
+// documentation of API changes on several occasions, particularly as we go through
+// the process of updating NPM package versions regularly.

@@ -91,3 +91,8 @@ it is made.
 
 Sadly, as mentioned, there is often no SDK, or no good ones, so lets
 keep trucking and learning about making these calls yourself.
+
+// TODO before using the sdk check some things
+// check # downloads via NPM
+// Search issues for outstanding problems with no movement or conversation
+// Check for who owns it - Recently, opted out of using one particular tool because it was owned by a big evil telecom company 🤮

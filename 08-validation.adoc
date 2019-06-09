@@ -290,6 +290,10 @@ might be a better idea. A much larger example, again available on
 Github, will show how JSON Pointers can be used to create dynamic
 errors.
 
+// TODO json-pointers example could use some clarification and explanation. I
+// hadn’t heard about json pointers before. A quick google cleared it up, but we
+// may as well save readers the time
+
 _Sadly a lot of this example is going to be specific to AJV, but the
 concepts should translate to any JSON Schema validator out there._
 

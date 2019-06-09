@@ -138,6 +138,9 @@ etc. tooling, but you will need to go a step further. Doing your best to
 avoid hitting rate limits is a good start, but nothing is perfect, and
 the API might lower its limits for some reason.
 
+// TODO This may be a good place to explain the Debounce and throttle methods
+// that lodash provides, since they often get comingled/confused
+
 === Am I Being Rate Limited?
 
 The appropriate HTTP status code for rate limiting has been argued over

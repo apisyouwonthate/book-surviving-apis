@@ -200,7 +200,11 @@ GET and POST. If it's GraphQL, it's all going to happen over POST.
 
 Confused? I know. More on all of that later.
 
+// TODO A table showing which verbs are used by REST vs GraphQL vs RPC might make the last paragraph stickier
+
 == HTTP Status Codes
+
+// illustrations / images / coloring might make the HTTP Status codes breakouts easier to remember. A big, smiley green box around 2xx, for example, vs. a red-angry client for 4xx and a broken server for 5xx, etc
 
 A status code is a category of success or failure, with specific codes
 being provided for a range of situations, that are essentially metadata
@@ -357,8 +361,8 @@ often you will find that a HTTP client with a GUI will be more helpful.
 There are plenty of HTTP GUI applications out there, but the three
 biggest are:
 
-* http://www.getpostman.com/[Postman]
 * http://paw.cloud/[Paw]
+* http://www.getpostman.com/[Postman]
 * http://insomnia.rest/[Insomnia]
 
 These GUIs are very impressive, and can help you build complex requests

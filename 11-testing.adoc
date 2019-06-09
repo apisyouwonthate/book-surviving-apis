@@ -306,3 +306,6 @@ Another one I like is `recordFailedRequests: true`. This is yet another reminder
 that if the API is ignoring HTTP conventions like status codes, this will not
 work. Ask the API developers to stop ignoring conventions and build their APIs
 properly. Maybe send them a copy of _Build APIs You Won't Hate_. if they need convincing.
+
+// TODO using Prism for spec-based mocking, like web mocking but using specs provided by the API teams
+// so they are not being created by the client
