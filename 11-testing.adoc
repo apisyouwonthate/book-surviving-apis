@@ -1,8 +1,8 @@
 = Testing
 
 One problem with building applications that talk to external dependencies like APIs,
-is that the applications are talking to external dependencies. That opens up a whole can
-works when it comes to testing the application.
+is that the applications are talking to external dependencies. This opens up a whole can
+of worms when it comes to testing the application.
 
 You may well have heard developers saying: don't let tests hit external dependencies!
 
@@ -117,7 +117,7 @@ and it is available in pretty much every programming language in one form or ano
 
 One approach for more realistic HTTP interactions in integration tests is to use
 something like https://github.com/bblimke/webmock[WebMock] for Ruby,
-https://github.com/nock/nock[Nock] for JavaScript, or the baked in
+https://github.com/nock/nock[Nock] for JavaScript, the baked in
 https://golang.org/pkg/net/http/httptest/[httptest] in Go.
 
 These tools are another type of mock, unlike the two other types of mocking
@@ -156,6 +156,9 @@ some specific content.
 Then other tests can confirm what Spectral will do if it tries to load an
 unsupported file type, the response contains a 404 status code, or any other
 number of edge cases.
+
+- **PHP:** https://guzzler.dev/[Guzzler]
+- **Java:** http://wiremock.org/docs/stubbing/[Wiremock]
 
 Web mocking is great for when you want to control the response, but once again
 you should only mock things you own. Using this approach for the Google Maps API
