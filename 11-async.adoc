@@ -72,4 +72,8 @@ Generally speaking, it's best to stay away from long polling unless you're askin
 
 == Websockets
 
-It turns out the answer to a lot of our problems comes in the form of websockets.  Under the hood, websockets are a protocol that is _parallel_ to `http`.  Websocket connections are established from client -> server via TCP
+It turns out the answer to a lot of our problems comes in the form of websockets.  Under the hood, websockets are a protocol that is _parallel_ to `http`.  Websocket connections are established from client -> server via TCP.  That connection is then used as a direct line of communication between your client and the server for (effectively) as long as it's needed.  This gets around many of the problems already discussed in this chapter.
+
+Websocket connections are flexible, and designed provide features that many  modern-day web applications use. 
+
+In fact, there are plenty of websocket-enabled client/server tools and adaptations which you may already use at some level.  
