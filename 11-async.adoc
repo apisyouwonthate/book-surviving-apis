@@ -76,4 +76,14 @@ It turns out the answer to a lot of our problems comes in the form of websockets
 
 Websocket connections are flexible, and designed provide features that many  modern-day web applications use. 
 
-In fact, there are plenty of websocket-enabled client/server tools and adaptations which you may already use at some level.  
+In fact, there are plenty of websocket-enabled client/server tools and adaptations which you may already use at some level.  Some examples of this are RxJS, Firebase's Realtime Database and Firestore, and ReactiveMongo (and surely loads more).
+
+Using websockets, we can avoid many of the problems seen in Long and Short Polling.  In particular, with websockets, you can send multiple requests to your API.  This will allow you to prioritize the information you're asking for - rather than have _one giant API call_ for everything on a screen, you can send a handful of smaller requests, and get back data in hieracrhical order of importance.  This will allow you to render bits of the page as they come back. Finally! 
+
+It may sound like loading pages in order of importance won't be that different from just loading everything at once, but there's a handful of benefits here:
+1. Users with _extremely_ slow connections will be able to use your software much more quickly.  With every passing millisecond of a page load, you're losing human attention.  You may as well give your product the best chance possible.  Want to feel the difference? Use your browser's devtools to set your connection speed to 3G or slower, and load up your favorite website.
+1. This approach allows for more generic API calls to be used, which puts less strain on your API dev team.  Think of it this way: if you had to task your API developers with a _single query_ for all of the data on every screen of your app, they would need to be in lock-step with your front-end team for everything.  With a more granular approach, you'll fire off API calls for content in ways that aren't hyper-specific to the page they're on.  It's the difference between `API.loadToDos().filterByMonth('march')` and `API.loadCalendarScreenForUser({ month: 'march', user: 12345, view: 'monthly'})`.  The former is much easier to write, test, and maintain. 
+
+An auxiliary benefit of websockets is that many websocket-enabled frameworks allow you to _subscribe_ to a particular query or bit of data.  This effectively means that your interface can reflect near real-time updates from your API without much extra effort for your front-end team.  It eliminates the need for your team to craft and adhere to strategies for repeatedly checking the API for data updates.  Many of these same frameworks come with supported (and often built-in) strategies for recovering lost connections, as well as PWA features for offline use of your site.
+
+
