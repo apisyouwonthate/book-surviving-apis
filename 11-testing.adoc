@@ -1,13 +1,13 @@
 = Testing
 
-One problem with building applications that talk to external dependencies like APIs,
+One problem with building applications that talk to external dependencies like APIs
 is that the applications are talking to external dependencies. This opens up a whole can
 of worms when it comes to testing the application.
 
-You may well have heard developers saying: don't let tests hit external dependencies!
+You may well have heard developers saying: _don't let tests hit external dependencies!_
 
 Some folks take that to various different extremes, and don't even let their
-tests talk to a database they control. That might make sense in some situation,
+tests talk to a database they control. That might make sense in some situations
 and not in others, but something pretty much everyone agrees on is that a test
 suite hitting an actual API over the wire is not ideal.
 
@@ -112,7 +112,7 @@ reliable test suite, or have a broken production with an untrustworthy test
 suite.
 
 As integration tests hit more code, some folks think hitting the external APIs is
-just going to happen, but not the case! There is a tactic called "record and replay",
+just going to happen, but that's not the case! There is a tactic called "record and replay",
 and it is available in pretty much every programming language in one form or another.
 
 One approach for more realistic HTTP interactions in integration tests is to use
@@ -122,13 +122,12 @@ https://golang.org/pkg/net/http/httptest/[httptest] in Go.
 
 These tools are another type of mock, unlike the two other types of mocking
 discussed so far. Instead of mocking a class in your programming language, they
-mock a HTTP server. They are also very different from API specification based
+mock an HTTP server. They are also very different from API specification based
 mocking tools like http://github.com/stoplightio/prism/[Prism], which will be
 discussed a bit later.
 
-Web mocking tools and can be configured to respond in certain ways depending on
-what URL, HTTP method, or body params are sent to it, depending on how complex
-things want to get. Most of the time this is used for simple stuff.
+Web mocking tools can be configured to respond in certain ways based on
+the URL, HTTP method, or body params which are used. Most of the time this is used for simple stuff.
 
 Here's an example taken from the CLI-tool https://github.com/stoplightio/spectral[Spectral].
 
@@ -159,6 +158,7 @@ number of edge cases.
 
 - **PHP:** https://guzzler.dev/[Guzzler]
 - **Java:** http://wiremock.org/docs/stubbing/[Wiremock]
+- **Node:** https://github.com/nock/nock[Nock]
 
 Web mocking is great for when you want to control the response, but once again
 you should only mock things you own. Using this approach for the Google Maps API
@@ -308,7 +308,7 @@ try again, but again it is worth getting used to.
 Another one I like is `recordFailedRequests: true`. This is yet another reminder
 that if the API is ignoring HTTP conventions like status codes, this will not
 work. Ask the API developers to stop ignoring conventions and build their APIs
-properly. Maybe send them a copy of _Build APIs You Won't Hate_. if they need convincing.
+properly. Maybe send them a copy of _Build APIs You Won't Hate._ if they need convincing.
 
 // TODO using Prism for spec-based mocking, like web mocking but using specs provided by the API teams
 // so they are not being created by the client
