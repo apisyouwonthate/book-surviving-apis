@@ -1,6 +1,6 @@
 = Form Generation
 
-In the chapter on Validation, we discussed how JSON Schema can be used to keep form validation in tune with your API's validation rules. From a usability standpoint, using JSON Schema for validation alone can represent a massive leap in progress compared to old-world application development.  As you may have anticipated already, JSON Schema can _also_ be used to generate your app's forms.  In this chapter, we present some strategies for building forms from your schema.
+In the chapter on Validation, we discussed how JSON Schema can be used to keep form validation in tune with your API's validation rules. From a usability standpoint, using JSON Schema for validation alone can represent a massive leap in progress compared to old-world application development.  As JSON Schema can _also_ be used to generate your app's forms.  In this chapter, we present some strategies for building forms dynamically from your API.
 
 == By way of example
 
@@ -27,7 +27,7 @@ Having done that, you let the product out into the world.  Maybe you make a ment
 In a better world, this is exactly where form generation would start to save your butt. After some googling, you find that Stripe actually has [an API endpoint](https://stripe.com/docs/api/country_specs/object) which you can use to grab a list of countries which they support.  It contains all of the metadata you'll need to make decisions about which countries to include in your dropdown list!  Suddenly you've got a solution on your hands which is much more maintainable:
 
 ----
-// note: this is a simplified example, done in react, for illustration purposes.  But you probably already knew that.
+// note: this is a simplified example, done with react, for illustration purposes
 
 const countries = await fetch('https://api.stripe.com/v1/country_specs');
 
