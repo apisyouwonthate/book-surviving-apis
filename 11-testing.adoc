@@ -157,6 +157,7 @@ Then other tests can confirm what Spectral will do if it tries to load an
 unsupported file type, the response contains a 404 status code, or any other
 number of edge cases.
 
+.Some other Web Mocking implementations 
 - **PHP:** https://guzzler.dev/[Guzzler]
 - **Java:** http://wiremock.org/docs/stubbing/[Wiremock]
 
@@ -220,7 +221,7 @@ out to see the code working differently.
 
 How exactly it works under the hood might be a bit too much of how the sausage is made,
 but it is very clever so I am going to nerd out a little. In Ruby once again there is
-some monkey patching going on. It knows to look out for common HTTP clients, and
+some monkey patching going on.footnote:[Monkey patching is the mysterious art of rewriting code at runtime, making a single instance of the application work differently. https://wikipedia.org/wiki/Monkey_patch] It knows to look out for common HTTP clients, and
 actually messes with their definitions a little (only in the test suite). This sounds a bit
 scary, but it means VCR can hijack the HTTP requests and use the recorded versions instead.
 
