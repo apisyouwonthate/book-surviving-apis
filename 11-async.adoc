@@ -147,6 +147,41 @@ We can do better than that.
 
 There are a plethora of services available which will detect and report application crashes to you the instant they happen, so your support team can spring into action at a moment's notice.  Some of these services include https://raygun.com/platform/crash-reporting[Raygun], https://sentry.io/[Sentry], https://logrocket.com[LogRocket], https://rollbar.com/[Rollbar], and https://www.datadoghq.com/[Data Dog].  With a few lines of code, these will plug into your app, and keep an eye on network requests.  When a page crashes, they'll fire off all manner of notifications - SMS, email, webhooks, Slack messages, you name it.  
 
+If you can't afford to use one of these services, or otherwise prefer not to, you can scrap together a simple one yourself.  This generally looks like a wrapper function which you can use to call APIs.  It should contain the logic to detect failures, and fire off whatever calls are necessary to alert your team to the problem.  For teams with a small budget, the easiest approach may be using Slack's incoming webhooks feature to send a message to a channel dedicated to an application crash:
+
+```javascript
+
+const callApi = async ({url, options}) => {
+  try {
+    // send off the API call
+    const response = fetch(url, options);
+    return response;
+  } catch (e) {
+
+    //something went wrong, let's notify the team!
+
+    /* helper function to gather as much information as possible about this session, possibly including:
+      - user name and contact information
+      - URL or page they were visiting
+      - which action caused this error
+      - browser metadata ("IE7" or "Firefox 58", etc)
+      - anything else that might help your support team send a thoughtful, personal response!
+    */ 
+    const metadata = getUserMetadata();
+
+    // just what it sounds like - send a message to your team's slack channel via incoming webhook
+    sendSlackWebhook({
+      error: e,
+      metadata: metadata
+    });
+
+    // send the response back to the interface so you can let the user know something went wrong
+    return e;
+  }
+}
+
+```
+
 These can greatly decrease your effective response time.  If you're able to detect these problems and set your dev team off on a solution _before_ users start complaining, the people using your app will feel loved. Think about how rare it is to use software and feel like the people who are making it care about you directly! If you're a small, scrappy start-up, this can really help you hang on to early customers.  If you're a larger company, it means lower attrition rates, and better support ratings.
 
 Error reporting can also help you detect crashes with user-by-user granularity.  You may see crash reports coming in from a single user over and over.  Reaching out to that individual to see how you can help them _before_ they message you can honestly feel like magic. I've even had users _thank me_ for dropping them a line and telling them I see that they're having trouble, and that I'm on the case.  It's a great feeling - particularly when the alternative is a red-hot support email or a scathing tweet.
