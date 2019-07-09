@@ -1,5 +1,8 @@
 = Async
 
+.https://twitter.com/jayzalowitz/status/1133547754989342722[A tweet from @ jayzalowitz] sums up async pretty well.
+image::images/11-async-tweet.png[]
+
 As a front-end developer, there are many different patterns that may be made available to you to read and write data asynchronously.  Like anything else, each has its benefits and challenges.  Your goal should be to make asynchronous interfaces feel like magic.  If implemented correctly, the people using your application won't feel burdened by waiting for data to come or go. They should feel confident that changes they're making are saved accurately.  When things go wrong, it should be easy for them to understand what broke, and what action they can take to remedy it (i.e. "Wait a moment and try again", or "You entered a title that is too long.").
 
 Historically, there have been a variety of different ways to pull data from APIs asynchronously.  Included here are some of the more popular patterns that are in use today.
