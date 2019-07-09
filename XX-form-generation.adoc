@@ -37,11 +37,6 @@ const countrySelect = (
 return countrySelect;
 ----
 
-notes / future janx: 
-https://github.com/json-schema-form/json-schema-form-core
-http://schemaform.io/
-https://mozilla-services.github.io/react-jsonschema-form/
-
 == JSON Schema
 
 In the chapter on Validation, we discussed how JSON Schema can be used to keep form validation in tune with your API's validation rules. From a usability standpoint, using JSON Schema for validation alone can represent a massive leap in progress compared to old-world application development.  As JSON Schema can _also_ be used to generate your app's forms.  In this chapter, we present some strategies for building forms dynamically from your API.
