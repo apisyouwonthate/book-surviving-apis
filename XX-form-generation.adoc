@@ -1,9 +1,5 @@
 = Form Generation
 
-In the chapter on Validation, we discussed how JSON Schema can be used to keep form validation in tune with your API's validation rules. From a usability standpoint, using JSON Schema for validation alone can represent a massive leap in progress compared to old-world application development.  As JSON Schema can _also_ be used to generate your app's forms.  In this chapter, we present some strategies for building forms dynamically from your API.
-
-== By way of example
-
 Imagine you're building a shiny new web app which requires users to register an account with a profile that includes their mailing address.  You're using [Stripe](https://stripe.com) for payments, and because of that, you're forced to limit registrations to the [countries supported by Stripe)(https://stripe.com/global).  Looking at their list on launch day, you see that they support _34 Countries_:
 
 .Stripe's list of supported countries on day 1 of your product launch
@@ -45,3 +41,7 @@ notes / future janx:
 https://github.com/json-schema-form/json-schema-form-core
 http://schemaform.io/
 https://mozilla-services.github.io/react-jsonschema-form/
+
+== JSON Schema
+
+In the chapter on Validation, we discussed how JSON Schema can be used to keep form validation in tune with your API's validation rules. From a usability standpoint, using JSON Schema for validation alone can represent a massive leap in progress compared to old-world application development.  As JSON Schema can _also_ be used to generate your app's forms.  In this chapter, we present some strategies for building forms dynamically from your API.
