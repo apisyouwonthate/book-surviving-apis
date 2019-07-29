@@ -29,7 +29,7 @@ const countries = await fetch('https://api.stripe.com/v1/country_specs');
 
 const countrySelect = (
   <select>
-    {countries.forEach(country => <option value={country.id}> {country.displayName}</option>)}
+    {countries.forEach(country => <option key={country.id} value={country.id}>{country.displayName}</option>)}
   </select>
 );
 
@@ -37,6 +37,54 @@ const countrySelect = (
 return countrySelect;
 ----
 
+This approach can also save you loads of time when it comes to standardizing your UI.  There's a principle in software development called DRY (Don't Repeat Yourself), which can serve as an easy litmus for front-end developers.  Though the work may not have been incredibly complex, there's quite a bit of repeated code in the first example above. It's easy enough to add another country to that list by creating a new `<option />` tag with a few attributes on it, but once the story gets a little more complex, the work gets lots heavier.
+
+What if your team decided that it was bad form to use the country name as the value of each checkbox, and instead that the value for each needs to be its ISO standard abbreviation? Now you've got to go back and edit each and every country to update its value.  The same goes for relatively common HTML-ish tasks, like adding an `id="blah"` attribute to each element.  
+
+Imagine now that requirements have changed, and that your users now need to indicate _all_ of the markets in which they intend to do business.  Now your `<select>` doesn't make sense, and all of those `<option>` entries need to be turned into something like `<input type="check" />`.  That's a lot of work, and the amount of work grows linearly with each country added to the list.  Not good.
+
+In all of these cases, you'll have to go back and update _each and every_ line of code manually.  Even if you're particularly savvy with your IDE, or are great at find/replace or perl scripting or regex or whatever it may be, you're opening yourself up to an error-prone and change-intensive process, which could be saved if you better encapsulated your interface with components or partials or includes, or whatever your implementation of choice makes available to you.
+
+----
+// country list implemented as a select dropdonw
+const CountryEntry = ({ country }) => (
+  <option value={country.id}>{country.displayName}</option>
+);
+
+const CountryList = ({ countries }) => (
+  <select>
+    {countries.forEach(country => (
+      <CountryEntry
+        key={country.id}
+        country={country}
+      />
+    )}
+  </select>
+);
+----
+
+----
+// country list implemented as checkboxes
+const CountryEntry = ({ country }) => (
+  <input
+    type="checkbox"
+    value={country.id}
+  >
+    {country.displayName}
+  </input>
+);
+
+const CountryList = ({ countries }) => (
+  {countries.forEach(country => (
+    <CountryEntry type="checkbox"
+      key={country.id}
+      country={country}
+    />
+  )}
+);
+----
+
 == JSON Schema
 
-In the chapter on Validation, we discussed how JSON Schema can be used to keep form validation in tune with your API's validation rules. From a usability standpoint, using JSON Schema for validation alone can represent a massive leap in progress compared to old-world application development.  As JSON Schema can _also_ be used to generate your app's forms.  In this chapter, we present some strategies for building forms dynamically from your API.
+In the chapter on Validation, we discussed how JSON Schema can be used to keep form validation in tune with your API's validation rules. From a usability standpoint, using JSON Schema for validation alone can represent a massive leap in progress compared to old-world application development.  As JSON Schema can _also_ be used to generate your app's input forms. 
+
