@@ -38,17 +38,11 @@ Whatever is going on, talking to multiple APIs probably means dealing with a lot
 
 For this, some people use the BFF pattern.
 
-=== Direct Dependencies Are Not Terrible
-
-This approach does have potential danger, but it depends on the size of your team, and what sort of phase the organization is in. Consider it a necessary shortcut for prototypes, MVPs, and early stage startups, etc. 
-
-If you are counting the runway of your company in months, direct dependencies are probably fine, because getting the job done, getting the features out, beating your competition, etc. is probably more important than making your client resilient to change which may not come for a year or two. 
-
-That said don't blame me if you build your entire startup around a single API which vanishes next week. It's impossible to predict the future, but you should consider what your priorities are before you read jump into implementing this next pattern...
-
 == Backends for Frontends (BFF)
 
 A BFF is an API built for the specific needs of a client. This sounds counterintuitive at first because many of us were taught that APIs must be so generic they can be used by multiple clients, even if those clients require rather different content.
+
+image::images/arch-bff.jpg[]
 
 Trying to make an API so generic that it is useable for every client usually means it is not optimized for any clients. That might be fine depending on how many clients there are, or what they are doing, or how much traffic is coming through the ecosystem, but eventually generic APIs become a source of frustration for the developers who want to build more optimized workflows or data models. 
 
@@ -64,7 +58,28 @@ BFFs sound like a lot of work, and they are. They require time, and money, as yo
 
 The canonical example of BFFs is Netflix, who used to make one API for their iPhone client app, another for web app, another their XBox client app, etc. Your company may not have pockets as deep as Netflix, and honestly your clients might not be that different from each other. 
 
-Your iOS and Android application might be basically identical, so maybe they could share a BFF. Then maybe there is an internal dashboard which is more about CRUD and statistics, this could just be an "Admin API", which powers a web dashboard and an iOS admin/management app. Dogmatic BFFs can be unrealistic and too extreme for many, so consider a resaonable variation: backends for groups of frontends. 
+[quote,Sam Newman,https://samnewman.io/patterns/architectural/bff/]
+____
+When it comes to delivering the same (or similar) user experience on different platforms, I have seen two different approaches. The model I prefer is to strictly have a single BFF for each different type of client - this is a model I saw used at REA:
+
+image::images/arch-bff-per-mobile.jpg[]
+____
+
+Your iOS and Android application might be basically identical, so maybe they could share a BFF. Then maybe there is an internal dashboard which is more about CRUD and statistics, this could just be an "Admin API", which powers a web dashboard and an iOS admin/management app. Dogmatic BFFs can be unrealistic and too extreme for many, so consider a reasonable variation: backends for groups of frontends. 
+
+
+[quote,Sam Newman,https://samnewman.io/patterns/architectural/bff/]
+____
+The other model, which I have seen in use at SoundCloud, uses one BFF per type of user interface. So both the Android and iOS versions of the listener native application use the same BFF:
+
+image::images/arch-bff-group.jpg[]
+
+My main concern with the second model is just that the more types of clients you have using a single BFF, the more temptation there may be for it to become bloated by handling multiple concerns. The key thing to understand here though is that even when sharing a BFF, it is for the same class of user interface - so while SoundCloud's listener Native applications for both iOS and Android use the same BFF, other native applications would use different BFFs (for example the new Creator application Pulse uses a different BFF). 
+
+I'm also more relaxed about using this model if the same team owns both the Android and iOS applications and own the BFF too - if these applications are maintained by different teams, I'm more inclined to recommend the more strict model. So you can see your organisation structure as being one of the main drivers to which model makes the most sense (Conway's Law wins again). It's worth noting that the SoundCloud engineers I spoke to suggested that having one BFF for both Android and iOS listener applications was something they might reconsider if making the decision again today.
+____
+
+Creating a BFF means you need to figure out the appropriate API paradigm. The two main contenders in this space are GraphQL and REST.
 
 == GraphQL BFFs
 
@@ -82,8 +97,6 @@ This is extra applicable if those frontends are dealing with real-time informati
 
 This is also applicable if the apps are mostly handling CRUD and do not have "workflows", which REST is a lot better at handling.
 
-// TODO get some articles to reference see if there is more to the sales pitch than this
-
 == REST BFFs
 
 A lot of the reasoning for "GraphQL as a BFF" are just as applicable to "REST as a BFF". Basically old badly designed RESTish APIs can be wrapped with a well designed REST API, 
@@ -97,8 +110,24 @@ This was due to some complex if statements checking 5 different things, and one 
 
 Whatever conclusions the BFF comes to about the state as it pertains to this client group, the whole group of clients get that same conclusion instead of everyone in the group all trying to figure it out independently.
 
+== Summary
+
+Direct dependencies are not terrible, despite having potential downsides. Depending on the size of your team, and what sort of phase the organization is in, they may be an unideal reality. Consider it a necessary shortcut for prototypes, MVPs, and early stage startups, etc. 
+
+If you are counting the runway of your company in months, direct dependencies are probably fine, because getting the job done, proving the concept, beating your competition, surviving to raise more, etc. is probably more important than making your client resilient to potential change which may not come for a year or two. 
+
+That said don't blame me if you build your entire startup around a single API which vanishes next week. It's impossible to predict the future, but you should consider what sort of priorities you have, before committing limited resources to building out loads of BFFs which might really not be all that important just yet.
 
 == Further Reading
 
-- https://samnewman.io/patterns/architectural/bff/
-- TODO Martin Fowler probably nailed this already
+Other authors have written more extensively on BFFs:
+
+- _https://samnewman.io/patterns/architectural/bff/[Pattern: Backends For Frontends]_ by Sam Newman
+- _https://martinfowler.com/articles/micro-frontends.html[Micro Frontends]_ by Cam Jackson
+
+Seeing as building a BFF is creating an API, the most logical suggestion would be to take a look at other content on _APIs You Won't Hate_.
+
+// TODO Update when 2nd edition is complete
+- _https://leanpub.com/build-apis-2/[Build APIs You Won't Hate: Second Edition]_ (in progress)
+- _https://apisyouwonthate.com/books/build-apis-you-wont-hate[Build APIs You Won't Hate]_
+- https://apisyouwonthate.com/videos[Videos and Talks]
