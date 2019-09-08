@@ -349,3 +349,5 @@ http://conduit.io[Conduit.io] are also great solutions for this problem.
 Instead of asking you to code it up yourself and the application level,
 it can be handled with network-level tools which are able to be
 controlled more centrally.
+
+// TODO: diagram for service mesh, and further reading links

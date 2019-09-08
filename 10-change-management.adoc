@@ -18,11 +18,11 @@ their interface over time.
 Let's go more in depth into these concepts, and how they come into
 effect in various API paradigms.
 
-== *# # # # # # # # # # # # # # #* # REST / "Endpoint-based" APIs
+== REST / "Endpoint-based" APIs
 
-<$Scr_H::2>**Global Versioning**
+**Global Versioning**
 
-<!$Scr_H::2>API endpoints are grouped (essentially "namespaced") under a
+API endpoints are grouped (essentially "namespaced") under a
 version number, e.g.
 https://hostname/v1/companies[`https://hostname/v1/companies`], to make
 it clear that a `/v1/companies` has no relation whatsoever to a

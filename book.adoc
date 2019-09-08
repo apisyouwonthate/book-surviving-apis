@@ -34,4 +34,8 @@ include::09-timeouts-retries.adoc[]
 
 include::10-change-management.adoc[]
 
+include::11-testing.adoc[]
+
+include::12-architecture.adoc[]
+
 include::99-outro.adoc[]
