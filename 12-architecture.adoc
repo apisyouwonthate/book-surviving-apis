@@ -1,6 +1,6 @@
 = Architecture
 
-Frontend application developers might not worry themselves with architecture, but this chapter applies to you as much as any backend developers out there. All client application developers need to consider how their application is going to interact with its dependencies, either directly, via a service mesh, via a BFF (Backend for Frontend), or some sort of combination.
+Frontend application developers might not worry themselves with architecture, but this chapter applies to you as much as any backend developers out there. All client application developers need to consider how their application is going to interact with its dependencies: either directly, via a service mesh, via a BFF (Backend for Frontend), or some sort of combination.
 
 The architecture you implement will effect the stability and overall success of your application and the ecosystem around it. As with everything there are pros and cons of all the approaches, and use cases where one would make sense over another. 
 
@@ -12,7 +12,7 @@ Some folks hard-code `api.example.com` into code (don't do this), some folks use
 
 However a client application is getting the IP/hostname for a dependency, if calls are being made directly to the dependency there are fewer moving parts, but a lot of things that can go wrong. 
 
-_Chapter 9: Timeouts, Retries and Circuit Breakers_ covered a lot of the initial concerns with what can go wrong here. Mainly around remember to set timeouts in all client-side calls. Service mesh helps a lot with handling that stuff at the platform level, without needing to write language-specific code, so if you can funnel your outgoing requests through a service mesh you will get can get a lot of protection against instability, and a lot of insight when things go wrong. 
+_Chapter 9: Timeouts, Retries and Circuit Breakers_ covered a lot of the initial concerns with what can go wrong here. Mainly around remembering to set timeouts in all client-side calls. Service mesh helps a lot with handling that stuff at the platform level, without needing to write language-specific code, so if you can funnel your outgoing requests through a service mesh you will get can get a lot of protection against instability, and a lot of insight when things go wrong. 
 
 A more lightweight debugging/tracing proxy like https://httptoolkit.tech/[HTTP Toolkit] if you need more insight into what is going on if a service mesh is out of reach, but relying on logs alone is probably not going to provide the information you need when a direct dependency is acting up.
 
@@ -22,13 +22,13 @@ Hopefully the API is using a reasonable approach to change management: they comm
 
 This is not always the case. Google Maps ditched their free mapping offering, Facebook regularly just turn off various APIs for whatever reason, and Meetup decided to ditch their API for any customers who were not Pro. 
 
-Stuff can just vanish, especially if its a third-party API. If you are coupling your client application with a direct dependency on an API, the impact of that API vanishing can be devastating. 
+Stuff can just vanish, especially if it's a third-party API. If you are coupling your client application with a direct dependency on an API, the impact of that API vanishing can be devastating. 
 
-In the past I've worked at companies who used alternative mapping solutions which got bought out by some bigger company and immediately sunset. We had to pull a rush job to switch all mobile apps, web apps, and backend services over to Google Maps, and deploy them all. When we did we made a generic "mapping service" which would proxy requests to Google Maps in the background, meaning we could switch mapping providers more easily, and it end-users on mobile/desktop apps were not stuck with a broken experience until they upgraded.
+In the past I've worked at companies who used alternative mapping solutions which got bought out by some bigger company and immediately sunset. We had to pull a rush job to switch all mobile apps, web apps, and backend services over to Google Maps, and deploy them all. When we did we made a generic "mapping service" which would proxy requests to Google Maps in the background, meaning we could switch mapping providers more easily, and its end-users on mobile/desktop apps were not stuck with a broken experience until they upgraded.
 
 === Consistency
 
-Most clients will talk to more than one API. In 2010-15 most organizations getting into API-based architectures might have 1 API, but that started ballooning into double and triple digits with the onset of the microservice trend. 
+Most clients will talk to more than one API. In 2010-15 most organizations getting into API-based architectures might have 1 API, but that started ballooning into double and triple digits with the onset of the microservice trend that followed. 
 
 If your client needs to talk to more than a few APIs, you will probably almost immediately notice inconsistencies between the APIs. Maybe some are internal to your organization and some are external, and that alone means you are interacting with a mixture of GraphQL, REST, gRPC or SOAP.
 
@@ -50,11 +50,11 @@ That said don't blame me if you build your entire startup around a single API wh
 
 A BFF is an API built for the specific needs of a client. This sounds counterintuitive at first because many of us were taught that APIs must be so generic they can be used by multiple clients, even if those clients require rather different content.
 
-Trying to make an API so generic that it is useable for every client usually means it is not optimized for any clients. That might be fine depending on how many clients there are, or what they are doing, or how much traffic is coming through the ecosystem, but eventually generic APIs become a source of frustration for the developers who want to build more optimized workflows or data models. 
+Trying to make an API so generic that it is useable for every client usually means it is not optimized for any client. That might be fine depending on how many clients there are, or what they are doing, or how much traffic is coming through the ecosystem, but eventually generic APIs become a source of frustration for the developers who want to build more optimized workflows or data models. 
 
 The worse the design of the remote models the more this starts to become ideal. If you are talking to one of those HTTP/1.1-based RESTish APIs which has jammed 25 resources into a single payload for some reason, but your iPhone application only needs 3 of those resources, making all that extra data go over the wire rather quickly becomes annoying. 
 
-A BFF is a chance for your team to optimize payloads, by grabbing these larger chunks of data and returning only what thinks you probably need. 
+A BFF is a chance for your team to optimize payloads, by grabbing these larger chunks of data and returning only what it thinks you probably need. 
 
 BFFs also let you solve authentication inconsistencies between the various APIs a client needs to talk to, by letting the end user authenticate with your BFF, then it creates various JWTs, bearer tokens, cookies, and heck knows what else, all stored internally in the BFF API so the client doesn't have to juggle all that nonsense. 
 
@@ -68,11 +68,11 @@ Your iOS and Android application might be basically identical, so maybe they cou
 
 == GraphQL BFFs
 
-A practice talked about a lot over the last few years is GraphQL as a BFF. Seeing as GraphQL has one message format, one type system, etc. then theoretically it is more likely to be consistent with other GraphQL APIs. If you are building a GraphQL BFF and have one external GraphQL API to talk to, then yes, there will likely be more consistency than two random HTTP APIs made by different teams.
+A practice talked about a lot over the last few years is GraphQL as a BFF. Seeing as GraphQL has one message format, one type system, etc., then theoretically it is more likely to be consistent with other GraphQL APIs. If you are building a GraphQL BFF and have one external GraphQL API to talk to, then yes, there will likely be more consistency than two random HTTP APIs made by different teams.
 
 This approach was popularized by Apollo platform, offering their own concept called Schema Stitching. This approach basically helped you hook up multiple microservices and easily put a single interface on top. This approach was deprecated and replaced with "Federation", which is a similar concept.
 
-Basically, if everything everywhere is GraphQL then glueing them all together is rather easy, and if there are some bad HTTP APIs involved then this gives folks a nice chance to put a nice layer on top of that badly designed API. 
+Basically, if everything everywhere is GraphQL then gluing them all together is rather easy, and if there are some bad HTTP APIs involved then this gives folks a nice chance to put a nice layer on top of that badly designed API. 
 
 Generally speaking the GraphQL BFF pattern seems like an odd choice for any clients that want to leverage HTTP appropriately. GraphQL adds a nice consistent type system, but the lack of endpoints means HTTP-based caching is no longer viable, HTTP/2 is out the window, hypermedia (using HTTP as a state machine for complex workflows) is gone, and the whole "ask for only what you need" approach to picking fields should not be necessary when talking to an API which is designed specifically to power a specific client. 
 
@@ -93,7 +93,7 @@ A REST API operating over HTTP also has the chance to leverage all of HTTP inste
 
 In my experience the "REST API for Frontend Groups" argument would have solved some rather frustrating problems. An iOS and a Web version of the same internal application was consistently receiving bug reports, where the same employee could see a button on the web app, but could not on the iOS app, even though it should have been the same. 
 
-This was due to some complex if statements checking 5 different things, and one of the apps forgot to check a 6th thing, so the state was out of whack. Hoisting these states up into the REST API mean that one API can interpret arbitrary data from all over the ecosystem. This data could be from hypermedia controls on other REST APIs, or random flags and settings elsewhere, or GraphQL APIs, or a gRPC API, or a local Redis DB, or based on OAtuh scopes, or any combination of the above. 
+This was due to some complex if statements checking 5 different things, and one of the apps forgot to check a 6th thing, so the state was out of whack. Hoisting these states up into the REST API meant that one API could interpret arbitrary data from all over the ecosystem. This data could be from hypermedia controls on other REST APIs, random flags and settings elsewhere, GraphQL APIs, a gRPC API, a local Redis DB, based on OAtuh scopes, or any combination of the above. 
 
 Whatever conclusions the BFF comes to about the state as it pertains to this client group, the whole group of clients get that same conclusion instead of everyone in the group all trying to figure it out independently.
 
