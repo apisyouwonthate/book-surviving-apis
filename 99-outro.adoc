@@ -1,21 +1,10 @@
-= Coming Soon
+= Thank You For Reading
 
-This book is a still an ongoing process, and more chapters will be coming. Much
-like _Build APIs You Won't Hate_, we are aiming for one chapter a month. Here's
-are a few you can expect to see soon:
-
-* API Proxies
-* State Management
-* Form Generation
-* Offline Syncing
-* Testing API Dependencies
-
-We are also trying to figure out how to get AMQP and WebSocket in here,
-possibly with their own sections. It will get there.
+This book is nearing completion but we've not sent it off for editing yet. Sorry for all the typos. 
 
 If you have any ideas, requests, questions, or feedback, please get in
 touch:
 
 phil@apisyouwonthate.com
 
-We hope you enjoyed the content so far!
+We hope you enjoyed the content, and wish you the best of luck out there!
