@@ -1,3 +1,7 @@
+## drop in an introduction on form generation
+
+- maybe go back and do this last
+
 = Form Generation
 
 Imagine you're building a shiny new web app which requires users to register an account with a profile that includes their mailing address.  You're using https://stripe.com[Stripe] for payments, and because of that, you're forced to limit registrations to the https://stripe.com/global[countries supported by Stripe].  Looking at their list on launch day, you see that they support _34 Countries_:
@@ -10,7 +14,7 @@ Taking note of that list, you build out your HTML form with a `<select>` box tha
 [source,html]
 ----
 <select>
-  <option value="australia">Australia</option>
+  <option value="australia">Australia</option>  
   <option value="austria">Austria</option>
   <option value="belgium">Belgium</option>
   <option value="canada">Canada</option>
@@ -111,7 +115,8 @@ const sampleSchema = {
 };
 ```
 
-TODO TODO TODO finish this code sample
+=== TODO TODO TODO finish this code sample
+- pull schema contract from _somewhere else_ to illustrate how this actually works
 
 This, as you can imagine, can save loads of effort when building forms in your applications. Most of the well-supported form libraries are flexible enough to work with anything you might throw at them.  Many are also extensible, allowing you to generate form controls from the UI library that you or your team are using for a given project.
 
@@ -119,6 +124,8 @@ This, as you can imagine, can save loads of effort when building forms in your a
 - show how to generate components from several UI Libraries
 
 === Validation
+
+=== **think about merging this with chapter 08 on validation**
 
 Along with the shape of data required for your forms, JSON Schema provides for input and form validation, too.  For a given field, you can proid
 
@@ -134,13 +141,17 @@ Along with the shape of data required for your forms, JSON Schema provides for i
 - how/when to cache this
 - how to prepare for API updates
 - example: how to read docs for important API changes (maybe talk about semver a bit?)
+- APIs can change, this can help, we'll talk more about that in a later chapter
 
 === Advising designers and front-end developers on how to use JSON Schema
 
 - talk a bit about Atomic Design as it applies to form generation
-- storybook storybook storybook
+- storybook storybook storybook:
+  - 3rd party integrations - look for JSON Schema in docs for external APIs where you can generate interface for [their service].  If all else fails, talk to API developers about what you need!
 - Set dev teams off on designing and building out form controls that are consistent with design guidelines before getting too deep on any specific form
 - Give a few examples on how to display form validation errors: inline with fields given enough context, on top of a form if it isn't too large, near submit/cancel as a summary with invalid fields highlighted
+
+- other examples: https://json-schema.org/implementations.html#web-ui-generation
 
 Give some great exmaples of brand guidelines / front-end guidelines on what a date/text/toggle field looks like, point to changelogs to track updates
 
@@ -148,4 +159,6 @@ Give some great exmaples of brand guidelines / front-end guidelines on what a da
 
 - there are some cases where you need to override the default: a type may say "array of strings", but really be asking for a selection of 1/many country names, or something like that
 
+=== When _not_ to do this
+- sometimes json schema just doesn't fit.  talk about how to detect and deal with that, and how to recognize scenarios where this makes sense
 - 
