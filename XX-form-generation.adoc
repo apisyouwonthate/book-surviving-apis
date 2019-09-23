@@ -88,3 +88,64 @@ const CountryList = ({ countries }) => (
 
 In the chapter on Validation, we discussed how JSON Schema can be used to keep form validation in tune with your API's validation rules. From a usability standpoint, using JSON Schema for validation alone can represent a massive leap in progress compared to old-world application development.  As JSON Schema can _also_ be used to generate your app's input forms. 
 
+Using JSON Schema to generate forms takes a bit of work up front, but saves you loads of manual work and error-prone repetition when things change.  Essentially, for each data type which your application uses, your software will have a _set interface element_ which will be _dynamically generated_ to prompt for, validate, accept, and edit the type of data which it represents.
+
+If that sounds great - it's because it absolutely is.  Imagine being able to add a field to a form just by telling the form that the field exists!  What's more, there's loads of great libraries which already exist to help front end developers with this.  As with anything else, you'd do well to search GitHub, NPM, PyPI, RubyGems, CocoaPods, Swift Package manager, and so on for well-maintained and widly used libraries in your implementation of choice.  
+
+(For the examples below, we'll use the https://react-jsonschema-form.readthedocs.io/en/latest/[`react-jsonschema-form`] library to illustrate how this might work for you).
+
+Using JSON Schema form generation tools typically looks something like this: an input form is generated (at least inj part) by feeding JSON Schema data into the form generator.  It provides hooks of some sort for your application to catch when the user requests a CRUD action from the form, providing some feedback for clientside validation alongh the way:
+
+```
+import React from 'react';
+import Form from 'react-jsonschema-form';
+
+const sampleSchema = {
+  title: "Business Settings",
+  type: "object",
+  required: ["title"],
+  properties: {
+    title: {type: "string", title: "Title", default: "A new task"},
+    done: {type: "boolean", title: "Done?", default: false}
+  }
+};
+```
+
+TODO TODO TODO finish this code sample
+
+This, as you can imagine, can save loads of effort when building forms in your applications. Most of the well-supported form libraries are flexible enough to work with anything you might throw at them.  Many are also extensible, allowing you to generate form controls from the UI library that you or your team are using for a given project.
+
+**EXAMPLE: generating forms from a given UI Library**
+- show how to generate components from several UI Libraries
+
+=== Validation
+
+Along with the shape of data required for your forms, JSON Schema provides for input and form validation, too.  For a given field, you can proid
+
+- explain how type checking works in JSON Schema
+- give a few examples of checking input validation:
+  - asynchronously
+  - on form submission
+  - waititng for response from API
+
+=== Resliance to API changes
+
+- this all is super duper awesome because when the API upstream from your project changes, you don't need to lose sweat as long as you're checking for updated JSON Schema definitions.
+- how/when to cache this
+- how to prepare for API updates
+- example: how to read docs for important API changes (maybe talk about semver a bit?)
+
+=== Advising designers and front-end developers on how to use JSON Schema
+
+- talk a bit about Atomic Design as it applies to form generation
+- storybook storybook storybook
+- Set dev teams off on designing and building out form controls that are consistent with design guidelines before getting too deep on any specific form
+- Give a few examples on how to display form validation errors: inline with fields given enough context, on top of a form if it isn't too large, near submit/cancel as a summary with invalid fields highlighted
+
+Give some great exmaples of brand guidelines / front-end guidelines on what a date/text/toggle field looks like, point to changelogs to track updates
+
+=== Heavily customized UI Elements
+
+- there are some cases where you need to override the default: a type may say "array of strings", but really be asking for a selection of 1/many country names, or something like that
+
+- 
