@@ -77,6 +77,8 @@ image::images/arch-bff-group.jpg[]
 My main concern with the second model is just that the more types of clients you have using a single BFF, the more temptation there may be for it to become bloated by handling multiple concerns. The key thing to understand here though is that even when sharing a BFF, it is for the same class of user interface - so while SoundCloud's listener Native applications for both iOS and Android use the same BFF, other native applications would use different BFFs (for example the new Creator application Pulse uses a different BFF). 
 
 I'm also more relaxed about using this model if the same team owns both the Android and iOS applications and own the BFF too - if these applications are maintained by different teams, I'm more inclined to recommend the more strict model. So you can see your organisation structure as being one of the main drivers to which model makes the most sense (Conway's Law wins again). It's worth noting that the SoundCloud engineers I spoke to suggested that having one BFF for both Android and iOS listener applications was something they might reconsider if making the decision again today.
+
+One guideline that I really like from Stewart Gleadow (who in turn credited Phil Calçado and Mustafa Sezgin) was 'one experience, one BFF'. So if the iOS and Android experiences are very similar, then it is easier to justify having a single BFF. If however they diverge greatly, then having separate BFFs makes more sense.
 ____
 
 Creating a BFF means you need to figure out the appropriate API paradigm. The two main contenders in this space are GraphQL and REST.
@@ -96,6 +98,9 @@ GraphQL as a BFF can be useful for creating backends for groups of frontends, be
 This is extra applicable if those frontends are dealing with real-time information and have no interest in caching, and instead of using HTTP/2 for grabbing related data they can subscribe to WebSockets for streams of data, which GraphQL integrates rather well. 
 
 This is also applicable if the apps are mostly handling CRUD and do not have "workflows", which REST is a lot better at handling.
+
+TODO https://blog.apollographql.com/easy-and-performant-graphql-over-rest-e02796993b2b
+data loaders for turning REST APIs into RPC-style grab the thing.
 
 == REST BFFs
 

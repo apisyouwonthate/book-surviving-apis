@@ -351,3 +351,14 @@ it can be handled with network-level tools which are able to be
 controlled more centrally.
 
 // TODO: diagram for service mesh, and further reading links
+
+// TODO when do you want to just keep on trying the thing? if you have 
+// offline sync maybe wait a reasonable time then offload to offline. If 
+// no offline, or no "alternative", then maybe you need to just keep on trying 
+// forever. For example: a video upload. I was riding bikes around swedish nowhere
+// and youtube spent about five hours uploading a video. Totally fair. Closer to the 
+// user you are, and closer to what the user is specifically trying to do, 
+// the more you want to trust they know what they are trying to do.
+
+// also maybe if you can differentiate between server struggling and network latency.
+// how do you find that out?
