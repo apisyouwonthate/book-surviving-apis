@@ -22,13 +22,11 @@ _Chapter 9: Timeouts, Retries and Circuit Breakers_ talked about this a lot, but
 
 === Change
 
-Hopefully the API is using a reasonable approach to change management: they communicate upcoming change a long way ahead of time, offer alternative solutions to anything being deprecated, and chase applications still using the old approach. 
+Hopefully, the API is using a reasonable approach to change management: it communicates an upcoming change a long way ahead of time, offer alternative solutions to anything being deprecated, and chase applications still using the old approach.  Unfortunately, this is not always the case. Google Maps ditched their free mapping offering, Facebook regularly just turns off various APIs for whatever reason, and Meetup decided to ditch their API for any customers who were not Pro. 
 
-This is not always the case. Google Maps ditched their free mapping offering, Facebook regularly just turn off various APIs for whatever reason, and Meetup decided to ditch their API for any customers who were not Pro. 
+Stuff can just vanish, especially if it's a third-party API. If you are coupling your client application with a direct dependency on an API, the impact of that API vanishing can be devastating. 
 
-Stuff can just vanish, especially if its a third-party API. If you are coupling your client application with a direct dependency on an API, the impact of that API vanishing can be devastating. 
-
-In the past I've worked at companies who used alternative mapping solutions which got bought out by some bigger company and immediately sunset. We had to pull a rush job to switch all mobile apps, web apps, and backend services over to Google Maps, and deploy them all. When we did we made a generic "mapping service" which would proxy requests to Google Maps in the background, meaning we could switch mapping providers more easily, and it end-users on mobile/desktop apps were not stuck with a broken experience until they upgraded.
+In the past, I've worked at companies who've used alternative mapping solutions which got bought out by some bigger company, then immediately sunset. We had to pull a rush job to switch all mobile apps, web apps, and backend services over to Google Maps and deploy them all. When we did, we made a generic "mapping service" which would proxy requests to Google Maps in the background. This meant we could switch mapping providers more easily and its end-users on mobile/desktop apps were not stuck with a broken experience until they upgraded.
 
 === Consistency
 
