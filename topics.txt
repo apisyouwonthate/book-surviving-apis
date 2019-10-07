@@ -9,3 +9,5 @@ APIs might vanish without a moments notice, maybe ask your backend friends to ma
 
 Protobuf required is forever or used to be, now yay optional everything
 https://developers.google.com/protocol-buffers/docs/pythontutorial
+
+A lightweight debugging/tracing proxy like https://httptoolkit.tech/[HTTP Toolkit] can give you some more insight into what is going on between your local client, which is handy for debugging
