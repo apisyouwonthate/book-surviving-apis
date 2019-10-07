@@ -39,13 +39,14 @@ You probably have some thin layer wrapping their logic, giving you the chance to
 swap things out without changing too much of your own code. Maybe it looks a bit
 like this:
 
-```ruby
+[source,ruby]
+----
 class Geocoder
   def address(str)
     google_sdk.geocode(str)
   end
 end
-```
+----
 
 The application code has `VenueService` which is talking to `Geocoder` and using
 the `address` method, which pops off to the Google Maps API to do the thing.
@@ -53,7 +54,8 @@ the `address` method, which pops off to the Google Maps API to do the thing.
 To avoid the test suite hitting the external API, the most likely move is to
 mock the `Geocoder` in the `VenueService` tests.
 
-```ruby
+[source,ruby]
+----
 RSpec.describe VenueService do
 
   describe '.update' do
@@ -70,7 +72,7 @@ RSpec.describe VenueService do
     end
   end
 end
-```
+----
 
 Basically what we have here is a test (using RSpec but whatever it's all the
 same) which describes how the `VenueService` should work. The `update` method is
@@ -132,7 +134,8 @@ things want to get. Most of the time this is used for simple stuff.
 
 Here's an example taken from the CLI-tool https://github.com/stoplightio/spectral[Spectral].
 
-```js
+[source,javascript]
+----
 const invalidOas3SpecPath = resolve(__dirname, '__fixtures__/openapi-3.0-no-contact.yaml');
 
 describe('when loading specification files from web', () => {
@@ -147,7 +150,7 @@ describe('when loading specification files from web', () => {
     expect(ctx.stdout).toContain('No errors or warnings found!');
   });
 });
-```
+----
 
 This test is setting up a server on the arbitrary fake hostname
 `http://foo.local`, with a GET path `/openapi` that returns a YAML file with
@@ -194,7 +197,8 @@ responses instead of going over the wire, meaning it is quick, always going to
 give the same result, and the entire response is being used, so you know it is
 accurate.
 
-```ruby
+[source,ruby]
+----
 require 'rubygems'
 require 'test/unit'
 require 'vcr'
@@ -212,7 +216,7 @@ class VCRTest < Test::Unit::TestCase
     end
   end
 end
-```
+----
 
 This is a rather verbose Ruby example for clarity. It includes the config which
 would normally be tucked away in a helper, and it is manually using a cassette
@@ -283,7 +287,8 @@ ports to other languages:
 If you are a JavaScript user then check out [Polly.js](https://netflix.github.io/pollyjs/), comically
 written by Netflix. It has some great config options.
 
-```js
+[source,javascript]
+----
 polly.configure({
   recordIfMissing: true,
   recordIfExpired: false,
@@ -299,7 +304,7 @@ polly.configure({
     order: true,
   }
 })
-```
+----
 
 The `recordIfMissing` is a good option, which means when folks add new tests it will try to record
 the request when it is run the first time. This can catch developers out if they

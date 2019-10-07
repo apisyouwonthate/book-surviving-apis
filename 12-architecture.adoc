@@ -26,9 +26,10 @@ Hopefully the API is using a reasonable approach to change management: they comm
 
 This is not always the case. Google Maps ditched their free mapping offering, Facebook regularly just turn off various APIs for whatever reason, and Meetup decided to ditch their API for any customers who were not Pro. 
 
-Stuff can just vanish, especially if its a third-party API. If you are coupling your client application with a direct dependency on an API, the impact of that API vanishing can be devastating. 
+Stuff can just vanish, especially if its a third-party API. If you are coupling your client application with a direct dependency on an API, the impact of that API vanishing can be devastating.
 
-In the past I've worked at companies who used alternative mapping solutions which got bought out by some bigger company and immediately sunset. We had to pull a rush job to switch all mobile apps, web apps, and backend services over to Google Maps, and deploy them all. When we did we made a generic "mapping service" which would proxy requests to Google Maps in the background, meaning we could switch mapping providers more easily, and it end-users on mobile/desktop apps were not stuck with a broken experience until they upgraded.
+In the past, I've worked at companies who've used alternative mapping solutions which got bought out by some bigger company, then immediately sunset. We had to pull a rush job to switch all mobile apps, web apps, and backend services over to Google Maps and deploy them all. When we did, we made a generic "mapping service" which would proxy requests to Google Maps in the background. This meant we could switch mapping providers more easily and its end-users on mobile/desktop apps were not stuck with a broken experience.
+
 
 === Consistency
 
@@ -58,7 +59,7 @@ BFFs also let you solve authentication inconsistencies between the various APIs 
 
 Mainly a BFF is about providing consistency for the client, even when change happens. If an external provider says they're closing down, your BFF team can update the BFF to proxy off to an alternative service, or even in a pinch make their own replacement service, all of which can reuse the same interface for seamless transitions for the end user. No application updates or down-time required. 
 
-BFFs sound like a lot of work, and they are. They require time, and money, as you will need extra developers to manage them. These developers might even need to be new hires if your whole team is more frontend than backend, so that alone can be a barrier to using them.
+BFFs sound like a lot of work, and they are. Extra development means extra time is spent on this and not on features. You may also need extra developers, and these developers might even need to be new hires if your whole team is more frontend than backend.
 
 The canonical example of BFFs is Netflix, who used to make one API for their iPhone client app, another for web app, another their XBox client app, etc. Your company may not have pockets as deep as Netflix, and honestly your clients might not be that different from each other. 
 
@@ -97,14 +98,14 @@ There are two common arguments, neither of which have much merit, but you should
 
 2. REST APIs are not consistent, so use GraphQL as a BFF to give your client application one consistent interface to query.
 
-The first is a confusion of network optimizations, and focuses too much on batching, leading to situations where clients spend 2s waiting for one mega query, when they could have spent 300ms waiting for 5 queries to be made and respond asynchronously. Be wary of anyone making these sorts of claims at your company. 
+The first is a confusion of network optimizations, and focuses too much on batching. This can lead clients spending two seconds waiting for one mega query, when they could have spent 300ms waiting for multiple queries to be made asynchronously. Be wary of anyone making these sorts of claims at your company. 
 
-
-As for the second argument, yes REST APIs have [a lot of different standards](https://standards.rest/). A bunch of inconsistent APIs in an ecosystem can be a pain in the backside for sure. 
+As for the second argument: yes REST APIs have [a lot of different standards](https://standards.rest/). A bunch of inconsistent APIs in an ecosystem can be a pain in the backside for sure. 
 
 Using GraphQL as a single "nice" interface over "your old smelly REST APIs" is a stance popularized by Apollo, offering a featured called Schema Stitching built into their server software.
 
-....
+[source,javacript]
+----
 class MoviesAPI extends RESTDataSource {
   baseURL = 'https://movies-api.example.com';
 
@@ -120,7 +121,7 @@ class MoviesAPI extends RESTDataSource {
     return data.results;
   }
 }
-....
+----
 
 Mapping these RPCish endpoint-grabs to a "data source" means GraphQL APIs can query the REST API just like it's a GraphQL API. 
 
