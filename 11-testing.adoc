@@ -57,7 +57,6 @@ mock the `Geocoder` in the `VenueService` tests.
 [source,ruby]
 ----
 RSpec.describe VenueService do
-
   describe '.update' do
     it 'will geocode address to lat lon' do
       allow(Geocoder).to receive(:address).with('123 Main Street') do

@@ -123,17 +123,13 @@ class MoviesAPI extends RESTDataSource {
 }
 ----
 
-Mapping these RPCish endpoint-grabs to a "data source" means GraphQL APIs can query the REST API just like it's a GraphQL API. 
+Mapping these RPCish endpoint-grabs to a "data source" means clients using a GraphQL BFF can query one or more REST APIs in a single request, which hopefully internally is using timeouts to avoid one slow data source letting the main query hang.
 
-This can make sense when the client is trying to a variety of different external APIs, but this has been advertised as something being done with internal APIs. To me the idea that multiple client application teams are running around building these GraphQL BFFs because the internal APIs are so inconsistent, suggests a huge smell at the company. 
+Schema Stitching was deprecated and replaced with "Federation", another rather similar feature for smushing together multiple APIs. Doing this makes sense when the client is trying to a variety of different external APIs, but this is something people still do with internal APIs. To me, the idea that multiple client application teams are running around building these GraphQL BFFs because the internal APIs are so inconsistent, suggests a huge smell at the company. Multiple BFFs being built just because of poor API governance means the company should get better at API governance.
 
-More generally speaking the GraphQL BFF pattern seems like an odd choice for any clients that want to leverage HTTP appropriately. GraphQL adds a nice consistent type system, but the lack of endpoints means HTTP-based caching is no longer viable, HTTP/2 is out the window, hypermedia (using HTTP as a state machine for complex workflows) is gone, and the whole "ask for only what you need" approach to picking fields should not be necessary when talking to an API which is designed specifically to power a specific client. 
+More generally speaking, the GraphQL BFF pattern seems like an odd choice for any clients that want to leverage HTTP appropriately. GraphQL adds a nice consistent type system, but the lack of endpoints means HTTP-based caching is no longer viable, HTTP/2 is out the window, hypermedia (using HTTP as a state machine for complex workflows) is gone, and the whole "ask for only what you need" approach to picking fields should not be necessary when talking to an API which is designed specifically to power a specific client. 
 
-GraphQL as a BFF can be useful for creating backends for groups of frontends, because there might be certain properties which are added for one of the client applications in this group of incredibly similar applications. 
-
-This is extra applicable if those frontends are dealing with real-time information and have no interest in caching, and instead of using HTTP/2 for grabbing related data they can subscribe to WebSockets for streams of data, which GraphQL integrates rather well. 
-
-This is also applicable if the apps are mostly handling CRUD and do not have "workflows", which REST is a lot better at handling.
+GraphQL can be good for creating a BFF for a group of clients, as there might be certain properties which are added for one of the client applications in this group of incredibly similar applications. If those frontends are dealing with real-time information and have no interest in caching, instead of using HTTP/2 for grabbing related data, they can subscribe to WebSockets for streams of data. When the client applications are mostly handling CRUD and do not have "workflows", this is even more reason to consider GraphQL for your BFF.
 
 == REST BFFs
 
@@ -144,7 +140,7 @@ A REST API operating over HTTP also has the chance to leverage all of HTTP inste
 
 In my experience the "REST API for Frontend Groups" argument would have solved some rather frustrating problems. An iOS and a Web version of the same internal application was consistently receiving bug reports, where the same employee could see a button on the web app, but could not on the iOS app, even though it should have been the same. 
 
-This was due to some complex if statements checking 5 different things, and one of the apps forgot to check a 6th thing, so the state was out of whack. Hoisting these states up into the REST API mean that one API can interpret arbitrary data from all over the ecosystem. This data could be from hypermedia controls on other REST APIs, or random flags and settings elsewhere, or GraphQL APIs, or a gRPC API, or a local Redis DB, or based on OAtuh scopes, or any combination of the above. 
+This was due to some complex if statements checking 5 different things. One of the apps forgot to check a 6th thing, so the state was out of whack. Hoisting these states up into the REST API mean that one API can interpret arbitrary data from all over the ecosystem. This data could be from hypermedia controls on other REST APIs, or random flags and settings elsewhere, or GraphQL APIs, or a gRPC API, or a local Redis DB, or based on OAtuh scopes, or any combination of the above. 
 
 Whatever conclusions the BFF comes to about the state as it pertains to this client group, the whole group of clients get that same conclusion instead of everyone in the group all trying to figure it out independently.
 
