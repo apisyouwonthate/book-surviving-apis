@@ -3,6 +3,28 @@
 .https://twitter.com/jayzalowitz/status/1133547754989342722[A tweet from @ jayzalowitz] sums up async pretty well.
 image::images/11-async-tweet.png[]
 
+== An overview
+Before we dive into the intricacies of implementing asynchronous API calls, let's cover some vocabulary.  There's a fair bit of lingo here, and it can be easy to get confused.
+
+[glossary]
+**Sync or Synchronous**::
+  This is code which is executed in order, from top to bottom, while waiting for any blocking calls to complete.  In our case, this most often means synchronous code execution (your function executes predictably from top to bottom, line by line), or sync API calls (before doing anything else, we wait for the Auth API to tell us whether or not someone is currently logged in).
+
+**Async or Asynchronous**::
+  **Async** code allows us to execute a call and _not_ block everything else while we wait for it to complete. This happens regularly in web applications - for example, your web-based mail client will regularly send off requests to refresh the mail in your inbox asynchronously.  When new email activity is detected, your inbox is updated on the fly.  Neat!
+
+**Serial**:: 
+  When we refer to **Serial** execution, it means we have several things to do, and we want to execute them in a specific order (1, then 2, then 3, etc). 
+
+**Parallel**:: 
+  Similarly, **parallel** execution means we have several things to do, and we don't care what order they're done in.  Each is executed independently of the rest, and we're notified when each job is done.
+
+**Blocking**::
+  When we say something is **blocking**, this refers to code that holds up any other work being done.  Javascript is notoriously prone to blocking - while running a long loop, for example nothing else can be done.  If you're not careful, this can result in a screen that is blank or unresponsive while we wait for blocking code to complete execution.
+
+**Non-blocking**::
+  On the other hand, **non-blocking** work is just like it sounds.  This allows other work to be done while waiting for a response.  This is how “workers” are designed, and callbacks, and in UI its letting you do other things.
+
 As a front-end developer, there are many different patterns that may be made available to you to read and write data asynchronously.  Like anything else, each has its benefits and challenges.  Your goal should be to make asynchronous interfaces feel like magic.  If implemented correctly, the people using your application won't feel burdened by waiting for data to come or go. They should feel confident that changes they're making are saved accurately.  When things go wrong, it should be easy for them to understand what broke, and what action they can take to remedy it (i.e. "Wait a moment and try again", or "You entered a title that is too long.").
 
 Historically, there have been a variety of different ways to pull data from APIs asynchronously.  Included here are some of the more popular patterns that are in use today.
