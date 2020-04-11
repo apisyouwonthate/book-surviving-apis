@@ -97,7 +97,7 @@ Generally speaking, it's best to stay away from long polling unless you're askin
 
 == Websockets
 
-It turns out the answer to a lot of our problems comes in the form of websockets.  Under the hood, websockets are a protocol that is _parallel_ to `http`.  Websocket connections are established from client -> server via TCP.  That connection is then used as a direct line of communication between your client and the server for (effectively) as long as it's needed.  This gets around many of the problems already discussed in this chapter.
+It turns out the answer to at least some of our problems comes in the form of websockets.  Under the hood, websockets are a protocol that is _parallel_ to `http`.  Websocket connections are established from client -> server via TCP.  That connection is then used as a direct line of communication between your client and the server for (effectively) as long as it's needed.  This gets around many of the problems already discussed in this chapter.
 
 Websocket connections are flexible, and designed provide features that many  modern-day web applications use. 
 
@@ -110,6 +110,68 @@ It may sound like loading pages in order of importance won't be that different f
 1. This approach allows for more generic API calls to be used, which puts less strain on your API dev team.  Think of it this way: if you had to task your API developers with a _single query_ for all of the data on every screen of your app, they would need to be in lock-step with your front-end team for everything.  With a more granular approach, you'll fire off API calls for content in ways that aren't hyper-specific to the page they're on.  It's the difference between `API.loadToDos().filterByMonth('march')` and `API.loadCalendarScreenForUser({ month: 'march', user: 12345, view: 'monthly'})`.  The former is much easier to write, test, and maintain. 
 
 An auxiliary benefit of websockets is that many websocket-enabled frameworks allow you to _subscribe_ to a particular query or bit of data.  This effectively means that your interface can reflect near real-time updates from your API without much extra effort for your front-end team.  It eliminates the need for your team to craft and adhere to strategies for repeatedly checking the API for data updates.  Many of these same frameworks come with supported (and often built-in) strategies for recovering lost connections, as well as PWA features for offline use of your site.
+
+== Don't block the UI thread
+
+When building web applications that use asynchronous API calls, developers often run into issues with blocking the UI thread.  As we defined at the beginning of this chapter, blocking the thread means that whatever work is being done prevents the browser from doing _anything else_.  You've probably encountered this from time-to-time - it can be extremely frustrating.  If you've ever clicked on an action in a web app that has caused the entire page to freeze while something loads, you've seen this in action.
+
+On the web, blocked UI threads are most often the result of improperly using JavaScript to query APIs. For better or worse, at the moment JavaScript is strictly single-threaded.  This means that no matter _how hard you try_, your JavaScript code will only ever execute one instruction at a time.  That's right - when you make API calls in your web applications using JavaScript, your GET requests can block the _entire UI_ from doing anything: no re-rendering, no scrolling, no navigating, no nothing.  It can get really nasty unless handled properly.
+
+So, how do we do that? Well, there's been a number of different approaches to this as web software has gotten more mature.  In the early days, web developers would have to roll their own workaround, using a pattern called Asynchronous Javascript and XML (AJAX). It was a remarkably simple solution to what was a vexing problem.  The gist of AJAX is this: while JavaScript is only able to execute one instruction at a time, your browser is smarter.  It can make many HTTP requests at any given time in parallel.  So, developers would fire off an HTTP request through the browser API, and include a _callback function_ -- a bit of JavaScript to invoke when the browser got back a response to the API request from the web.  Basic AJAX calls look something like this:
+
+```javascript
+
+function getZooAnimals() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState === 4 && this.status === 200) {
+      // the browser returned us something from our HTTP call
+      // typically stored in this.responseText. 
+      // do something with it!
+      alert('here are the zoo animals!' + this.responseText);
+    }
+  }
+
+  xhttp.open('GET', 'https://example.com/zooAnimals/list', true);
+  xhttp.send();
+}
+
+```
+
+If that looks unfamiliar to you, don't sweat it. In short, we tell the browser to invoke an HTTP request, and when it comes back, a JavaScript function is called to deal with what's there.  It's a relatively simple work-around for thread-blocking.  
+
+As ajax grew in popularity, web applications started to feel more like native applications. The pattern works well - but the long syntax wrapped around each API call is long-winded and leaves lots of room for typoes and easy mistakes. Thankfully, as developers often do, we got tired of writing out all of the nonsense about `readyState` and `status`, and JavaScript Callback syntax was born.  You've probably come across this type of syntax if you've ever used something like jQuery: 
+
+```javascript
+  $.get("https://example.com/zooAnimals/list", function(data) {
+    alert('here are the zoo animals!' + data);
+  });
+```
+
+Look at that! It's much tidier, and serves the same purpose. The `function(data)` bit seen above is called a _callback function_, and is executed when the browser's HTTP request is completed, just like in the first example where we create and pass a function to `xhttp.onreadystatechange`.
+
+Callback functions are easy to understand, and easy to read, and quickly became a common pattern in building UIs for the web. They also allow developers to easily _chain_ callbacks together - which allows us to build applications that execute pseudo-asynchronous code in a reasonably redable manner:
+
+```javascript
+  $.get("https://example.com/zooAnimals/list", function(data) {
+    alert('here are the zoo animals!' + data);
+  }).then(function() {
+    // now that our zoo animals are loaded, we can fetch the list of zookeepers
+    $.get("https://example.com/zooKeepers/list", function(data) {
+      alert('we found zookeepers!' + data);
+    })
+  }); 
+```
+
+This got even better with the advent of `async` syntax for JavaScript, which allows us to write the above code even more succinctly:
+
+```javascript
+  const zooAnimals = await fetch('https://example.com/zooAnimals/list');
+  alert('here are the zoo animals!' + zooAnimals);
+
+  const zooKeepers = await fetch('https://example.com/zooKeepers/list');
+  alert('here are the zookeepers!' + zooKeepers);
+```
 
 == Plan for things to go wrong
 
