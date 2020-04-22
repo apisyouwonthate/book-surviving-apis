@@ -115,7 +115,7 @@ An auxiliary benefit of websockets is that many websocket-enabled frameworks all
 
 When building web applications that use asynchronous API calls, developers often run into issues with blocking the UI thread.  As we defined at the beginning of this chapter, blocking the thread means that whatever work is being done prevents the browser from doing _anything else_.  You've probably encountered this from time-to-time - it can be extremely frustrating.  If you've ever clicked on an action in a web app that has caused the entire page to freeze while something loads, you've seen this in action.
 
-On the web, blocked UI threads are most often the result of improperly using JavaScript to query APIs. For better or worse, at the moment JavaScript is strictly single-threaded.  This means that no matter _how hard you try_, your JavaScript code will only ever execute one instruction at a time.  That's right - when you make API calls in your web applications using JavaScript, your GET requests can block the _entire UI_ from doing anything: no re-rendering, no scrolling, no navigating, no nothing.  It can get really nasty unless handled properly.
+On the web, blocked UI threads are most often the result of improperly using JavaScript to query APIs. For better or worse, at the moment JavaScript is strictly single-threaded.  This means that no matter _how hard you try_, your JavaScript code will only ever execute one instruction at a time.  That's right - when you make API calls in your web applications using JavaScript, your `GET` requests can block the _entire UI_ from doing anything: no re-rendering, no scrolling, no navigating, no nothing.  It can get really nasty unless handled properly.
 
 So, how do we do that? Well, there's been a number of different approaches to this as web software has gotten more mature.  In the early days, web developers would have to roll their own workaround, using a pattern called Asynchronous Javascript and XML (AJAX). It was a remarkably simple solution to what was a vexing problem.  The gist of AJAX is this: while JavaScript is only able to execute one instruction at a time, your browser is smarter.  It can make many HTTP requests at any given time in parallel.  So, developers would fire off an HTTP request through the browser API, and include a _callback function_ -- a bit of JavaScript to invoke when the browser got back a response to the API request from the web.  Basic AJAX calls look something like this:
 
@@ -158,12 +158,43 @@ Callback functions are easy to understand, and easy to read, and quickly became 
   }).then(function() {
     // now that our zoo animals are loaded, we can fetch the list of zookeepers
     $.get("https://example.com/zooKeepers/list", function(data) {
-      alert('we found zookeepers!' + data);
-    })
-  }); 
+        alert('we found zookeepers!' + data);
+    }); 
+  });
 ```
 
-This got even better with the advent of `async` syntax for JavaScript, which allows us to write the above code even more succinctly:
+As you can see, that's pretty understanable, even at a glance.  The downside of this approach is that it can lead to something called _callback hell_ - where the execution chain for a given function is so dependent on nested `then()` function calls that it gets really challenging to read, and even more difficult to debug. Imagine what the above snippet would look like it we needed to call 5-10 different APIs before we could do anything else -- you'd have a whole mess of `then` blocks, and any code you need to execute after everything is loaded would need to find its way into a deeply nested function:
+
+```javascript
+  $.get("https://example.com/zooStuff/list1", function(list1Data) {
+    const list1 = list1data;
+  }).then(function() {
+    $.get("https://example.com/zooStuff/list2", function(list2data) {
+        const list2 = list2data;
+      }).then(function() {
+        $.get("https://example.com/zooStuff/list3", function(lst3data) {
+          const list3 = list3data;
+        }).then(function() {
+          $.get("https://example.com/zooStuff/list4", function(list4data) {
+            const list4 = list4data;
+          }).then(function() {
+            // finally we have _EVERYTHING_ and we can do whatever we need to...
+            // provided there weren't any errors thrown anywhere in this chain
+            doSomethingWithTheseLists([
+              list1,
+              list2,
+              list3,
+              list4
+            ]);
+          });
+        })
+      })
+    })
+```
+
+Again, this absolutely _can_ work, but it can be a nightmare to maintain. The above snippet also leaves out any error handling - each of the `.then` clauses should be accompanied by a parallel `.catch` function to check for errors.
+
+As this sort of callback pattern became more and more common, JavaScript was anointed with some shiny new syntax to make it easier to execute asynchronous calls: it's called `async` syntax, and it allows us to write these sorts of calls even more succinctly:
 
 ```javascript
   const zooAnimals = await fetch('https://example.com/zooAnimals/list');
@@ -171,6 +202,17 @@ This got even better with the advent of `async` syntax for JavaScript, which all
 
   const zooKeepers = await fetch('https://example.com/zooKeepers/list');
   alert('here are the zookeepers!' + zooKeepers);
+```
+
+To handle errors, `async` calls can be wrapped in `try/catch` blocks, too:
+
+```javascript
+  try {
+    const zooKeepers = await fetch('https://example.com/zooKeepers/list');
+    alert('here are the zookeepers!' + zooKeepers);
+  } catch (err) {
+    console.error('There was an issue fetching the zookeepers list:', err);
+  }
 ```
 
 == Plan for things to go wrong
