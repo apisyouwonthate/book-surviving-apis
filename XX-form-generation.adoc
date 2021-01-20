@@ -1,5 +1,0 @@
-
-Users could only register in USA so the “Country” field was omitted on addresses, but now you sell globally and the country field is required on the API. The users cannot even enter the field because but users of the old the application cannot buy anything.
-https://github.com/json-schema-form/json-schema-form-core
-http://schemaform.io/
-https://mozilla-services.github.io/react-jsonschema-form/
