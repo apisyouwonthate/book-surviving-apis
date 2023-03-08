@@ -5,8 +5,8 @@ of computer science and programming. A Linux command-line application would
 consider the command names and options to be an API. A Java module would also
 consider its classes, method names, and arguments to be an API. 
 
-Basically an API means code somebody else wrote, and a Web APIs is just code
-that lives on a server controlled by somebody else. 
+Basically an API in general means "code somebody else wrote and packaged up for
+use", and a Web APIs is just code that lives on a web server.
 
 The goal of a Web API is to provide other applications with access to specific
 subsets of functionality or data that an application owns. The interactions over
@@ -164,7 +164,7 @@ complicated things floating around like SOAP ("Simple Object Access Protocol"),
 but instead of diving into that there was a scary amount of nonsense like iframe
 trickery. 
 
-There was a whole lot of scraping websites and yoinking out data with regex. One
+There was a whole lot of scraping websites and yoinking out data with regular expressions (pattern matching). One
 time built something for a financial services company to provide stocks and
 shares data for the MSN Money homepage. We generated full HTML on our backend
 from some horrendous CMS, then they read the whole thing, regex replaced some
@@ -248,8 +248,7 @@ teams can work on just their piece of the puzzle internally.
 Arrows are always moving around, and new APIs are being merged in, spun out,
 rewritten, and forgotten about. Applications start talking to each other in
 unexpected ways without telling anyone. Architectural diagrams get out of date.
-Everything starts talking to everything and it just because an octopus orgy of
-dependencies calling everything and everyone.
+Everything starts talking to everything and the dependency chart becomes octopus orgy.
 
 The more APIs there are, the more complex everything gets, but a well
 disciplined and experienced engineering department with a strong devops culture
