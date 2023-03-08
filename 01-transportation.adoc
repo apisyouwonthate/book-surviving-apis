@@ -5,9 +5,7 @@ To send anything to or fetch anything from an API, we're going to need a
 things about over the network, and there's a bunch of different levels with a
 bunch of different protocols that all sit on top of each other. Whole books are
 written about transportation, network protocols, and all the fun that goes with
-it, but we're going to skim past some of the stuff that's not relevant. This
-might be a bit too much insight into how the sausage is made, but it could be
-handy context for many of you.
+it, but we're going to skim past some of the stuff that's not relevant. 
 
 http://https://wikipedia.org/wiki/Transmission_Control_Protocol[Transmission
 Control Protocol (TCP)] and
@@ -387,17 +385,22 @@ biggest are:
 
 Kicking the tyres of an API with a GUI HTTP client like this is a great way to make sure things work as you expect, allowing you to build up complex requests and even chained interactions, without having to try to write a bunch of JSON or awkward command-line arguments. 
 
-.Screenshot of the Paw HTTP client on macOS, from www.paw.rest.
+.Paw HTTP client on macOS making a GET request.
 image::images/paw.png[Paw HTTP client]
+
+Paw is a lot of fun, but I like using Thunder Client as it keeps me right there in VS Code when I'm working. Here is Thunder Client hitting the Protect Earth API.
+
+.Thunder Client extension for VS Code, calling the Protect Earth API
+image::images/thunderclient.png[Thunderclient HTTP client]
 
 Once you've got the API interacting in the way you want, most of these GUI's will help you generate some "sample code" in the programming language of your choice. You can grab that, and pop it into your application (or an interactive console that speaks your programming language) to get even closer to making your first successful interaction in code.
 
-==== Postman Collections
+.Thunder Client extension generating Swift HTTP code automatically
+image::images/thunderclient-generate-code.png[Thunderclient generating some Swift code]
 
-Paw is a great GUI for playing around with, but the most popular HTTP GUI is Postman. Many public APIs will have a "Postman Collection" you can download. A good example of this is https://www.twilio.com/docs/openapi/using-twilio-postman-collections[Twilio's Postman Collection].
+Without knowing any Swift I can grab this code, and my application will make a successful request. 
 
-
-
+Making a "GET THE THING" requests like this is overly simplistic and brittle, but this should help get you making API requests quickly, and we can spend the rest of the book making interactions as reliable as possible.
 
 See the headers, response codes, and data being returned. Twilio is a
 fantastic API and has a great
@@ -408,7 +411,6 @@ so maybe start there.
 TODO
 
 - Talk about HTTP/3 and what relevant changes it has, can you use it already in any languages, tools, etc.
-
 
 - illustrations / images / coloring might make the HTTP Status codes breakouts easier to remember. A big, smiley green box around 2xx, for example, vs. a red-angry client for 4xx and a broken server for 5xx, etc
 
