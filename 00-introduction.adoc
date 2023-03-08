@@ -9,7 +9,7 @@ Basically an API means code somebody else wrote, and a Web APIs is just code
 that lives on a server controlled by somebody else. 
 
 The goal of a Web API is to provide other applications with access to specific
-subset of functionality or data that an application owns. The interactionsover
+subsets of functionality or data that an application owns. The interactions over
 the network utilize network protocols such as HTTP, AMQP, MQTT, etc., and
 instead of command-line arguments or method parameters, they use URLs, query
 string parameters, or chunks of data like JSON.
