@@ -3,9 +3,9 @@
 source 'https://rubygems.org'
 
 gem 'asciidoctor'
-gem 'asciidoctor-pdf', '~> 1.5.pre'
-gem 'asciidoctor-epub3', '~> 1.5.pre'
+gem 'asciidoctor-pdf', '~> 1.6'
+gem 'asciidoctor-epub3', '~> 1.5'
 gem 'asciidoctor-diagram' # https://github.com/asciidoctor/asciidoctor-diagram
 gem 'coderay' # markdown
-gem "kindlegen", "~> 3.0"
+# gem "kindlegen", "~> 3.0"
 gem "nokogiri", "~> 1.10"
