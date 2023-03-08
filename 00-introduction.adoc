@@ -178,7 +178,7 @@ organizations are building APIs for this sort of work, with API consumers
 focusing on interface building.
 
 On the desktop it's all about single-page JavaScript applications, with
-EmberJS/ReactJS offering data-binding to pull and push data from a data source.
+Angular/React/Vue/Rails offering data-binding to pull and push data from a data source.
 Mobiles have come on the scene and often work very similarly, regardless of if
 the apps are HTML based or native.
 
