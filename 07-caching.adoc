@@ -143,7 +143,7 @@ run into it quite often, but it's also ignored by a lot of API
 developers who just do not know it exists.
 
 Basically there are a whole bunch of conventions outlines in
-http://Speeding[RFC 7234: HTTP/1.1 Caching], the most commonly used of
+RFC 7234: HTTP/1.1 Caching, the most commonly used of
 which is the
 https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control[Cache-Control
 HTTP header], which resources can use to define its cacheability. The
@@ -850,3 +850,6 @@ Remember, going over the wire is inherently slow and fraught with danger
 and potential issues. Caching helps clients do that less often by
 identifying which questions they already have answers to, but that does
 not mean API developers can stop worrying about performance.
+
+
+// TODO RFC 7234: HTTP/1.1 Caching needs updating to 9110 or whichever

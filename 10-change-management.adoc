@@ -192,7 +192,7 @@ APIs can add a simple header to the HTTP response, to let clients know the
 endpoint is nearing the end of its life.
 
 Supporting Sunset is as simple as sniffing for the `sunset` header, and
-it contains a https://tools.ietf.org/html/rfc7231#section-7.1.1.1[HTTP
+it contains a https://www.rfc-editor.org/rfc/rfc9110#name-date-time-formats[HTTP
 date] which looks a little like this:
 
 ....

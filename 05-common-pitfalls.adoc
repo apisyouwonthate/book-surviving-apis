@@ -212,8 +212,8 @@ http://en.wikipedia.org/wiki/Unix_time[UTC time] in `X-RateLimit-Reset`.
 === Retry-After
 
 According to the RFCs for HTTP/1.1 (the obsoleted and irrelevant RFC
-2616, and the replacement RFC 7230-7235), the header
-https://tools.ietf.org/html/rfc7231#section-7.1.3[Retry-After] is only
+2616, and the replacement RFC 9110), the header
+https://www.rfc-editor.org/rfc/rfc9110#field.retry-after[Retry-After] is only
 for 503 server errors, and maybe redirects. Luckily
 https://tools.ietf.org/html/rfc6585[RFC 6584] (the same one which added
 HTTP status code 429) says it's totally cool for APIs to use

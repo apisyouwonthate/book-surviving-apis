@@ -14,7 +14,7 @@ Some applications have configuration managers and environment variables to store
 
 Some very lucky ecosystems might use "service discovery", which is a special service in charge of knowing where everything is. This is more likely to be used internally when there is a backup service which might be waiting to take over from the primary service if it goes down. Consider the situation where `https://api.example.com` is down and `https://api-secondary.example.com` is ready to go. All those hardcoded applications would be toast for a while and the configuration users will be quickly updating their config and restarting the app. Those using service discovery won't have to do anything because api-secondary has already told the service catalog it is ready to accept traffic. 
 
-Service discovery is probably not an option when calling external APIs. You just have to hope whatever hostname they have is correct and unchanging.  If it is randomly going to change (re-branding, acquisition, etc)... then, well, hopefully they advertise this somehow.
+Service discovery is probably not an option when calling external APIs. You just have to hope whatever hostname is correct and unchanging.  If it is randomly going to change (re-branding, aquisition, etc)... then hopefully the change is advertised appropriately.
 
 Whatever means the client application is using to get the IP/hostname for a dependency, if calls are being made directly to the dependency, there are fewer moving parts but a lot of things that can still go wrong. 
 
