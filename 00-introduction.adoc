@@ -179,7 +179,7 @@ focusing on interface building.
 
 On the desktop it's all about single-page JavaScript applications, with
 Angular/React/Vue/Rails offering data-binding to pull and push data from a data source.
-Mobiles have come on the scene and often work very similarly, regardless of if
+Mobile phones have come on the scene and often work very similarly, regardless of if
 the apps are HTML based or native.
 
 These frontend applications can do a lot of amazing things, but APIs are going
@@ -236,13 +236,13 @@ globe is a mess, and why waste time on that when you've got underpants to fold!
 == Monoliths & Cluster-f**ks
 
 Perhaps Uber for Underpants is so successful that their bottom line is being
-effected with all the SMS API charges, so they decide to ditch that external API
+affected by all the SMS API charges, so they decide to ditch that external API
 and build an internal API which can handle SMS messaging. This all gets added
 into an ever growing API which creaks and groans with all the new
 responsibilities.
 
 Alternatively as the organization grows, and the number of developers grow with
-it, bits of their APIs might split off into smaller APIs so that individual
+it, bits of their monolithic APIs might split off into smaller APIs so that individual
 teams can work on just their piece of the puzzle internally.
 
 Arrows are always moving around, and new APIs are being merged in, spun out,
