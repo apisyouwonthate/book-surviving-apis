@@ -1,74 +1,82 @@
-= SDKs
+= Software Development Kits (SDKs)
 
-Assuming you've been tasked with integrating with an API, the first
-thing to do is look for a Software Development Kit (SDK). An SDK is
-basically a fancy term for some code that has been written to make
-integration with a third party API easier in a specific programming
-language. Often they are released officially by the company in charge of
-the API, sometimes they are written by third-parties and released as
-open-source.
+Knowing how to interact with a HTTP API directly is a good skill to have, but
+sometimes you the API team will have created a library/package/module written in
+your programming language of choice, so that you don't have to bother. This is
+know as a Software Development Kit, or an SDK for short. 
 
-The use of an SDK defers a lot of the responsibility to the API
-developers, as most of the HTTP-level code you would need to write to
-interact with their API is done by them. Theoretically, they should
-seamlessly take care of authentication, data formats, HTTP errors will
-be turned into exceptions, validation will be returned in a useful
-format, etc. If that is the case for the specific API you are attempting
-to integrate with, then you might be in luck, and able to skip a lot of
+Theoretically, an SDK abstracts most of the transport layer specifics away
+behind idiomatic code, taking care of authentication, URLs, methods, headers,
+data formats, caching, retries, even HTTP status codes will be converted into
+meaningful exceptions. The best SDKs will even turn validation errors into a
+useful format. If that is the case for the specific API you are attempting to
+integrate with, then you might be in luck, and perhaps you can skip a lot of
 this book.
 
-For example, we have not covered how Authentication works yet, and with
-a good SDK you would not need to know, or care. You simply grab the
-authentication token and put it into the code:
+For example, we have not covered how Authentication works yet, and with a good
+SDK you would not need to know. They will give you somewhere to pop in the
+authentication details, in this instance an API key.
 
-[source,javacript]
+[source,javascript]
 ----
-const stripe = require("stripe")(
-  "sk_test_BQokikJOvBiI2HlWgH4olfQ2"
-);
+import Stripe from 'stripe';
+
+const stripeApiKey = 'sk_test_4eC39HqLyjWDarjtT1zdp7dc';
+
+const stripe = new Stripe(stripeApiKey);
+const charge = await stripe.charges.create({
+  amount: 2000,
+  currency: 'usd',
+  source: 'tok_amex',
+  description: 'My First Test Charge (created for API docs at https://www.stripe.com/docs/api)',
+});
 ----
 
-A good SDK will not only obfuscate how things work at a transport layer,
-but a bad one might just get in the way and make it harder to work with
-than just approaching the API directly. Much like any
-library/package/plugin, if it cannot do everything you require, and has
-little room for extension, sometimes it is easier to skip it and do
-things yourself.
+Just as a good SDK can obfuscate the nitty gritty of the transport layer and
+make it easier to get things done, a bad SDK might just get in the way and make
+it harder to work with than just attacking the API directly. 
+
+Much like any library/package/plugin, if it cannot do everything you require and
+provides insufficient room for extension, it might easier to skip it and
+interface directly with the API more directly (via HTTP, or whichever other
+transport layer).
 
 == Ensuring SDK Quality
 
-To use an SDK for the API you are trying to integrate, there needs to be
-an SDK for the programming language you are using, and it needs to be
-well built. If there is no official SDK, you can search around and to
-find an unofficial one.
+To use an SDK for the API you are trying to integrate there needs to be an SDK
+for the programming language you are using, and it needs to be well built. If
+there is no official SDK, you can search around and try to find an unofficial
+one.
 
-If you find one, often that can still suffer from not being particularly
-good, especially as abandonment is a big problem in open-source. If the
-SDK is outdated, it's potentially useless, and might be missing methods
-for the resources and endpoints your application might require.
+Finding an SDK for the API you want to work with is usually a good thing, but
+whether its official or unofficial, in-house or third-party, they all run the
+risk of being useless, out-dated, unstable, or insecure. Abandonment can be a
+big problem in the world of open-source, and best intensions lead to stagnated
+software that might not even keep up with the latest API changes. Often I've
+seen an SDK pointing at API v2 when the latest is API v3...
 
-To ensure the SDK is of good quality, check for a few things.
+Assuming its up to date, let's make sure its good quality. To ensure the SDK is
+of good quality, check for a few things.
 
+- Are there lots of downloads/installs on the package repository?
 - Does it have unit tests?
 - Does it have documentation?
-- Is it on GitHub?
-- Does it have loads of outstanding issues that are months old?
-- Does it have outstanding pull requests with no feedback?
+- Is that documentation any good?
+- Is the code open-source and hosted somewhere useful like GitHub/GitLab/BitBucket?
+- Are there loads of outstanding bug reports that are months old?
+- Is anyone sending in pull requests and are they being reviewed or ignored?
 
 For examples of great SDKs, again, check out
 https://www.twilio.com/docs/libraries[Twilio], who do a fantastic job at
 building SDKs. They have libraries/packages built for C#, Java, Node,
 PHP, Python, Ruby, and JavaScript!
 
-Another example is https://stripe.com/docs/api[Stripe], who document
+Another example is https://stripe.com/docs/api[Stripe]. They document
 each SDK and its usage separately, with code examples that show how to
 carry out certain tasks in those languages.
 
-[source,javacript]
+[source,javascript]
 ----
-const stripe = require("stripe")(
-  "sk_test_BQokikJOvBiI2HlWgH4olfQ2"
-);
 stripe.disputes.update(
   "dp_1AfYgX2eZvKYlo2CXQAAqDv7",
   {
@@ -84,15 +92,16 @@ stripe.disputes.update(
 );
 ----
 
-Another than the evidence tag taking a JavaScript object that matches
-the JSON payload to be sent, there is not much HTTP about this cod, and
-that's fantastic if you want to just eat the sausage and not learn how
-it is made.
+Learning what can be sent in the `evidence` property here will probably be
+documented like any other JavaScript library, but thats where another benefit of
+SDKs come in: as you are working with code, your IDE should have a "Show Definition" option and you can glean more information about allowed options, validation rules, etc. 
 
-Sadly, as mentioned, there is often no SDK, or no good ones, so lets
-keep trucking and learning about making these calls yourself.
+If nothing useful shows up in the SDK docs or code, then popping over to the
+general API Reference documentation will probably get you there, as often the payloads being passed in are just turned straight into JSON.
 
-// TODO before using the sdk check some things
-// check # downloads via NPM
-// Search issues for outstanding problems with no movement or conversation
+Assuming there is no decent SDK for the API you want to work with, let's keep
+trucking and see if we can learn how to confidently interact with the API
+ourselves over the next few chapters.
+
+// TODO 
 // Check for who owns it - Recently, opted out of using one particular tool because it was owned by a big evil telecom company 🤮

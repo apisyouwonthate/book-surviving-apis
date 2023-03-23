@@ -400,12 +400,9 @@ image::images/thunderclient-generate-code.png[Thunderclient generating some Swif
 
 Without knowing any Swift I can grab this code, and my application will make a successful request. 
 
-Making a "GET THE THING" requests like this is overly simplistic and brittle, but this should help get you making API requests quickly, and we can spend the rest of the book making interactions as reliable as possible.
+Another option you will probably come across is Postman. It can be a bit daunting as it's grown from being a simple HTTP client, to being a whole API toolsuite, but API developers will often share "Postman Collections", which you can use to interact with their API like an "API console". Try installing it and playing around with the https://www.twilio.com/docs/openapi/using-twilio-postman-collections[Twilio Postman Collection] to see how far you can get.
 
-See the headers, response codes, and data being returned. Twilio is a
-fantastic API and has a great
-https://postmancollections.com/collection/twilio-api-1513510826119x720495719814266900[collection],
-so maybe start there.
+There is a huge amount more to working with an API than just prodding it with a HTTP request. Authentication will likely cause problems for most APIs, but even when an API client is successfully making requests and getting responses, "GET THE THING" requests like this is overly simplistic and brittle. A lot of developers unfortunately do stop at this point, which makes it a great place to end the chapter, and we can spend the rest of the book making interactions as reliable as possible.
 
 ////
 TODO
