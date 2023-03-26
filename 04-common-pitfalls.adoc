@@ -1,38 +1,26 @@
 = Common Pitfalls
 
-The "happy path" is the way things should work in an ideal world, where nothing goes wrong.
+The "happy path" is the way things should work in an ideal world, where nothing
+goes wrong. It would be like me thinking "I can just ride my bike to work in NYC
+without two taxi drivers, a truck, a family unit of tourists, cops on horses, a
+dog walker, and a raccoon all trying to kill me."
 
-The happy path for an API interaction is pretty simple. 
+There are so many assumptions being made when talking to another API that it's
+hard to count them all.
 
-.The most basic API interaction possible.
-[source,javascript]
+.The most basic API interaction possible, fetching some JSON data from the PokéAPI to show all of Squirtle's abilities.
+[,javascript]
 ----
-const url = 'https://api.protect.earth/maps/sites/a40d4174-f8c6-486a-adff-69364e0c1d18';
-fetch(url)
-  .then((response) => response.json())
-  .then((data) => console.log(data));
-
-fetch(url)
-  .then((response) => {
-    if (response.ok) {
-      return response.json();
-    }
-    throw new Error('Something went wrong');
-  })
-  .then((responseJson) => {
-    console.log(error);
-  })
-  .catch((error) => {
-    console.log(error);
-  });
+include::code/ch-05-common-pitfalls/01-happy-path-only.js[]
 ----
 
-. Usually the happy path is
-something like "I expect a quick response, with valid JSON, in the
-format my code expects it" often feels about as naive as thinking "I can
-just ride my bike to work in NYC without two taxi drivers, a truck, a
-whole family of tourists, cops on horses, a dog walker, and a raccoon,
-all trying to kill me."
+This is assuming that the request is going to get a response, in a reasonable time-frame (no definition of what that is), and when it does it's actually talking to the server you want to talk to and not being hijacked by Wifi, so they feel confident assuming that JSON will be returned the PokeAPI said it would?
+
+Assuming server exists, responds in a decent time, and the data is in fact JSON, there's a few more issues in that we've presumed the pokemon was definitely found (not typos or missing data), and confidently tied our code to an exact JSON structure with no checks at all.
+
+Coding API interactions this way may work for long enough to close out your tickets and go home, but you'll end up with a lot more tickets piling up when various things go wrong.
+
+Let's look into what some of those things are, so you can code in a way that defends your API client, and your precious time, from all the nonsense that can go wrong.
 
 == Connection Failures
 
