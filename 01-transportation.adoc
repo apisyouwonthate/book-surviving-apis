@@ -171,7 +171,7 @@ Not all HTTP clients are that well set up by default, so you might need to progr
 response to see if the request was successful or not.
 
 .JavaScript library fetch() example, showing how to check response as a success or an error.
-[source,js]
+[source,javascript]
 ----
 const url = 'https://api.example.org/companies/12345';
 fetch(url)

@@ -1,6 +1,33 @@
 = Common Pitfalls
 
-Getting the happy path coded up is super easy. Usually the happy path is
+The "happy path" is the way things should work in an ideal world, where nothing goes wrong.
+
+The happy path for an API interaction is pretty simple. 
+
+.The most basic API interaction possible.
+[source,javascript]
+----
+const url = 'https://api.protect.earth/maps/sites/a40d4174-f8c6-486a-adff-69364e0c1d18';
+fetch(url)
+  .then((response) => response.json())
+  .then((data) => console.log(data));
+
+fetch(url)
+  .then((response) => {
+    if (response.ok) {
+      return response.json();
+    }
+    throw new Error('Something went wrong');
+  })
+  .then((responseJson) => {
+    console.log(error);
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+----
+
+. Usually the happy path is
 something like "I expect a quick response, with valid JSON, in the
 format my code expects it" often feels about as naive as thinking "I can
 just ride my bike to work in NYC without two taxi drivers, a truck, a

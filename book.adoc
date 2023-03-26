@@ -20,9 +20,9 @@ include::02-sdks.adoc[]
 
 include::03-paradigms.adoc[]
 
-include::04-authentication.adoc[]
+include::04-common-pitfalls.adoc[]
 
-include::05-common-pitfalls.adoc[]
+include::05-authentication.adoc[]
 
 include::06-ux-pitfalls.adoc[]
 
