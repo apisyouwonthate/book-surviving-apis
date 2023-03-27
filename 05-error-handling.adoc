@@ -1,0 +1,116 @@
+= Error Codes and Error Messages
+
+Error codes are usually strings or integers that act as a unique index
+to a corresponding human-readable error message with more information
+about what is going wrong. That sounds a lot like HTTP status codes, but
+these errors are about application specific things that may or may not
+have anything to do with HTTP specific responses.
+
+Some folks will try to use HTTP status codes exclusively and skip using
+error codes because they do not like the idea of making their own error
+codes or having to document them, but this is not a scalable approach.
+There will be some situations where the same endpoint could easily
+return the same status code for more than one different condition. For
+example, a 403 could be because the authenticated user is not allowed to
+send a message to this specific user, or it could mean the users has
+been banned entirely.
+
+HTTP status codes are there to merely hint at the category of error.
+When an API needs to return application specific information, it can do
+that with a simple bit of JSON in the response.
+
+For example, an issue with the access token will always result in the
+user not being recognized. An uninterested client would simply say "User
+could not get in" while a more interested client would probably prefer
+to offer suggestions via messages in their own webapp/iPhone app
+interface.
+
+....
+{
+  "error": {
+    "type": "OAuthException",
+    "message": "Session has expired at unix time 1385243766.
+The current unix time is 1385848532."
+  }
+}
+....
+
+Humans can understand that nicely enough, but this example from an old
+version of the Facebook Graph API is not good enough. Their "type" is
+vague, making it rather hard for computers to understand the problem.
+They have added error codes since then, which removes the hell which is
+substring matching a bit of text to find out the specifics of what is
+going on.
+
+Twitter does a great job of having their
+https://developer.twitter.com/en/docs/basics/response-codes.html[error
+responses and codes documented]. It's a good thing they use error codes
+on top of HTTP status codes, because they loooooooove to use 403. In the
+Twitter API, a 403 response could mean:
+
+* The access token being used belongs to a suspended user.
+* The OAuth credentials cannot be validated. Check that the token is
+still valid
+* Thrown when a user cannot follow another user due to some kind of
+limit
+* Thrown when a Tweet cannot be viewed by the authenticating user,
+usually due to the Tweet's author having protected their Tweets
+* This was a duplicated follow request and a previous request was not
+yet acknowleged
+
+This is a snipped list because I got tired of copying and pasting.
+Twitter are misusing 403 for most of those examples past the first, but
+they've never much cared about good API design.
+
+Anyway, if you check their documentation, they have a code next to each
+of those specific error instances, which means you can figure out
+exactly which situation you are in when a 403 pops up.
+
+*Programatically Detecting Errors*
+
+You can use error codes to make an application respond intelligently to
+failure of something as basic as a posted Twitter
+
+status.
+
+....
+try:
+    api.PostUpdates(body['text'])
+except twitter.TwitterError, exc:
+    skip_codes = [
+        # Page does not exist
+        34,
+        # You cannot send messages to users who are not following you
+        150,
+        # Sent too many
+        # TODO Make this requeue with a dekal somehow
+        151
+    ]
+    error_code = exc.__getitem__(0)[0]['code']
+    # If the error code is one of those listed before, let's just end here
+    if error_code in skip_codes:
+        message.reject()
+    else:
+        # Rate limit exceeded? Might be worth taking a nap before we requeue
+        if error_code == 88:
+            time.sleep(10)
+        message.requeue()
+....
+
+Compare this sort of logic with the Facebook example from when they
+lacked error codes:
+
+....
+except facebook.GraphAPIError, e:
+    phrases = ['expired', 'session has been invalidated']
+    for phrase in phrases:
+        # If the token has expired then lets knock it out so we don't try again
+        if e.message.find(phrase) > 0:
+            log.info("Deactivating Token %s", user['token_id'])
+            self._deactivate_token(user['token_id'])
+    log.error("-- Unknown Facebook Error", exec_info=True)
+....
+
+Looking out for codes is considerably more reliable than checking for
+bits of text in a message, but if you have no choice then do what you
+have to do.

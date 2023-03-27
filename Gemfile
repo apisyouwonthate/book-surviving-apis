@@ -9,3 +9,6 @@ gem 'asciidoctor-diagram' # https://github.com/asciidoctor/asciidoctor-diagram
 gem 'coderay' # markdown
 # gem "kindlegen", "~> 3.0"
 gem "nokogiri", "~> 1.10"
+
+# Required to avoid "PNG uses unsupported interlace method"
+gem "prawn-gmagick"

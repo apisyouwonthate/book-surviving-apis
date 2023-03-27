@@ -1,51 +1,87 @@
-= Common Pitfalls
+= Connection Problems
 
 The "happy path" is the way things should work in an ideal world, where nothing
-goes wrong. It would be like me thinking "I can just ride my bike to work in NYC
-without two taxi drivers, a truck, a family unit of tourists, cops on horses, a
-dog walker, and a raccoon all trying to kill me."
+goes wrong. It would be like me thinking "I can just ride my bike to work in New
+York City without two taxi drivers, a truck, a family unit of tourists, cops on
+horses, a dog walker, and a raccoon all trying to kill me."
 
-There are so many assumptions being made when talking to another API that it's
-hard to count them all.
+When API client developers start out they are full of optimism, and spend most of their time focused on the happy path as they focus on completing all the functionality they've been asked to do.
 
-.The most basic API interaction possible, fetching some JSON data from the PokéAPI to show all of Squirtle's abilities.
+Over time API client developers step on enough rakes of their own making that they become hardened, almost paranoid, and it's not unreasonable to feel this way.
+
+There are so many things that can go wrong whenever you "go over the wire" that it's best to assume an API interaction is _not going to work_, then be pleasantly surprised when it does. Your code should reflect this mindset.
+
+== What can go wrong?!
+
+Let's look at a simple bit of code thats likely to be in a codebase near you already.
+
+.A super simple API interaction: finding out the various abilities for a Pokémon via the https://pokeapi.co/[PokéAPI].
 [,javascript]
 ----
 include::code/ch-05-common-pitfalls/01-happy-path-only.js[]
 ----
 
-This is assuming that the request is going to get a response, in a reasonable time-frame (no definition of what that is), and when it does it's actually talking to the server you want to talk to and not being hijacked by Wifi, so they feel confident assuming that JSON will be returned the PokeAPI said it would?
+This is assuming that the server is up, that the request is going to get a response, in a reasonable time-frame (no definition of what that is), and when it does it's actually talking to the server you thought it would be, and it's definitely returning JSON!
 
-Assuming server exists, responds in a decent time, and the data is in fact JSON, there's a few more issues in that we've presumed the pokemon was definitely found (not typos or missing data), and confidently tied our code to an exact JSON structure with no checks at all.
+Assuming server exists, responds in a decent time, and the data is in fact JSON, there's a few more issues: we've presumed the pokemon was definitely found (not typos or missing data), and confidently tied our code to an exact JSON structure with no checks to see if the data exist, and of the types we expect.
 
 Coding API interactions this way may work for long enough to close out your tickets and go home, but you'll end up with a lot more tickets piling up when various things go wrong.
 
-Let's look into what some of those things are, so you can code in a way that defends your API client, and your precious time, from all the nonsense that can go wrong.
+== Intermittent Connections
 
-== Connection Failures
+For a client-server interaction to work, clearly both the client and the server will need to have an Internet connection at some point, but it might not always be there. 
 
-Connection failures can happen for all sorts of reasons:
+Even in situations where there is a strong degree of confidence, things could cut out momentarily, or for a while. How will your application cope if it does?
 
-* Mobile user gets on the subway
-* Laptop user switches WiFi networks, and the new one has a captive portal login
-* API rate limiting has decided your client is too chatty
-* API deployment caused temporary instability
-* AWS is down again
-* Cockroaches made a nest in the API servers
+=== Connection Vanishes
 
-Going over the wire is fraught with danger, and it gets worse the
-farther a request and response have to travel. A common theme "in this
-book will be: avoid making network calls when possible, expect failure,
-and make sure your user interface degrades to vary levels, so failures
-are clear. No white screens of death!
+Mobile users in the city might hop on a subway, or go into an old building with a Superman-proof lead roof.
 
-One quick tip: make sure your HTTP client throws exceptions whenever
-possible, which makes failures a lot more clear. Some applications
-presume the call will work then fall over on JSON parsing, or some other
-business logic later down the line which expects an object, but the
-object contains some error message and the required keys are missing.
-This all makes debugging very complicated as the backtrack will send you
-off on some wild goose chase looking at some unrelated source code.
+Mobile users in the countryside might be out in the woods trying to use your app to get directions home, or maybe they're just trying to send selfies to make their friends jealous. 
+
+Laptop users might be in the middle of an important process when their wireless network decides to switch from the coffee shop wifi to the bar next doors Wifi, essentially cutting that connection in half and trashing the API calls. That might take a second, or it might be longer if the new network requires a login screen.
+
+=== Client Mistakes
+
+Maybe the API has "rate limiting" and decided your client is too chatty.
+
+The API implemented a redirect and the HTTP client doesn't know to follow it.
+
+=== Server Mistakes
+
+Their HTTP errors are coming out in HTML because they forgot to catch and return JSON errors.
+
+HTTP status code 500 is popping up from the server or some other network component like a cache server, even though their documentation said they would not ever do a 500 error.
+
+The API deployment wasn't set up with zero-downtime deployments, and a code push has caused some downtime.
+
+The API is relying on an upstream API which is deploying, or generally having a wobble, and thats caused some temporary instability.
+
+AWS is down again. 
+
+=== Weird Problems
+
+ISP (Internet Service Provider) blocked a domain, or a keyword in the request/response.
+ 
+Squirrels attacked the data center?
+
+[quote,Rich Miller,"Surviving Electric Squirrels and UPS Failures, 2012, Data Center Knowledge"]
+"A frying squirrel took out half of our Santa Clara data center two years back," Christian said, noting squirrels' propensity to interact with electrical equipment, with unfortunate results.
+If you enter “squirrel outage” in either Google News or Google web search, you'll find a lengthy record of both recent and historic incidents of squirrels causing local power outages.
+
+Ships trash an undersea cables by dropping anchor right on The Internet?!
+
+// TODO Stock photo liven it up a bit? https://www.istockphoto.com/photo/underwater-fiber-optic-cable-on-ocean-floor-gm1362710800-434533439
+
+== Coding Defensively 
+
+Going over the wire is fraught with danger, and it gets worse the farther a
+request and response have to travel. A common theme "in this book will be: avoid
+making network calls when possible, expect failure, and make sure your user
+interface degrades to vary levels, so failures are clear. No white screens of
+death!
+
+=== Detecting Success or Failure
 
 Failed to connect? Try it again, and if it fails a few times maybe show
 something to the user explaining that their Internet is down.
@@ -124,13 +160,13 @@ If this process was being implemented in NodeJS, you could use
 https://www.npmjs.com/package/bottleneck[Bottleneck].
 
 ....
-const Bottleneck = require("bottleneck");
- 
-// Never more than 5 requests running at a time.
-// Wait at least 1000ms between each request.
-const limiter = new Bottleneck({
-  maxConcurrent: 5,
-  minTime: 1000
+const Bottleneck = require("bottleneck");
+ 
+// Never more than 5 requests running at a time.
+// Wait at least 1000ms between each request.
+const limiter = new Bottleneck({
+  maxConcurrent: 5,
+  minTime: 1000
 });
 
 const fetchPokemon = id => {

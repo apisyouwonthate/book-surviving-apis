@@ -1,7 +1,7 @@
-= Surviving Other Peoples APIs
-Philip Sturgeon <phil@apisyouwonthate.com>; Mike Bifulco <mbifulco@live.com>
+= Surviving Other Peoples Web APIs
+Phil Sturgeon <phil@apisyouwonthate.com>; Mike Bifulco <mike@apisyouwonthate.com>
 :doctype: book
-:creator: Philip Sturgeon & Mike Bifulco
+:creator: Phil Sturgeon & Mike Bifulco
 :front-cover-image: image:cover.jpeg[Front Cover,1050,1600]
 :keywords: API, architecture, REST, gRPC, RPC, HTTP, GraphQL, microservices, API Design
 :source-highlighter: coderay
@@ -20,22 +20,26 @@ include::02-sdks.adoc[]
 
 include::03-paradigms.adoc[]
 
-include::04-common-pitfalls.adoc[]
+include::04-authentication.adoc[]
 
-include::05-authentication.adoc[]
+include::05-error-handling.adoc[]
 
-include::06-ux-pitfalls.adoc[]
+include::06-connection-problems.adoc[]
 
-include::07-caching.adoc[]
+include::07-ux-pitfalls.adoc[]
 
-include::08-validation.adoc[]
+include::08-caching.adoc[]
 
-include::09-timeouts-retries.adoc[]
+include::09-validation.adoc[]
 
-include::10-change-management.adoc[]
+include::10-timeouts-retries.adoc[]
 
-include::11-testing.adoc[]
+include::11-change-management.adoc[]
 
-include::12-architecture.adoc[]
+include::12-async.adoc[]
+
+include::13-testing.adoc[]
+
+include::14-architecture.adoc[]
 
 include::99-outro.adoc[]
