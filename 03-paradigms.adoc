@@ -516,6 +516,6 @@ third-party, letting them lead could cause some unexpected results. If the API
 was designed without the knowledge of the clients requirements, the API might
 not do a very good job of leading.
 
-And if you just need to grab some data and do a thing, well, who cares. Let's grab that data, mush it about, and ship it... well, that's the "happy path" at least.
+And if you just need to grab some data and do a thing, well, who cares. Let's grab that data, mush it about, and ship it... well, that's the "happy path" at least
 
-Unfortunately, there are infinite things that can go wrong with you grabbing/sending that data, so let's have a look at the most common pitfalls.
+Whatever sort of API you are using, it probably wants to know who you are, or at least know what your application is. Let's learn about authentication so you can start working with actual APIs, then armed with enough information to become dangerous we can try to disarm some of the footguns before they go off.

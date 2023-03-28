@@ -1,33 +1,230 @@
 = Authentication
 
-Generally the idea of Authentication is to require that clients provide
-some sort of unique information, with the goal of proving the request is
-coming from a user or application that actually exists, and is allowed
-to make that request. The unique information is usually referred to as
-"credentials" and these will be given to you by developers on the team
-in charge of the API. If the API belongs to another company you can
-often sign up for "API Access" or "API Keys" on their website somewhere.
+Some read-only APIs might let you grab data without needing any sort of credentials set up, but at some point you're almost certainly going to need to figure out Authentication, Authorization, API Keys, API Credentials, Access Tokens, Bearer tokens, JWTs... or a whole sack full of terminology that all basically comes down to letting people or machines do various tasks that you wouldn't want the wrong people doing.
 
-Authentication primarily allows APIs to restrict access to various
-endpoints, but it also offers APIs the chance to track users, give
-endpoints user context (GET /feed should only return the _current users_
-feed), filter data, or even throttle and deactivate accounts that overdo
-it.
+== Basic Concept
 
-Some are completely public with no keys at all. Completely open APIs
-with no keys seem to be getting rarer over time, as APIs get more
-important, do far more, and are increasingly dynamic.
+Generally the idea is to require API clients to provide some sort of unique
+information, similar in concept to a username and a password, but hopefully not literally a username and password because that is fraught with security concerns.
 
-To get the specifics for a particular API, their documentation is a
-fantastic place to start. Usually API documentation will contain an
-"Authentication" section in their docs, and this will usually be towards
-the start.
+The API wants to know that the request is:
 
-.Screenshot from https://stripe.com/docs/api/curl#authentication[Stripe: Authentication]
-image::images/stripe-authentication.png[]
+1. coming from a user or application that actually exists
+2. has been allowed to make that request
+3. has not had its access revoked
 
-Here Stripe are making it quite clear where you can find your API keys,
-and talk about two approaches to sending them.
+An API might also want to tie you to a specific payment plan, or want to at least have your email so they can pester you about buying things or warn you about changes.
+
+The unique information given to the API client is usually referred to as
+"credentials" or "tokens", and it can be a little different depending on whether the API client is interacting with the API on behalf of itself, or on behalf of a user in the API.
+
+== User or Application
+
+Say you're building a Mastodon client. The Mastodon application will need general credentials in order to fetch the public posts, find the current trends, do all the public stuff you're seeing before the end user logs in.
+
+To log the end user in, your Mastodon client will need to say "Hey Mastodon Server, it's me, Legit App, you can tell because you gave me those secret API credentials! This person wants to log in, is that alright with you?"
+
+Then the Mastodon server will say "Yeah those credentials check out, alright... here are some more credentials for that specific users' session."
+
+Now you can do things as your application, or on behalf of that end user specifically.
+
+== Authentication vs. Authorization
+
+These two terms get thrown around interchangeably sometimes but mean very different things, and I always forget so let's write it down.
+
+[quote,onelogin.com]
+--
+Authentication and authorization are two vital information security processes that administrators use to protect systems and information. Authentication verifies the identity of a user or service, and authorization determines their access rights.
+
+Authentication and authorization are similar in that they are two parts of the underlying process that provides access. Consequently, the two terms are often confused in information security as they share the same "auth" abbreviation. Authentication and authorization are also similar in the way they both leverage identity. For example, one verifies an identity before granting access, while the other uses this verified identity to control access.
+--
+
+Does this matter to you? Possibly.
+
+Some APIs will only want to know that you are allowed to be working with the API, then the whole API is open to you. 
+
+Some APIs will want to know if you are meant to be doing the specific thing you are trying to do.
+
+Some APIS will accidentally forget to check if you're meant to be looking at certain information and you can steal loads of data thats meant to be tied to some other company just by changing details.
+
+.Graphic from apisecurity.io highlighting one of the largest security threats in badly made APIs.
+image::images/ch04-authentication/api1.jpg[]
+
+Oops! You probably don't want to be using an API where this is possible, so it's worth trying to have a quick hack before you start building it. More API security concerns can be found via the https://owasp.org/www-project-api-security/[OWASP API Security Project].
+
+Anyway, even when its not a security issue, it can be confusing to see these two different concepts munged into the `Authorization` HTTP header when we're only trying to do basic authentication... 
+
+Ahh well. Computers are weird. Let's get into it! 
+
+== Getting Your API Keys / Access Tokens
+
+Depending on the type of API you're working on, the credentials could be given to you in a bunch of different ways.
+
+*Internal APIs:* If the API was made a few desks over and its application credentials, then you'll probably get told an API Token, or have it direct messaged to you.
+
+*External APIs:* You'll probably have to sign up for some sort of Developer Portal, make an account, and possibly create an App to get your credentials.
+
+If there is API documentation there will usually be a section called Authentication, and that should tell you whether you need API keys, access tokens, or what, and will help you find them.
+
+.Screenshot from https://stripe.com/docs/api/curl#authentication[Stripe's Authentication documentation].
+image::images/ch04-authentication/stripe-authentication.png[]
+
+Stripe do a great job of directing people to the Dashboard to find API keys, it's explained right after the Introduction! Like many APIs, pop over to the Dashboard, then look for a "Developers" link. 
+
+Once there look for something like "Get API Key".
+
+.Stripe's Developer Portal, showing an API key being made.
+image::images/ch04-authentication/stripe-authentication-key.png[]
+
+Copy this somewhere secret, maybe into a password manager for now, so you can
+use it whenever you like, but it's not easy to find by the criminals.
+
+== Using API Keys
+
+If you're lucky enough to have a good SDK for the API then this might be incredibly easy. Just grab that code, bung it into some sort of environmental variable manager, and effectively you're just doing this.
+
+.Stripe's JavaScript SDK showing an API key being passed in. Hardcoded... naughty!
+[,javascript]
+----
+include::code/ch04-authentication/01-stripe-sdk.js[]
+----
+
+.Keep your API keys out of source control! 
+[sidebar]
+--
+Better to pass that in through something like dotenv, which is a cracking environment variable manager available in most languages.
+
+[source,javascript]
+----
+import Stripe from 'stripe';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
+const stripeApiKey = process.env.STRIPE_API_KEY;
+----
+
+You can usually make a `.env.development` to store "muck around" tokens, then your production deployment/build probably has a way to pop in production Environment Variables.
+
+Don't ignore this step, as there's all sorts of unknown horrors that can befall you if you commit API keys to source control, like Git Copilot happily auto-completing tokens into other peoples code and letting them do crimes.
+
+image::images/ch04-authentication/github-copilot-crimes.png[Reddit post titled "GitHub copilot just leaked someones api key..." with the code embedded with a hardcoded api key right there.]
+--
+
+When SDKs are not an option it isn't too much different to 
+
+.How would that authenticated Stripe SDK example look in a plain old HTTP client?
+[,javascript]
+----
+include::code/ch04-authentication/02-bearer-token.js[]
+----
+
+Here we have simple passed in the `Authorization` HTTP header, with a "Bearer" token, which is the keyword `Bearer` with a space and the token popped in behind it. This is one of the more common ways to do auth for HTTP, but there are plenty more to keep you guessing.
+
+== Authorization Methods
+
+Here are a few of the authentication methods you're likely to come up against working with various HTTP APIs (if the SDK hasn't abstracted it away for you.)
+
+=== Authorization Header
+
+The Authorization header is part of a https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization[general HTTP authentication framework] which can be used with several https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication#authentication_schemes[authentication schemes].
+
+- Basic
+- Bearer
+- Digest
+
+These all work in a similar way to the example above, you pass in `Authorization` as a header in every request, then the server will respond with a 401 if it's no good.
+
+*HTTP Basic* is password based, so have generally been used less and less. Basic is especially bad as somebody sniffing network traffic can see the password. It's not plaintext, but base64 encoded, and that can be decoded with no effort.
+
+.HTTP basic credentials grabbed from the browser that look encrypted, but...
+image::images/ch04-authentication/http-basic.png[]
+
+If anyone was to grab that traffic (man in the middle, snooping on a public network) then they could base64 decode it:
+
+```
+$ echo YWRtaW46cGFzc3dvcmQxMjM= | base64 -d
+admin:password123
+```
+
+Decoding it shows the password, which can allow for privilege escalation if an attacker can now logs in as the user. They could change account details to lock the original user out. They might even be able to access other systems if the password is reused.
+
+If an API is using HTTP Basic then see if the password is an actual password, or if its an access token being used as a password. If its a user account password then you might not want to use this API. If it's a token then that's just fine, as tokens cannot be used to login, only to make authenticated requests, so most of those other problems go away.
+
+HTTP Digest is a bit safer going over the wire as it is taking password checkums, which is fairly similar to how most login forms work anyway. 
+
+```
+Digest: sha-256=X48E9qOokqqrvdts8nOJRJN3OWDUoyWxBf7kbu9DBPE=
+```
+
+Digest checksums are a bit tricky to construct, but essentially you mush a lot of different things together and checksum it up:
+
+- Compute A1 as MD5("username:realm:password").
+- Compute A2 as MD5("requestMethod:requestURI").
+- Compute the final hash, known as “response”, as MD5("A1:nonce:A2").
+
+This can also get sketchy depending on how that API client is getting that password. It's ok if the API client is asking the user to log in, then sends that HTTP digest authenticated token off then ok for a single request, or a few requests together. It's ok if the API client uses that digest approach to talk to an authentication server to get credentials on behalf of the user. It's not ok if the API client is storing that password in plain text so it can repeat those requests. Y'all going to get hacked and get in trouble.
+
+*HTTP Bearer* tokens are far more common, and that token is either the API Key like we discussed earlier, or some sort of other credential tied to the user specifically. Some will last forever, some might expire and need refreshing, and some might get revoked if you're doing something cheeky.
+
+=== JWTs (JSON Web Tokens)
+
+A JWT (JSON Web Token) is a compact, URL-safe way to represent claims to be
+transferred between two parties, which in our example is client and server. It's
+a type of authentication and authorization token that is commonly used in web
+applications and APIs.
+
+A JWT is made up of three parts: a header, a payload, and a signature. The
+header contains information about the algorithm used to sign the token, while
+the payload contains the actual data or claims that are being made about the
+user or request. The signature is used to verify the integrity of the JWT,
+ensuring that it has not been tampered with or modified.
+
+When a user logs in to a web application or API, they are issued a JWT, which is
+then used to authenticate subsequent requests. The JWT is typically included in
+the request headers or as a query parameter, and the server can verify its
+authenticity by decoding the token and verifying its signature.
+
+JWTs are useful for single sign-on (SSO) scenarios, where a user can log in to
+multiple applications using a single set of credentials. They are also commonly
+used in microservices architectures, where each service can use the JWT to
+verify the identity of the user or request.
+
+.Simple example of a JWT being created with a shared secret to talk to a hypothetical API.
+[,javascript]
+----
+include::code/ch04-authentication/03-jwt.js[]
+----
+
+In this example, we use the jwt library to sign the JWT token with a secret key, which can be used to verify the token on the server side. We then set up the API request headers with the JWT token, using the Bearer scheme, and the Content-Type header to indicate that we are sending JSON data.
+
+We then make a request to the API using the fetch API, passing in the URL and headers. We parse the response JSON data and log the information about the golden retriever breed to the console.
+
+=== Query String
+
+Some APIs will ask you to send API keys or access tokens via the URL.
+
+.A request to fetch a list of products from a Shopify store which includes the access token in the query string.
+```
+GET /admin/api/2021-01/products.json?access_token={access_token}
+```
+
+Passing access tokens through query strings is generally frowned up for most
+APIs, as it can lead to tokens being leaked, but there are plenty of ways to
+reduce this impact. 
+
+1. Don't log or expose this key in any way inside your application.
+
+2. Don't let the access token make its way to the browser, as people will see it
+in their history or network tab, and malicious actors could grab that.
+
+Shopify allow access tokens in the URL to authenticate requests to their API
+from their various integrations. This is made less dangerous by Shopify allowing
+developers to limit the "scope" of their app's access by specifying which parts
+of the Shopify store the app can access. This helps ensure that the app only has
+access to the data it needs, and reduces the risk of data breaches. 
+
+== Auth in HTTP is usually "Stateless"
 
 What confuses many folks when faced with HTTP Authentication, is that
 most of the time the authentication happens on every single HTTP
@@ -56,230 +253,4 @@ For this, and many other reasons (like not having to worry about
 logouts), HTTP Authentication tokens are passed on every single request
 made.
 
-Stripe have already mentioned HTTP Basic Auth and Bearer, which are two
-very similar approaches to authentication in HTTP. There are quite a
-damn lot of authentication strategies you could bump into, and whilst
-you do not need to know them all, you will probably want to read the
-appropriate section when an API you are looking at uses it:
-
-* HTTP Basic
-* HTTP Digest Auth
-* Bearer
-* OAuth 1.0a
-* OAuth 2.0
-* JWTs
-
-WARNING: This chapter is incomplete.
-
-// TODO Explain how to work with them all. Ugh it's gonna take a while.
-
-
-
-// ## Basic
-
-// Digest is an approach to authentication similar to Basic, but is designed to improve on the security concerns.
-// Instead of transmitting passwords in plain text, it will calculate a MD5 hash and send that. Unlike the
-// Base64-based passwords used in the basic auth, MD5 is a one-way hash meaning you cannot simply take the hash
-// and calculate the original password without trying out a lot of different combinations.
-// > HA1 = MD5(A1) = MD5(username:realm:password)
-// > HA2 = MD5(A2) = MD5(method:digestURI)
-// > response = MD5(HA1:nonce:HA2)
-// The `nonce` is a unique number, which can contain (but should not be only) a timestamp. This helps to avoid
-// replay attacks as the same hash will not be usable later on.
-// **Pros**
-// * Password is not transmitted in plain text
-// * The use of `nonce` helps negate rainbow table attacks
-// * Generally speaking, more secure than basic auth
-// * Easier to implement than some approaches
-// **Cons**
-// * Harder than basic auth to implement **well**
-// * Easy to implement badly
-// * Still insecure over HTTP
-// * Just like basic auth, passwords can still be stored by the browser
-// * Uses MD5
-// **MD5... 4... 3... 2... 1... HACKED**
-// MD5 is well accepted by many people today to be extremely crackable in most scenarios. Digest authentication has
-// not improved since its creation in 1993. While the calculation process should help negate many of
-// these issues, a lousy implementation of digest authentication will be open to some weird attack vectors that will
-// remain unknown until after the fact.
-// Digest is certainly more secure than basic. It is great over SSL - definitely a good choice for an internal API
-// if you have more time to spend implementing - but it still requires the username and password to be sent repeatedly,
-// meaning it _is_ potentially hackable if the hacker has enough encrypted requests available to process.
-
-// ## Digest
-
-// Digest is an approach to authentication similar to Basic, but is designed to improve on the security concerns.
-// Instead of transmitting passwords in plain text, it will calculate a MD5 hash and send that. Unlike the
-// Base64-based passwords used in the basic auth, MD5 is a one-way hash meaning you cannot simply take the hash
-// and calculate the original password without trying out a lot of different combinations.
-// > HA1 = MD5(A1) = MD5(username:realm:password)
-// > HA2 = MD5(A2) = MD5(method:digestURI)
-// > response = MD5(HA1:nonce:HA2)
-// The `nonce` is a unique number, which can contain (but should not be only) a timestamp. This helps to avoid
-// replay attacks as the same hash will not be usable later on.
-// **Pros**
-// * Password is not transmitted in plain text
-// * The use of `nonce` helps negate rainbow table attacks
-// * Generally speaking, more secure than basic auth
-// * Easier to implement than some approaches
-// **Cons**
-// * Harder than basic auth to implement **well**
-// * Easy to implement badly
-// * Still insecure over HTTP
-// * Just like basic auth, passwords can still be stored by the browser
-// * Uses MD5
-// **MD5... 4... 3... 2... 1... HACKED**
-// MD5 is well accepted by many people today to be extremely crackable in most scenarios. Digest authentication has
-// not improved since its creation in 1993. While the calculation process should help negate many of
-// these issues, a lousy implementation of digest authentication will be open to some weird attack vectors that will
-// remain unknown until after the fact.
-// Digest is certainly more secure than basic. It is great over SSL - definitely a good choice for an internal API
-// if you have more time to spend implementing - but it still requires the username and password to be sent repeatedly,
-// meaning it _is_ potentially hackable if the hacker has enough encrypted requests available to process.
-
-// ## Oauth 1a
-
-// Not quite as popular these days, OAuth 1.0a was a big player on the web-based authentication scene and used by
-// services such as Dropbox, Flickr, Twitter, Google, LinkedIn and Tumblr. Since then, most have moved over to OAuth 2,
-// which we will discuss next. The two are very different beasts and should not be conflated.
-// > OAuth provides a method for clients to access server resources on
-// > behalf of a resource owner (such as a different client or an end-user).
-// > It also provides a process for end-users to authorize third-party access
-// > to their server resources without sharing their
-// > credentials (typically, a username and password pair), using user-agent redirections.
-// > -- **Source:** [Wikipedia](http://en.wikipedia.org/wiki/OAuth)
-// Previously, we looked at authentication technologies that were essentially built into the browser, and were
-// not particularly flexible in their usages. OAuth 1.0 was a great way for services such as social networks to
-// implement web-based HTML login forms that looked the same as any other login form (were branded with logos,
-// color schemes, etc) but could then send you back to the third party website for all sorts of awesome
-// integration purposes.
-// For example, when Twitter swapped from HTTP Basic integration to OAuth 1.0 it meant that instead of
-// third-parties (iPhone apps, other websites, CMSs, whatever) asking end-users to enter their username and
-// password (which would be saved somewhere in plain text), the third party could redirect the user to the Twitter
-// website, get them to log in, and have them come back to their service to save a special token, instead of saving a
-// password. OAuth 1.0a called these tokens an 'OAuth Token' and an 'OAuth Token Secret'.
-// OAuth 1.0a was built to be very secure even when not running over SSL. That meant, of course, that it was
-// incredibly complicated, having to set up signatures of which there were a few different algorithms, including
-// HMAC-SHA1 and RSA-SHA1, or just plaintext. That got a bit tricky when trying to write client code, as you had to
-// make sure you supported the right signature algorithm, and most of the PHP implementations out there (including
-// my old CodeIgniter library) did not support them all.
-// An average OAuth 1.0a signed HTTP request would look a little something like this:
-// ~~~~~~~~
-// POST /moments/1/gift HTTP/1.1
-// Host: api.example.org
-// Authorization: OAuth realm="http://sp.example.org/",
-// oauth_consumer_key="0685bd9184jfhq22",
-// oauth_token="ad180jjd733klru7",
-// oauth_signature_method="HMAC-SHA1",
-// oauth_signature="wOJIO9A2W5mFwDgiDvZbTSMK%2FPY%3D",
-// oauth_timestamp="137131200",
-// oauth_nonce="4572616e48616d6d65724c61686176",
-// oauth_version="1.0"
-// Content-Type: application/json
-// { "user_id" : 2 }
-// ~~~~~~~~
-// Ouch.
-// Another complication was that there were different implementations: two-legged ("proper" and "not proper") and
-// three-legged. This is incredibly confusing, so I will let Mashape explain in the [OAuth Bible: OAuth Flows].
-// There was also xAuth (which is still OAuth 1.0a), designed for mobile and desktop applications that do
-// not have easy access to a browser. It is much easier for a web application to spawn a popup with JavaScript, or to
-// redirect a user, than it is for a mobile app. This made it a much handier way to get OAuth Tokens than the other
-// implementations.
-// In the end, if you got the OAuth Token and Secret, you would place the OAuth Token in the request as a
-// header and use the secret to sign the signature, which would encrypt the request and make the whole thing nice
-// and secure. If you can shove SSL on top of that, then you have got yourself a very secure setup - except for the
-// fact that tokens would stay the same once created, so over time their security could be compromised. Somebody
-// could recover the data from a laptop you sold them on eBay, or a potential hacker could packet sniff enough
-// traffic signed with your signature to eventually programmatically guess the token and secret.
-// **Pros**
-// * Super secure, even without SSL
-// * Does not send username/password in every request (plain text or hashed)
-// * Stops third party applications wanting or storing your username and password
-// * An attacker gaining an OAuth Token and even a Secret should still never be able to change your password, meaning you should be safe from account hijack
-// **Cons**
-// * Rather complicated to interact with, even if you have a well built client library. PHP never really had one, but [The League of Extraordinary Packages](http://thephpleague.com/) has recently [built a decent one](https://github.com/thephpleague/oauth1-client)
-// * Limited number of ways to grant access. xAuth and Two/Three-legged flows ended up being rather restrictive
-// * Tokens never changed, so security was essentially just a matter of how long and how much you used the service
-// OAuth 1.0a would be a great technology to implement if you were building a website with a public user-based API... and you were building it in 2009-2010. Now, probably not.
-
-// == OAuth 2
-
-// OAuth 2 dropped the secret token, so users are simply getting an _access token_ now. It also dropped signature
-// encryption. This was seen by many as a massive step backwards in security, but it was actually rather a wise
-// move. The OAuth 1.0a spec made SSL optional, but OAuth 2.0 requires it. Relying on SSL to handle the encryption
-// of the request is logical and drastically improves the implementation.
-// Even a basic GET request in OAuth 1.0a was horrendous as you would always need to set up your consumers,
-// signatures, etc., but with OAuth 2.0 you can simply do this:
-// {lang=php,starting-line-number=1}
-// ~~~~~~~~
-// file_get_contents('https://graph.facebook.com/me?access_token=vr5HmMkzlxKE70W1y4Mi');
-// ~~~~~~~~
-// Or, as we saw back in [chapter 3](#chapter-3), you can usually pass access tokens to the server as an HTTP
-// request header:
-// ~~~~~~~~
-// POST /moments/1/gift HTTP/1.1
-// Host: api.example.org
-// Authorization: Bearer vr5HmMkzlxKE70W1y4Mi
-// Content-Type: application/json
-// { "user_id" : 2 }
-// ~~~~~~~~
-// That looks a little easier to work with than OAuth 1.0a, right?
-// W> ### Headers vs. URL
-// W> You should always try to use the `Authorization` header to send your tokens whenever possible. The query-string is
-// W> secured when using SSL, but unless they are intentionally blocked then access tokens could start turning up in server
-// W> logs and various other places. Also, browsers will store the full URL (including query-string) in history. This could
-// W> easily compromise the integrity of users security if their computer is stolen or if a sibling decides to play a prank.
-// **"Short"-life Tokens**
-// As discussed, OAuth 1.0a also uses the same tokens essentially forever. OAuth 2.0's access tokens will (can)
-// expire after an arbitrary period of time, which is defined by the OAuth server. When you request an access token, you will
-// usually be provided with a _refresh token_ and an _expiry offset_, which is the number of seconds until the token
-// expires. Some servers send you a unix time at which it expires. Folks like to do things different for some
-// reason, but if you know what to look out for it is not so bad.
-// Using the expire time you know when your access token will not be valid, so you can proactively create a CRON
-// job that refreshes the access tokens, or you can wrap your HTTP requests in an exception handler that looks for
-// a 'Not Authorized' error and then refreshes them as the OAuth 2.0 spec recommends.
-// This extra "access tokens expire and you have to refresh them" step initially seems confusing and annoying,
-// especially when you are used to "once I have this token it works forever". However, it is much more secure. OAuth 1.0a
-// stopped you handing out your username and password by essentially giving you another username and password (the
-// token and the secret), which worked for one specific client. Any good network admin will tell you that you should
-// regularly change your password (at least once every month), and OAuth is no different as the more you use the same
-// password/token the greater your chance of somebody finding out what it is.
-// **Grant Types**
-// One further massive benefit OAuth 2.0 provides over OAuth 1.0a is the ability to have multiple (even custom) grant
-// types. Grant types are essentially a "mode" in which the OAuth 2.0 server will run, expecting different inputs and
-// maybe providing different outputs. With this flexibility, you can create some amazing implementations.
-// The most common OAuth 2.0 Grant Type that a user will be familiar with is `authorization_code`, which is a very OAuth
-// 1.0a-like flow.
-// A client web app creates a link to the OAuth Server of the service they would like to log into (e.g. Facebook), and the
-// user logs in. Facebook redirects the user back to the client web app's 'Callback URL' with a `?code=FOO` variable in
-// the query string. The web app then takes that code and makes a second request to Facebook (usually a `POST`, but sometimes
-// a `GET` depending on which popular API you look at) and Facebook then offers up an access token in the response.
-// Some other popular APIs, like Google Apps, then provide `expires` and a refresh token too.
-// This is just one approach and there are more. Due to this flexibility, OAuth 2.0 is good for pretty much any
-// scenario when authenticating an API, be it a basic username password login on a single-page JavaScript app, a
-// CRON job that has no database access, or a full blown user-redirect flow between different websites. The flexibility
-// of custom grant types allows absolutely anything to be done.
-// More on this in the 'Understanding OAuth 2.0 Grant Types' section below.
-// **Erin Hammer**
-// Often, I am asked why anyone would still use OAuth 2.0 after Erin Hammer (lead author and editor of the OAuth 2.0
-// standard) [withdrew his name from the specification]. It certainly sent a ripple through the Internet, but I
-// personally disagree wholeheartedly with the issues he raised.
-// 1. OAuth 2.0 is less secure if you do not use SSL/TSL. Correct. So use them.
-// 2. People have implemented OAuth 2.0 badly (looking at you Facebook/Google/most providers), but when implemented well it is lovely. Use a pre-built standard compliant implementation.
-// 3. He thinks refresh tokens are annoying, but I think they are great.
-// His departure from the project is no major loss. I am sure the IETF are bikeshedding hard,
-// but after using both for years, I am much happier with OAuth 2.0 and really wish [Twitter would get on with a
-// full upgrade] so I never have to use OAuth 1.0a again.
-// _Generally speaking,_ OAuth 2.0 is a good fit for a huge majority of situations, provided you **use SSL** and
-// implement a **well-tested** existing solution for your OAuth 2.0 Server. Trying to do this yourself can be
-// incredibly hard and may well lead to you getting super-hacked. Even Facebook
-// have trouble here to this day because they rolled their own solution based on a really early draft of the
-// specification.
-// [withdrew his name from the specification]: http://hueniverse.com/2012/07/26/oauth-2-0-and-the-road-to-hell/
-// [Twitter would get on with a full upgrade]: https://dev.twitter.com/discussions/397
-
-// ## Others
-
-// * **OpenID** - https://openid.net/
-// * **Hawk** - https://github.com/hueniverse/hawk
-// * **Oz** - https://github.com/hueniverse/oz
+// TODO Wedge in OAuth 2,2.1
