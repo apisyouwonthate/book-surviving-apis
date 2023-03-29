@@ -13,7 +13,16 @@ The API wants to know that the request is:
 2. has been allowed to make that request
 3. has not had its access revoked
 
-An API might also want to tie you to a specific payment plan, or want to at least have your email so they can pester you about buying things or warn you about changes.
+An API might also want to tie you to a specific payment plan, or want to at least have your email so they can pester you about buying things, or warn you about upcoming changes.
+
+These credentials might be called:
+
+- API Token
+- API Key
+- Access Token
+- OAuth Token
+
+There might also be "secrets", which are tokens you keep to yourself that pair with credentials that are more public, conceptually similar to a username and a password.
 
 The unique information given to the API client is usually referred to as
 "credentials" or "tokens", and it can be a little different depending on whether the API client is interacting with the API on behalf of itself, or on behalf of a user in the API.
@@ -32,7 +41,7 @@ Now you can do things as your application, or on behalf of that end user specifi
 
 These two terms get thrown around interchangeably sometimes but mean very different things, and I always forget so let's write it down.
 
-[quote,onelogin.com]
+[quote,onelogin.com,Authentication vs. Authorization]
 --
 Authentication and authorization are two vital information security processes that administrators use to protect systems and information. Authentication verifies the identity of a user or service, and authorization determines their access rights.
 
@@ -50,13 +59,14 @@ Some APIS will accidentally forget to check if you're meant to be looking at cer
 .Graphic from apisecurity.io highlighting one of the largest security threats in badly made APIs.
 image::images/ch04-authentication/api1.jpg[]
 
-Oops! You probably don't want to be using an API where this is possible, so it's worth trying to have a quick hack before you start building it. More API security concerns can be found via the https://owasp.org/www-project-api-security/[OWASP API Security Project].
+Oops! You probably don't want to be using an API where this is possible, so it's worth trying to have a quick hack around trying to abuse the API before you start building your API client around it. More API security concerns can be found via the https://owasp.org/www-project-api-security/[OWASP API Security Project].
 
-Anyway, even when its not a security issue, it can be confusing to see these two different concepts munged into the `Authorization` HTTP header when we're only trying to do basic authentication... 
+It can also be confusing to see these two different concepts munged into the
+`Authorization` HTTP header when we're only trying to do basic authentication... 
 
 Ahh well. Computers are weird. Let's get into it! 
 
-== Getting Your API Keys / Access Tokens
+== Getting API Credentials
 
 Depending on the type of API you're working on, the credentials could be given to you in a bunch of different ways.
 
@@ -167,6 +177,50 @@ This can also get sketchy depending on how that API client is getting that passw
 
 *HTTP Bearer* tokens are far more common, and that token is either the API Key like we discussed earlier, or some sort of other credential tied to the user specifically. Some will last forever, some might expire and need refreshing, and some might get revoked if you're doing something cheeky.
 
+=== Query String
+
+Some APIs will ask you to send API keys or access tokens via the URL.
+
+.A request to fetch a list of products from a Shopify store which includes the access token in the query string.
+```
+GET /admin/api/2021-01/products.json?access_token={access_token}
+```
+
+Passing access tokens through query strings is generally frowned up for most
+APIs, as it can lead to tokens being leaked, but there are plenty of ways to
+reduce this impact. 
+
+1. Don't log or expose this key in any way inside your application.
+
+2. Don't let the access token make its way to the browser, as people will see it
+in their history or network tab, and malicious actors could grab that.
+
+Shopify allow access tokens in the URL to authenticate requests to their API
+from their various integrations. This is made less dangerous by Shopify allowing
+developers to limit the "scope" of their app's access by specifying which parts
+of the Shopify store the app can access. This helps ensure that the app only has
+access to the data it needs, and reduces the risk of data breaches. 
+
+=== OAuth
+
+OAuth (Open Authorization) is a standard protocol for secure authentication and authorization of API access. There's a few different versions knocking around which can be confusing, but the main idea is to be an auth framework instead of just passing keys around, and handles "scopes" to give different levels of permission to different tokens.
+
+OAuth also covers "user redirect" flows where your client users can be sent to an interface associated with the API, then callback to your client with access tokens. There's various different "flows", but that's the famous one, and its a whole lot easier in OAuth 2.x.
+
+Keep an eye out for OAuth 2.1, which was released in 2021 and includes some improvements and clarifications to the OAuth 2.0 specification.
+
+The main differences between OAuth 1.0a, OAuth 2.0, and OAuth 2.1 are:
+
+1. Authorization flow: OAuth 1.0a uses a complex signature-based authorization flow that requires multiple round-trip requests between the client, the server, and the user. OAuth 2.0 uses a simpler authorization flow that involves the client requesting an access token from the server and using that token to make API requests. OAuth 2.1 does not introduce any changes to the authorization flow.
+
+2. Token types: OAuth 1.0a and OAuth 2.0 both support various token types, including access tokens and refresh tokens. However, OAuth 2.0 allows for more flexibility in token types and also introduces the concept of bearer tokens, which do not require a cryptographic signature. OAuth 2.1 does not introduce any changes to token types.
+
+3. Security considerations: OAuth 2.1 provides additional security considerations and recommendations for the use of OAuth 2.0, such as guidance on how to securely handle access tokens and the use of PKCE (Proof Key for Code Exchange) to prevent authorization code interception attacks. It also clarifies some aspects of the OAuth 2.0 specification that were open to interpretation, such as the definition of client types and the handling of redirect URIs.
+
+Doing a full walk through of how all the OAuth versions work would be too much for this book, but if we stick with Stripe as the example they have brilliant documentation covering https://stripe.com/docs/connect/oauth-standard-accounts[Using OAuth with Stripe accounts] which can give you an idea.
+
+One main thing to be wary of with OAuth is that access tokens can expire. If you are given an expiry time/offset then store that along with the token, so you know to refresh without waiting for a 403 failure to happen. Otherwise you can set up a middleware that detects 403 failures and tries refreshing the token then instead. Whichever works, but find out if they expire or last forever before you go to production. 😅
+
 === JWTs (JSON Web Tokens)
 
 A JWT (JSON Web Token) is a compact, URL-safe way to represent claims to be
@@ -200,30 +254,6 @@ In this example, we use the jwt library to sign the JWT token with a secret key,
 
 We then make a request to the API using the fetch API, passing in the URL and headers. We parse the response JSON data and log the information about the golden retriever breed to the console.
 
-=== Query String
-
-Some APIs will ask you to send API keys or access tokens via the URL.
-
-.A request to fetch a list of products from a Shopify store which includes the access token in the query string.
-```
-GET /admin/api/2021-01/products.json?access_token={access_token}
-```
-
-Passing access tokens through query strings is generally frowned up for most
-APIs, as it can lead to tokens being leaked, but there are plenty of ways to
-reduce this impact. 
-
-1. Don't log or expose this key in any way inside your application.
-
-2. Don't let the access token make its way to the browser, as people will see it
-in their history or network tab, and malicious actors could grab that.
-
-Shopify allow access tokens in the URL to authenticate requests to their API
-from their various integrations. This is made less dangerous by Shopify allowing
-developers to limit the "scope" of their app's access by specifying which parts
-of the Shopify store the app can access. This helps ensure that the app only has
-access to the data it needs, and reduces the risk of data breaches. 
-
 == Auth in HTTP is usually "Stateless"
 
 What confuses many folks when faced with HTTP Authentication, is that
@@ -236,21 +266,22 @@ This sounds bizarre at first, as we are so often used to the concept of
 "Users logs in, then they have a session and can do logged in stuff
 until they log out or the session expires" being the one paradigm for
 how users login. That paradigm certainly exists for some APIs, but its
-rare, and for plenty of good reasons.
+rare, and is avoided these days for plenty of good reasons.
 
 To cut a long story short, servers are happier when they do not need to
-remember who a specific user is. For example, if the API actually has
-multiple application servers all running behind load balancers, a client
-could hit a different server with each request they make. If cookies
-were used, then the user would be logged out every time the load
-balancer routed them to a different application server, unless it went
-to the trouble of maintaining "sticky sessions" to keep the user hitting
-the same server. That is all well and good until that application server
-is replaced by another instance on deployment... should users really be
-logged out due to a deployment?
+remember who a specific user is. 
+
+For example, if the API actually has multiple application servers all running
+behind load balancers, a client could hit a different server with each request
+they make. If cookies were used, then the user would be logged out every time
+the load balancer routed them to a different application server, unless it went
+to the trouble of maintaining "sticky sessions" to keep the user hitting the
+same server. That is all well and good until that application server is replaced
+by another instance on deployment... should users really be logged out due to a
+deployment?
 
 For this, and many other reasons (like not having to worry about
 logouts), HTTP Authentication tokens are passed on every single request
 made.
 
-// TODO Wedge in OAuth 2,2.1
+Now we've got a bit of a foundational knowledge covering the main types of auth, we're armed with enough knowledge to be let loose on any API in the world. Time for us to start looking into what pitfalls await us out there in the jungle of badly documented and poorly built APIs.
