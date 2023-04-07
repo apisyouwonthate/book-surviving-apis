@@ -66,42 +66,67 @@ ISP (Internet Service Provider) blocked a domain, or a keyword in the request/re
 Squirrels attacked the data center?
 
 [quote,Rich Miller,"Surviving Electric Squirrels and UPS Failures, 2012, Data Center Knowledge"]
+--
 "A frying squirrel took out half of our Santa Clara data center two years back," Christian said, noting squirrels' propensity to interact with electrical equipment, with unfortunate results.
 If you enter “squirrel outage” in either Google News or Google web search, you'll find a lengthy record of both recent and historic incidents of squirrels causing local power outages.
+--
 
 Ships trash an undersea cables by dropping anchor right on The Internet?!
 
 // TODO Stock photo liven it up a bit? https://www.istockphoto.com/photo/underwater-fiber-optic-cable-on-ocean-floor-gm1362710800-434533439
 
-== Coding Defensively 
+== Defensive Code
 
-Going over the wire is fraught with danger, and it gets worse the farther a
-request and response have to travel. A common theme "in this book will be: avoid
-making network calls when possible, expect failure, and make sure your user
-interface degrades to vary levels, so failures are clear. No white screens of
-death!
+All of these problems are going to cause the happy path to get messy.
 
-=== Detecting Success or Failure
+Let's harden our code one step at a time.
 
-Failed to connect? Try it again, and if it fails a few times maybe show
-something to the user explaining that their Internet is down.
+[sidebar]
+Inspiration for these code examples was taken from Umar Hansa's brilliant article https://web.dev/fetch-api-error-handling/[Implement error handling when using the Fetch API].
 
-It's important to make sure that no single part of any client
-application _requires_ a connection to leave that state. Often I have
-seen client applications submit a form, hide the form they just
-submitted, fail to make the connection, and as they were expecting a
-positive or negative JSON response in a specific structure, in order to
-dictate showing the form again or progressing, they end up with a blank
-screen.
+[,js]
+----
+include::code/ch06-connection-problems/02-catch-fetch-errors.js[]
+----
 
-Timeouts are also a concern, but more on those later.
+This little change solves some of these problems. If there is any sort of connection failure from something like a connection refused (no internet, server is down, etc), or a dropped connection (failed part way through), or certificate errors, this should all be caught with the first exception.
+
+Whatever happens, it will log something to the user console, and return early. You could imagine this code doing something clever to update the user interface, but for now we're keeping it simple. 
+
+This is a step in the right direction, but once we've eventually got a response there is a lot of other things that can go wrong. What if the response is randomly HTML instead of JSON? Or it's weirdly invalid JSON?
+
+[,js]
+----
+include::code/ch06-connection-problems/03-catch-json-errors.js[]
+----
+
+Great! Now when the API randomly squirts some unexpected HTML error at you, the function will just return an empty array, and there is an error logged that the developers can go digging into.
+
+Another step in the right direction, but this still assumes we actually get a response in a reasonable timeframe.
+
+What if you've been waiting for *thirty seconds*? 
+
+What if you've been waiting for *two minutes*?
+
+We will deep dive into timeouts later on in the book, but a really helpful quick bit of defensive coding you can do, is to make sure your application isn't spending two minutes doing absolutely nothing for a request that normally takes less than half a second.
+
+[,js]
+----
+include::code/ch06-connection-problems/03-catch-json-errors.js[]
+----
+
+== Simulating Network Nonsense 
+
+Most of the time developing against an API that works just fine means you cannot test these complicated unhappy paths.
+
+To simulate the sort of nonsense you are coding to defend against, take a look at https://github.com/Shopify/toxiproxy[Toxiproxy] by Shopify. 
 
 == Rate Limiting
 
-Another common situation to run into is rate limiting: the API telling
-you to calm down a bit, and slow down how many requests are being made
-in a certain timeframe. The most basic rate limiting strategy is often
-"clients can only send X requests per second."
+Another common situation to run into is rate limiting, which is basically the
+API telling your API client to calm down a bit, and slow down how many requests
+are being made. The most basic rate limiting strategy is
+often "clients can only send X requests per second."
 
 Many APIs implement rate limiting to ensure relative stability when
 unexpected things happen. If for some reason one client causes a spike
@@ -159,7 +184,8 @@ processes handling 5 requests per second each, but you get the idea.
 If this process was being implemented in NodeJS, you could use
 https://www.npmjs.com/package/bottleneck[Bottleneck].
 
-....
+[source,js]
+--
 const Bottleneck = require("bottleneck");
  
 // Never more than 5 requests running at a time.
@@ -176,7 +202,7 @@ const fetchPokemon = id => {
 limiter.schedule(fetchPokemon, id).then(result => {
   /* ... */
 })
-....
+--
 
 Ruby users who are already using tools like Sidekiq can add plugins like
 https://github.com/sensortower/sidekiq-throttled[Sidekiq::Throttled], or
@@ -195,23 +221,26 @@ the API might lower its limits for some reason.
 === Am I Being Rate Limited?
 
 The appropriate HTTP status code for rate limiting has been argued over
-about as much as tabs vs spaces, but there is a clear winner now;
-https://tools.ietf.org/html/rfc6585[RFC 6585] defines it as 429, so APIs
-should be using 429.
+about as much as "tabs" versus "spaces", but there is a clear winner now;
+https://tools.ietf.org/html/rfc6585[RFC 6585] defines it as HTTP 429.
 
-image::images/429.jpg[]
+.http.cat meme for HTTP 429
+image::images/429.jpg[Lots of cats,500,align="center"]
 
-Twitter's API existed for a few years before this standard, and they
-chose "420 - Enhance Your Calm". They've dropped this and moved over to
-429, but some others copied them at the time, and might not have updated
-since. You cannot rule out bumping into a copycat API, still using that
-outdated unofficial status.
+Some APIs like Twitter's old API existed for a few years before this standard,
+and they chose "420 - Enhance Your Calm". Twitter has dropped 420 and got on
+board with the standard 429. Unfortunately some APIs replicated that and have
+not yet switched over to using the standard, so you might see either a 429 or
+this slow copycat.
 
-image::images/420.jpg[]
+.http.cat meme for HTTP 420
+image::images/420.jpg[Cat chewing on a cannabis leaf,500,align="center"]
 
 Google also got a little "creative" with their status code utilization. For a
-long time were using 403 for their rate limiting, but I have no idea if they are
+long time were using 403 for their rate limiting, but I don't know if they are
 still doing that. Bitbucket are still using 403 in their Server REST API.
+
+// TODO Confirm if google are still doing that.
 
 [quote,REST Resources Provided By: Bitbucket Server,https://docs.atlassian.com/bitbucket-server/rest/5.12.3/bitbucket-rest.html]
 ____
@@ -220,7 +249,8 @@ ____
 
 GitHub v3 API has a 403 rate limit too:
 
-....
+[source]
+----
 HTTP/1.1 403 Forbidden
 X-RateLimit-Limit: 60
 X-RateLimit-Remaining: 0
@@ -229,17 +259,74 @@ X-RateLimit-Reset: 1377013266
    "message": "API rate limit exceeded for xxx.xxx.xxx.xxx. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)",
    "documentation_url": "https://developer.github.com/v3/#rate-limiting"
 }
-....
+----
 
 Getting a 429 (or a 420) is a clear indication that a rate limit has
 been hit, and a 403 combined with an error code, or maybe some HTTP
-headers can also be a thing to check for. Either way, when you're sure
-it's a rate limit error, you can move onto the next step: figuring out
-how long to wait before trying again.
+headers can also be a thing to check for. 
 
-=== Proprietary Headers
+Either way, when you're sure it's a rate limit error, you can move onto the next
+step: figuring out how long to wait before trying again.
 
-Github here are using some proprietary headers, all beginning with
+There are three main ways a server might communicate retry logic to you.
+
+==== Retry-After Header
+
+The Retry-After header is a handy standard way to communicate "this didn't work
+now, but it might work if you retry in <the future>".
+
+```
+Retry-After: <http-date>
+Retry-After: <delay-seconds>
+```
+
+The logic for how it works is defined in https://tools.ietf.org/html/rfc6585[RFC 6584] (the same RFC that introduced HTTP 429) but basically it might look a bit like this:
+
+[source]
+----
+HTTP/1.1 429 Too Many Requests
+Retry-After: 60
+Content-Type: application/json
+
+{
+  "error": {
+    "message": "API rate limit exceeded for xxx.xxx.xxx.xxx.",
+    "link": "https://developer.example.com/#rate-limiting"
+  }
+}
+----
+
+You might also see a `Retry-After` showing you an HTTP date:
+
+[source]
+----
+Retry-After: Sat, 15 April 2023 07:28:00 GMT
+----
+
+Same idea, it's just saying "please don't come back before this time".
+
+By checking for these errors, you can catch and retry (or re-queue)
+requests that have failed. If that is not an option try sleeping for a
+bit to calm workers down.
+
+
+WARNING: Make sure your sleep does not block your background
+processes from processing other jobs. This can happen in languages where
+sleep sleeps the whole process, and that process is running multiple
+types job on the same thread. Don't back up your whole system with an
+overzealous sleep!_
+
+Some HTTP clients like Faraday are
+https://github.com/lostisland/faraday/pull/773[aware of Retry-After] and use it
+to power their build in retry logic, but other HTTP clients might need some
+training. 
+
+// TODO: Code example
+
+
+==== Proprietary Headers
+
+Some APIs like GitHub v3 use proprietary headers, all beginning with
 `X-RateLimit-`. These are not at all standard (you can tell by the
 `X-`), and could be very different from whatever API you are working
 with.
@@ -248,63 +335,31 @@ Successful requests with Github here will show how many requests are
 remaining, so maybe keep an eye on those and try to avoid making
 requests if the remaining amount on the last response was 0.
 
-....
-curl -i https://api.github.com/users/octocat
+[source]
+----
+$ curl -i https://api.github.com/users/octocat
+
 HTTP/1.1 200 OK
 X-RateLimit-Limit: 60
 X-RateLimit-Remaining: 56
 X-RateLimit-Reset: 1372700873
-....
+----
 
 You can use a shared key (maybe in Redis or similar) to track that, and
 have it expire on the reset provided in
 http://en.wikipedia.org/wiki/Unix_time[UTC time] in `X-RateLimit-Reset`.
 
-=== Retry-After
 
-According to the RFCs for HTTP/1.1 (the obsoleted and irrelevant RFC
-2616, and the replacement RFC 9110), the header
-https://www.rfc-editor.org/rfc/rfc9110#field.retry-after[Retry-After] is only
-for 503 server errors, and maybe redirects. Luckily
-https://tools.ietf.org/html/rfc6585[RFC 6584] (the same one which added
-HTTP status code 429) says it's totally cool for APIs to use
-`Retry-After` there.
+==== RateLimit Headers (Standard Draft)
 
-So, instead of potentially infinite proprietary alternatives, you should
-start to see something like this:
+The benefit of the proprietary headers is that you get a lot more information to work with, letting you know you're approaching a limit so you can pre-emptively back off, instead of waiting to stand on that rake then having to respond after being hit round the head.
 
-....
-HTTP/1.1 429 Too Many Requests
-Retry-After: 3600
-Content-Type: application/json
+There's an IETF RFC draft called https://datatracker.ietf.org/doc/draft-ietf-httpapi-ratelimit-headers/[RateLimit header fields for HTTP] that aims to give you the best of both, and maybe you'll fun into something that resembles this in the distant future of 2024 or 2025.
 
-{
-   "message": "API rate limit exceeded for xxx.xxx.xxx.xxx.",
-   "documentation_url": "https://developer.example.com/#rate-limiting"
-}
-....
+----
+RateLimit-Limit: 100
+RateLimit-Remaining: 50
+RateLimit-Reset: 50
+----
 
-An alternative value for Retry-After is an HTTP date:
-
-....
-Retry-After: Wed, 21 Oct 2015 07:28:00 GMT
-....
-
-Same idea, it just tells the client to wait until then before bothering
-the API further.
-
-By checking for these errors, you can catch then retry (or re-queue)
-requests that have failed, or if thats not an option try sleeping for a
-bit to calm workers down.
-
-WARNING: Make sure your sleep does not block your background
-processes from processing other jobs. This can happen in languages where
-sleep sleeps the whole process, and that process is running multiple
-types job on the same thread. Don't back up your whole system with an
-overzealous sleep!_
-
-Faraday, a ruby gem I work with often, is
-https://github.com/lostisland/faraday/pull/773[now aware of
-Retry-After]. It uses the value to help calculate the interval between
-retry requests. This can be useful for anyone considering implementing
-rate limiting detection code, even if you aren't a Ruby fan.
+This says there is a limit of 100 requests in the quota, the client has 50 remaining, and it will reset in 50 seconds. Handy!

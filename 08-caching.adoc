@@ -641,12 +641,12 @@ and maybe not writing the very most performant code possible.
 
 The basic idea looks a little like this:
 
-image::images/1HVrgB2mX7EC8tz523pkxaA.png[image]
+image::images/ch08-caching/http-caching-miss.png[image]
 
 A request being returned early by a cache
-server. -- book.varnish-software.com
+server. -- book.varnish-software.com
 
-image::images/143stxceFqvz0WDO_2KmOVg.png[image]
+image::images/ch08-caching/http-caching-hit.png[image]
 
 A request failing to find a match (a.k.a cache miss), and being passed
 on to the API server to fulfill. -- book.varnish-software.com

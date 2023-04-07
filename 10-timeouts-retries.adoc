@@ -56,14 +56,14 @@ service B has a bad day, and instead of responding within the usual
 ~350ms, it starts to take 10 seconds? Do you want to wait 10 seconds for
 that response? 
 
-image::images/1-new-relic-response-time-spike.png[image]
+image::images/ch10-timeouts-retries/1-new-relic-response-time-spike.png[image]
 
 What about if service B is fine, but C is taking 20s and D is taking
 25s? Are you happy to wait 45 seconds for the response from B?
 
 What about two minutes?! 😱
 
-image::images/2-runscope-two-min-response.png[image]
+image::images/ch10-timeouts-retries/2-runscope-two-min-response.png[image]
 
 When a server is under load, it can do some pretty wild stuff, and not
 all servers know to give up. Even fewer client applications know when to
@@ -78,7 +78,7 @@ first byte, and if that doesn't happen then the request gets dropped. 
 Quite often in monitoring systems like NewRelic or CA APM, you will see
 things like this:
 
-image::images/3-heroku-timeout-chop.png[image]
+image::images/ch10-timeouts-retries/3-heroku-timeout-chop.png[image]
 
 This controller has an average response time of 2.9s, but the slow ones
 are floating right around that 30s mark. The Heroku Chop saves the
@@ -136,7 +136,7 @@ expected network latency. If you are making an HTTP call to another
 service in the same data center, the latency is going to be a few
 milliseconds, but going to another continent takes time. 
 
-image::images/4-cloudping-aws-latency.png[image]
+image::images/ch10-timeouts-retries/4-cloudping-aws-latency.png[image]
 
 The *read timeout* is how long you want to spend reading data from the
 server once the connection is open. It's common for this to be set
@@ -231,7 +231,7 @@ or whatever monitoring tool is being used. Looking at the response
 times, you can get an idea of what should be acceptable. Be careful
 though, *do not look only at the average*.
 
-image::images/5-new-relic-web-transactions-time-damn-lies.png[image]
+image::images/ch10-timeouts-retries/5-new-relic-web-transactions-time-damn-lies.png[image]
 
 Looking at this graph may lead you to think 300ms is an appropriate
 timeout. Seems fair right? The biggest spike there is 250ms and so round
@@ -241,7 +241,7 @@ Nope! These are averages, and averages are going to be far far lower
 than the slowest transactions. Click the drop-down and find "Web
 transaction percentiles."
 
-image::images/6-new-relic-web-transactions-percentile-more-accurate.png[image]
+image::images/ch10-timeouts-retries/6-new-relic-web-transactions-percentile-more-accurate.png[image]
 
 That is a more honest representation. Most of the responses are 30-50ms,
 and the average is usually sub 100ms. That said, under *high load* this

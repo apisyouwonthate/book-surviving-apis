@@ -65,7 +65,7 @@ https://developers.google.com/web/tools/chrome-devtools/device-mode/#network[net
 throttling utility].
 
 .Chrome DevTools can simulate different bandwidth options on your site.  It's an eye-opening experience.
-image::images/ux-chrome-dev-tools.png[]
+image::images/ch07-ux-pitfalls/ux-chrome-dev-tools.png[]
 
 
 This, of course, begs the question: what can we do to make the page
@@ -76,10 +76,10 @@ when it comes to loading data on a page.
 You've undoubtedly come across a website whose content loads in
 unpredictable chunks - with content appearing and unfolding haphazardly
 on the page right in front of your eyes, pushing content you were trying
-to read down without warning.  This is a step better than the "Web 1.0"
+to read down without warning. This is a step better than the "Web 1.0"
 days where you'd need to wait for _everything_ to load before displaying
 any content, but only because there's a chance you may be able to get to
-what you're looking for slightly more quickly.  It's tricky business
+what you're looking for slightly more quickly. It's tricky business
 trying to guess what's going on in an app while content is popping into
 existence left and right, changing the layout of the page as it arrives
 back from its journey through the API.
@@ -90,16 +90,20 @@ click on it, something on the page loads just above where you're about
 to click, causing the page to reflow so that you click the _[Sign Out]_
 button instead of that one simple thing you wanted to do?
 
-.Yeah, holy shit, right? Me too. Our goal here is to avoid this
-image::images/ux-pay-bill-before.png[]
-image:images/ux-pay-bill-after.png[]
+.User tries to click the Pay Bill button while a component is still loading...
+image::images/ch07-ux-pitfalls/ux-pay-bill-before.png[Spin wheel loading above the Pay Bill button,400,200,align="center"]
+
+.When the component loads that pushes the button down and the user can end up clicking self-destruct.
+image::images/ch07-ux-pitfalls/ux-pay-bill-after.png[Cursor is over newly loaded Self Destruct button,400,200,align="center"]
+
+AHHHH!
 
 There's a few great, proven patterns we can use to avoid that kind of
 rage-inducing experience. While you're waiting on data to come back from
 an API, render content placeholders on screen.
 
 .Facebook does a great job of this - while timeline content is loading, animated data placeholders are displayed in a way that makes the application feel alive.
-image::images/ux-facebook-progressive-load.png[]
+image::images/ch07-ux-pitfalls/ux-facebook-progressive-load.png[]
 
 === Progressive data loading
 
@@ -117,14 +121,14 @@ from "Loading..." to "Still waiting..." after a few moments.
 
 
 .Netflix loads each show individually, maintaining their position in the grid on-screen while others load.  You'll never accidentally tap the wrong show!
-image::images/ux-netflix.png[]
+image::images/ch07-ux-pitfalls/ux-netflix.png[]
 
-image::images/ux-netflix-2.png[]
+image::images/ch07-ux-pitfalls/ux-netflix-2.png[]
 
 .The BBC's website loads images last, but holds their position in the layout until images are loaded.
-image::images/ux-bbc-loading.png[]
+image::images/ch07-ux-pitfalls/ux-bbc-loading.png[]
 
-image::images/ux-bbc.png[]
+image::images/ch07-ux-pitfalls/ux-bbc.png[]
 
 
 
@@ -151,18 +155,18 @@ activities, this is firmly rooted in science.
 Spend enough time around seasoned designers, and you'll eventually hear
 someone prattle on about
 https://en.wikipedia.org/wiki/Maslow's_hierarchy_of_needs[Maslow's
-Hierarchy of Needs].  If up until this moment you've been lucky enough
+Hierarchy of Needs]. If up until this moment you've been lucky enough
 to have never encountered Maslow, I can save you some time: from a UX
 perspective, the hierarchy tells us that first we should deliver what
-the user _needs_ before we give them what they [think they] want.  (In
+the user _needs_ before we give them what they [think they] want. (In
 reality, Maslow tell us quite a bit more than that, but for the sake of
-this example, this should be a suitable oversimplification).  
+this example, this should be a suitable oversimplification). 
 
 So let's come back to the example of dealing with a user on a
-particularly slow connection.  Looking at any page or interface as a
+particularly slow connection. Looking at any page or interface as a
 hierarchy of data being presented to the user becomes advantageous for
 us if we have some idea of what actions a user might be looking to
-accomplish on a page.  
+accomplish on a page.
 
 === First: The sublime, a Logical Hierarchy
 
@@ -179,10 +183,10 @@ the biggest/boldest thing, and located somewhere near the very top of
 the content area of the page.
 
 .For example, if you are showing a feed of articles, and next to that feed of data are some suggestions for things to read next, and a list of trending articles, then feed is probably the primary data, the suggestions might be secondary, and the service which shares trending articles might be down, so that could be tertiary.
-image::images/progressive-data-loading.png[]
+image::images/ch07-ux-pitfalls/progressive-data-loading.png[]
 
 .Load the most pertinent content first and progress from there based on how important it is to your reader
-image::images/progressive-data-loading-annotated.png[]
+image::images/ch07-ux-pitfalls/progressive-data-loading-annotated.png[]
 
 === Then: Which data is most expensive?
 
@@ -254,18 +258,18 @@ you detect a loss of connectivity, have a strategy on-hand for
 presenting that to your users.
 
 .Intercom provides a helpful notification when users are offline, without disabling every action on the page. 
-image::images/ux-intercom-notification.png[]
+image::images/ch07-ux-pitfalls/ux-intercom-notification.png[]
 
-You may also be able to cache actions while your users are offline.
- You've probably experienced this before with your mail client of
-choice.  Gmail, Outlook, Thunderbird, and whatever else you might prefer
-will let you draft new emails (and replies to existing emails) while
-offline.  You can even send them, which puts the email into your outbox,
-to be sent as soon as your connection comes back from the dead.
+You may also be able to cache actions while your users are offline. You've
+probably experienced this before with your mail client of choice. Gmail,
+Outlook, Thunderbird, and whatever else you might prefer will let you draft new
+emails (and replies to existing emails) while offline. You can even send them,
+which puts the email into your outbox, to be sent as soon as your connection
+comes back from the dead.
 
 For both web and mobile applications, the strategy for enabling offline
 actions is fairly similar - first, make sure the user knows they're
-offline.  Beyond that, if there are actions that they may reasonably be
+offline. Beyond that, if there are actions that they may reasonably be
 able to perform without loading more information from the web - let
 them! This generally includes actions where your user is annotating some
 content (tagging financial records with metadata, marking an action as
@@ -274,15 +278,15 @@ a blog post).
 
 Behind the scenes, those actions will get cached to local storage on the
 device using any of a number of techniques, depending on your
-implementation.  Once your app detects that connectivity has returned,
+implementation. Once your app detects that connectivity has returned,
 the user's actions are sent off to your API in the order they were
 executed while offline. Once confirmation comes back from the server
 that the job is done, data is reloaded on the client-side, and they
 should be up to speed!
 
 In web app parlance, this type of behavior is often called a Progressive
-Web App (or PWA).  Depending on your implementation details, there are
-loads of different ways to accomplish the PWA dream.  For example,
+Web App (or PWA). Depending on your implementation details, there are
+loads of different ways to accomplish the PWA dream. For example,
 Amazon provides a service called https://aws.amazon.com/appsync/[AWS
 AppSync] for GraphQL, and Google's Firebase has several action caching
 strategies built into their framework
@@ -363,9 +367,9 @@ service went down.  Instead of giving me a frustratingly useless map
 interface, it let me know the service was down, and hid the view option
 until the map service came back.  Brilliant!
 
-image::images/ux-spothero.png[]
+image::images/ch07-ux-pitfalls/ux-spothero.png[]
 
-image::images/ux-spothero-map-gone.png[]
+image::images/ch07-ux-pitfalls/ux-spothero-map-gone.png[]
 
 In some cases, you may be able to provide a good fallback: if your video
 hosting CDN is down, and you have the luxury of a backup CDN, switch to
@@ -448,7 +452,7 @@ that even if your request is sent to an API multiple times, it will only
 ever be executed once.
 
 .Stripe's Idempotentcy strategy helps stop API consumers from accidentally creating the same credit card charge more than once.
-image::images/ux-idempotency-key.png[Screenshot from the stripe.com API documentation showing an example of the idempotency key.]
+image::images/ch07-ux-pitfalls/ux-idempotency-key.png[Screenshot from the stripe.com API documentation showing an example of the idempotency key.]
 
 == Dealing with errors
 
@@ -483,7 +487,7 @@ support staff, provide as much detail as possible so that they can find,
 remedy, and fix any problems they may be tasked with supporting.
 
 .Giving your support team as much information as possible can make your helpdesk experience feel like magic.
-image::images/ux-errors.png[]
+image::images/ch07-ux-pitfalls/ux-errors.png[]
 
 You can also use bug tracking services like
 https://logrocket.com/[LogRocket] or https://sentry.io/[Sentry] to
@@ -501,7 +505,7 @@ powers-that-be in your organization, particularly if you have data to
 back up your story.
 
 .An example error report sent to a slack channel via Incoming Webhook. Seeing errors happening in real time will help your team feel empathy for how (infuriatingly) often your users encounter a given bug.
-image::images/ux-bug-track.png[]
+image::images/ch07-ux-pitfalls/ux-bug-track.png[]
 
 == Undo Functionality
 
@@ -509,7 +513,7 @@ If you're doing something semi-permanent, make sure you give users the
 ability to undo or cancel actions whenever possible.
 
 .Toast notification from Gmail serves as an action confirmation and an undo opportunity for a few moments before your email goes out into the world.
-image::images/ux-undo.png[]
+image::images/ch07-ux-pitfalls/ux-undo.png[]
 
 Undo can be accomplished both proactively and reactively.  Proactive
 undo scenarios are extremely common; most often, this comes in the form
@@ -537,4 +541,4 @@ to undo that action here. Finally, this can be presented back to your
 users as a historical log of their activity on your service.
 
 .Stripe provides an Events log to customers using their service, which can be extremely helpful in tracking down failed and missing payments.
-image::images/ux-events.png[]
+image::images/ch07-ux-pitfalls/ux-events.png[]
