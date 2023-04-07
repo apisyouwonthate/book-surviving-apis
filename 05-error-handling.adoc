@@ -250,7 +250,7 @@ That URI may or may not resolve, so try using it as a URL and see if it loads up
 
 === JSON:API
 
-Another popular data format for REST/RESTish APis is JSON:API. Most of the spec focuses on the data and relationships, but it also defines what error structures should look like.
+Another popular data format for REST/RESTish APIs is JSON:API. Most of the spec focuses on the data and relationships, but it also defines what error structures should look like.
 
 [source]
 --

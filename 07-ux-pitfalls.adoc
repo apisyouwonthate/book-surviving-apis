@@ -344,7 +344,7 @@ a birthday present, mum!_
 
 What happens if the API you're trying to access is down for maintenance?
 Most modern applications take advantage of _many_ external services. If
-an APi or service is not critical to the functionality of your
+an API or service is not critical to the functionality of your
 application, the show must go on! Don't disable everything because your
 connection to the Google Analytics API is down.
 
