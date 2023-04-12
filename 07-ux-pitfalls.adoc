@@ -1,16 +1,16 @@
 = User Experience Pitfalls
 
 Connecting to and using the APIs that enable your application are only
-part of the story.  Creating and managing a design that is both
+part of the story. Creating and managing a design that is both
 intuitive and useful for the people using your application is critical
-to building successful software.  Paradoxically,
+to building successful software. Paradoxically,
 https://en.wikipedia.org/wiki/Aesthetic_usability_effect[science has
 shown] that if your users _perceive_ your product to be aesthetically
 pleasing, they will feel like they're using more intuitive (and thus
-more valuable) software.  Whether you consider yourself a full-stack
+more valuable) software. Whether you consider yourself a full-stack
 developer, a front-end developer, or a database engineer, it's to your
 benefit to take advantage of this by understanding where your work fits
-into the bigger picture of User Experience design on your team.  
+into the bigger picture of User Experience design on your team. 
 
 Once you've figured out how to consume a given API, spend some time
 considering all of the ways in which things might go wrong. Within
@@ -25,7 +25,7 @@ perfectly well, but not providing data to your application quickly
 enough to be perceived as instant by your users. When a page in your
 application appears empty for even a fraction of a second, it can make
 your app seem like it is unresponsive, or not working correctly, or just
-sluggish.  This is easy to forget when you're developing your app on a
+sluggish. This is easy to forget when you're developing your app on a
 beefy workstation - particularly if your dev environment includes your
 API, database, and app. You may be seeing imperceptible loading times of
 <200ms, but that won't be representative of your app's typical consumer.
@@ -55,11 +55,11 @@ on a train riding from Brussels to Paris, with a spotty wifi connection
 that comes and goes as you fly through the countryside. Maybe you're in
 a quiet cafe in Vietnam, sipping an iced coffee in the sweltering heat,
 connected to a network that makes everything just a bit of a struggle.
- What if you're on a mobile phone in the middle of Pune India, on a
+What if you're on a mobile phone in the middle of Pune India, on a
 crowded 3G Network, or in Midtown NYC where the signal is inexplicably
 awful? It can _really_ suck, right? This is something you should
 regularly do - even if you don't expect the majority of your users to be
-in this kind of situation.  You can also use a simulator to slow your
+in this kind of situation. You can also use a simulator to slow your
 network, like the Chrome devtools
 https://developers.google.com/web/tools/chrome-devtools/device-mode/#network[network
 throttling utility].
@@ -120,7 +120,7 @@ slow loading, you both lose. This can be as simple as changing a loading status
 from "Loading..." to "Still waiting..." after a few moments.
 
 
-.Netflix loads each show individually, maintaining their position in the grid on-screen while others load.  You'll never accidentally tap the wrong show!
+.Netflix loads each show individually, maintaining their position in the grid on-screen while others load. You'll never accidentally tap the wrong show!
 image::images/ch07-ux-pitfalls/ux-netflix.png[]
 
 image::images/ch07-ux-pitfalls/ux-netflix-2.png[]
@@ -133,10 +133,10 @@ image::images/ch07-ux-pitfalls/ux-bbc.png[]
 
 
 Lucky for you, some of these effects are fairly easy to accomplish on
-your own.  What's even better is that with a quick search of your
+your own. What's even better is that with a quick search of your
 favorite open-source repositories, you may find community-supported
 libraries, packages, and plugins that support this sort of behavior.
- Some examples include
+Some examples include
 https://www.npmjs.com/package/react-placeholder[react-placeholder]
 (React), and
 https://www.npmjs.com/package/@netbasal/ngx-content-loader[ngx-content-loader]
@@ -294,7 +294,7 @@ strategies built into their framework
 https://firebase.google.com/docs/database/ios/offline-capabilities[IOS],
 and
 https://firebase.google.com/docs/database/android/offline-capabilities[Android]).
- Ruby on Rails has a library called
+Ruby on Rails has a library called
 https://rossta.net/blog/service-worker-on-rails.html[serviceworker-rails],
 and ASP.net has an open source library extension called
 https://github.com/madskristensen/WebEssentials.AspNetCore.ServiceWorker[WebEssentials.AspNetCore.ServiceWorker]
@@ -350,22 +350,22 @@ connection to the Google Analytics API is down.
 
 This can be done with frontend circuit breakers, or just generally
 checking if services are down. Naturally, some judgement is needed to
-decide how to handle missing services.  Completely non-critical services
+decide how to handle missing services. Completely non-critical services
 should fail silently, and those which fall somewhere between there and
 being mission critical should be disabled intelligently.
 
 In some cases, that should be exactly what it sounds like - let your
 users know something is missing or offline temporarily, and disable any
 interface elements that might lead to that offline service breaking
-things.  In other cases, after letting users know that something is
+things. In other cases, after letting users know that something is
 temporarily offline, it might be better to get it out of their way - and
 to hide it until that service comes back online.
 
 
 While booking a parking space recently, Spothero.com's mapping
-service went down.  Instead of giving me a frustratingly useless map
+service went down. Instead of giving me a frustratingly useless map
 interface, it let me know the service was down, and hid the view option
-until the map service came back.  Brilliant!
+until the map service came back. Brilliant!
 
 image::images/ch07-ux-pitfalls/ux-spothero.png[]
 
@@ -373,12 +373,12 @@ image::images/ch07-ux-pitfalls/ux-spothero-map-gone.png[]
 
 In some cases, you may be able to provide a good fallback: if your video
 hosting CDN is down, and you have the luxury of a backup CDN, switch to
-the fallback!  Similarly, if you can tell that the google maps embed on
+the fallback! Similarly, if you can tell that the google maps embed on
 your page is breaking, it might make sense to fall back to
 OpenStreetMap, or another similar service. If you're loading images on
 your interface, having a fallback image or SVG loaded via CSS will
 always look better than the browser or mobile OS's broken image
-placeholder.  
+placeholder. 
 
 === API retries
 
@@ -397,26 +397,26 @@ status on your interface that clearly shows that a retry attempt is
 being made.
 
 You should have an application-wide strategy for retrying failed API
-calls.  If you detect that an API fails, it may be okay to retry that
-call 2 or 3 times before alerting the user that something is wrong.  In
+calls. If you detect that an API fails, it may be okay to retry that
+call 2 or 3 times before alerting the user that something is wrong. In
 these cases, it's also a good idea to keep track of the amount of time
 between sending the initial request and alerting users - in cases where
 API calls are taking multiple seconds to fail, it will be better to show
-a failure notice as soon as you detect the first failure.  This takes
+a failure notice as soon as you detect the first failure. This takes
 some intuition, and may also require some fine-tuning on a per-scenario
 basis.
 
 While retrying, it's also a good idea to add an exponential backoff to
-your API calls.  In essence, this means you might wait 100ms after the
+your API calls. In essence, this means you might wait 100ms after the
 first API call fails (to give the server a chance to get its act
-together), and 200ms after the second, then 400ms, etc.  At scale, this
+together), and 200ms after the second, then 400ms, etc. At scale, this
 will prevent you from accidentally DDoSing your API services when
 there's a brief failure of an API.
 
 It's also a great idea to communicate to your users when calls are
-taking longer than expected, too.  Letting them know in plain english
+taking longer than expected, too. Letting them know in plain english
 that you're waiting for a response from the server gives you a chance to
-let users know that your app hasn't frozen or crashed.  This is also an
+let users know that your app hasn't frozen or crashed. This is also an
 opportunity to send a link to a system status page, so users can see
 whether the problem they're having is local to them or not.
 
@@ -447,12 +447,15 @@ your users.
 
 You may also have the luxury of using or building APIs that provide
 something like https://stripe.com/blog/idempotency[Stripe's Idempotency
-Key].  This allows you to annotate your request with a unique key, so
+Key]. This allows you to annotate your request with a unique key, so
 that even if your request is sent to an API multiple times, it will only
 ever be executed once.
 
 .Stripe's Idempotentcy strategy helps stop API consumers from accidentally creating the same credit card charge more than once.
+
 image::images/ch07-ux-pitfalls/ux-idempotency-key.png[Screenshot from the stripe.com API documentation showing an example of the idempotency key.]
+
+More on idempotency later...
 
 == Dealing with errors
 
@@ -477,7 +480,7 @@ Information" expanding box is a good common ground, as it means users
 who are a bit more technically inclined can report the error code to
 helpdesk staff. Adding a "Contact Support" which prefills an
 email/contact form with the error code and other information is another
-good option, or do both.  
+good option, or do both. 
 
 Helpdesk staff and support engineers are the second important class of
 people who benefit from information about errors that have occurred on
@@ -492,14 +495,16 @@ image::images/ch07-ux-pitfalls/ux-errors.png[]
 You can also use bug tracking services like
 https://logrocket.com/[LogRocket] or https://sentry.io/[Sentry] to
 silently send more contextual information to your support team in the
-background, to better enable their support efforts.  These services can
-also be tied to systemwide reporting, so that _as soon as_ an error is
-seen, your team is alerted to the problem.  In its simplest form, this
+background, to better enable their support efforts. These services can
+also be tied to system-wide reporting, so that _as soon as_ an error is
+seen, your team is alerted to the problem.
+
+In its simplest form, this
 may mean sending an email to a share inbox with a bug report, or to an
 https://api.slack.com/incoming-webhooks[Incoming Webhook] on Slack which
-posts to a shared channel.  Seeing how frequently users are encountering
+posts to a shared channel. Seeing how frequently users are encountering
 a given error can help your engineering team prioritize bug fixes over
-new feature development.  Being able to fix a bug before your users get
+new feature development. Being able to fix a bug before your users get
 disenfranchised with your product will always be easy to sell to the
 powers-that-be in your organization, particularly if you have data to
 back up your story.
@@ -515,28 +520,28 @@ ability to undo or cancel actions whenever possible.
 .Toast notification from Gmail serves as an action confirmation and an undo opportunity for a few moments before your email goes out into the world.
 image::images/ch07-ux-pitfalls/ux-undo.png[]
 
-Undo can be accomplished both proactively and reactively.  Proactive
+Undo can be accomplished both proactively and reactively. Proactive
 undo scenarios are extremely common; most often, this comes in the form
 of a modal dialog asking "are you sure you want to do this?"
 
 Reactive undo scenarios are a bit trickier with web-based applications,
 since edits and actions are often sent up to the cloud somewhere via API
 call, rather than being stored locally, where it's easy to keep track of
-a list of recent actions in memory.  
+a list of recent actions in memory. 
 
 If you're using "events" logic, which might well be how you are handling
 offline syncing, then this "undo" could be a case of removing the event
-from a queue.  If you add delays to your queue (for certain events that
+from a queue. If you add delays to your queue (for certain events that
 are hugely destructive or scary like sending email) then adding a 30
 second delay to the queue before the event is handled makes this undo
 work.
 
 Another approach is to keep track of the relevant actions a user has
-taken by way of a queue structure in your database.  Think of this as a
+taken by way of a queue structure in your database. Think of this as a
 table listing instructions for your application to take on behalf of a
 user. This can be useful in several ways - work completed on
 asynchronous actions can be tracked to completion, and annotated with
-error messages as necessary.  You can also store the information needed
+error messages as necessary. You can also store the information needed
 to undo that action here. Finally, this can be presented back to your
 users as a historical log of their activity on your service.
 

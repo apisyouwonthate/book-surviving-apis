@@ -184,11 +184,13 @@ amazing guide] which is designed at understanding the concepts in
 general, and the hosting company https://www.fortrabbit.com/[Fortrabbit]
 have written a brilliant
 https://blog.fortrabbit.com///blog.fortrabbit.com/mastering-http-caching[article
-on HTTP caching for applications in general]. To leverage some of their
-writing, here is an overview of the Cache-Control header from
-fortrabbit:
+on HTTP caching for applications in general]. 
 
-____
+To leverage some of their writing, here is an overview of the Cache-Control
+header from fortrabbit:
+
+[quote,Ulrich Kautz,Fortrabbit.com]
+--
 The Cache-Control header controls not just the request and response, but
 holds instructions for potentially two cache locations: The "local
 cache" (aka "private cache") and the "shared cache".
@@ -206,7 +208,6 @@ this case. You have full control over the shared cache and should
 leverage it to the fullest.
 
 OK, let's dive in with some code examples. I'll explain in detail below:
-____
 
 ....
 Cache-Control: public max-age=3600
@@ -216,7 +217,6 @@ Cache-Control: public max-age=3600 s-maxage=7200
 Cache-Control: public max-age=3600 proxy-revalidate
 ....
 
-____
 That might look a bit confusing, but don't worry, it's not that hard.
 First you should now that Cache-Control takes three "kinds" of
 directives: Cachability, expiration and revalidation.
@@ -224,7 +224,6 @@ directives: Cachability, expiration and revalidation.
 First cachability, which takes care of the cache location, which in
 includes whether it should be cached at all. The most important
 directives are:
-____
 
 * *private:* Means it shall only be cached in the local (private) cache.
 On your laptop.
@@ -235,31 +234,43 @@ everybody (local cache, shared cache) must revalidate before using the
 cached value
 * *no-store:* Means it shall not be cached. Nowhere. Not ever.
 
-[quote,Ulrich Kautz,Fortrabbit.com]
-____
 Next up is expiration, which takes care of how long things are cached.
-The most important directives are: * *max-age=<seconds>:* Sets the cache
-validity time. How many seconds shall the cache location keep it? Goes
-for local and shared cache. * *s-maxage=<seconds>:* Overrides max-age
-just for the shared cache. No effect on local cache.
+The most important directives are: 
+
+- *max-age=<seconds>:* Sets the cache validity time. How many seconds shall the
+cache location keep it? Goes for local and shared cache.
+
+- *s-maxage=<seconds>:* Overrides max-age just for the shared cache. No effect
+on local cache.
 
 Lastly there is revalidation, which is, more or less, fine control. The
-most important directives are: * *immutable:* Means that the document
+most important directives are: 
+
+- *immutable:* Means that the document
 won't change. Ever. Can be cached until the heat death of the universe.
-* *must-revalidate:* Means the client (browser) must still check with
+
+- *must-revalidate:* Means the client (browser) must still check with
 the proxy (CDN), even while it's cached! * *proxy-revalidate:* Means
 that the shared cache (CDN) must check the origin, even while it's
 cached!
 
 And to put it all together, here is how to read the above code examples
-in plain English: 1. Cache it both on CDN and laptop for an hour. 2.
-Don't store in CDN, only on laptop. Once cached (on laptop), no need to
-ever refresh it. 3. Don't cache it - or do. Just make sure to revalidate
-always! 4. Cache it for an hour on laptop, but for two hours on the CDN
-5. Cache it both on CDN and laptop for an hour. BUT: if a request hits
-the CDN, although it's cached here for an hour, it still must check with
-the origin whether the document is still unchanged.
-____
+in plain English: 
+
+1. Cache it both on CDN and laptop for an hour. 
+
+2. Don't store in CDN, only on laptop. Once cached (on laptop), no need to
+ever refresh it. 
+
+3. Don't cache it - or do. Just make sure to revalidate
+always! 
+
+4. Cache it for an hour on laptop, but for two hours on the CDN.
+
+5. Cache it both on CDN and laptop for an hour. BUT: if a request hits the CDN,
+although it's cached here for an hour, it still must check with the origin
+whether the document is still unchanged.
+--
 
 Couldn't have put that any better myself! We've spoken a bit here about
 client caching and network caching, so let's look into both of those
@@ -283,7 +294,7 @@ step, and performance can suffer. Hopefully the API you are integrating
 with has `Cache-Control` headers, if not, you are on your own and have
 to use the application caching approach we discussed before.
 
-== Implementing HTTP Client Caching
+== Implementing HTTP Client Caching
 
 At work we built an upstream "Permissions" API, which would talk to a
 lot of other systems to see if a user should be allowed to complete the
@@ -753,7 +764,7 @@ these is FastQL, a name inspired by Fast.ly but built specifically for
 GraphQL. It might not be easily to tell if the API developers have that
 enabled.
 
-If they have not enabled a network cache you are out of option. Unlik
+If they have not enabled a network cache you are out of option. Unlike
 HTTP-based caching solutions, client developers are not be able to run
 their own network cache that the API development team is unaware of, as
 it relies on purge requests being made to it to remove outdated
@@ -816,7 +827,7 @@ Memcache, and if it is front end then check out Local Storage.
 == Identify no-cache Requests
 
 Figure out which parts - if any - of your application require the
-freshest possible data, and add Cache-Control: no-cache on there to
+freshest possible data, and add `Cache-Control: no-cache` on there to
 force revalidation on that request.
 
 == Check for Network Caching

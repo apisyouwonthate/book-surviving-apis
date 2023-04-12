@@ -17,7 +17,7 @@ application, this might come in the form of making invalid boxes red,
 scrolling the user to the problem, showing basic alert boxes, or
 disabling the submit button until the local data looks good.
 
-image::images/validation-ui-boxes.png[image]
+image::images/validation-ui-boxes.png[]
 
 To create this functionality, a common approach is to reproduce
 server-side validation in the client-side. This should be avoided at all
@@ -98,7 +98,7 @@ themselves. Client-side validation is yet another feature some of these
 systems are able to provide, saving a trip over the wire, and hopefully
 avoiding validation hell.
 
-== JSON Schema
+== JSON Schema for Client-Side Validation
 
 JSON Schema is a layer of metadata for JSON, that is written in JSON.
 Unlike some formats which are knocked out by one particularly large
@@ -111,7 +111,8 @@ optional, what data format they use, and other validation rules can be
 added on top of that basic premise. The metadata lives in .json files,
 which might look a bit like this:
 
-....
+[source,json]
+----
 {
   "$id": "http://example.com/schemas/user.json",
   "type": "object",
@@ -140,7 +141,7 @@ which might look a bit like this:
   },
   "required": ["name"]
 }
-....
+----
 
 There is quite a lot of stuff here, but most of it should make sense to
 the human eye without too much guesswork. We are listing "properties" by
@@ -159,25 +160,26 @@ Schema is not madly changing crap at random.
 Anyway, back to it: An example of a valid instance for that .json schema
 file might look like this.
 
-....
+[source,json]
+----
 {
  "name": "Lucrezia Nethersole",
  "email":"l.nethersole@hotmail.com",
  "date_of_birth": "2007-01-23"
 }
-....
+----
 
 To try playing around with this, head over to
-http://jsonschemavalidator.net[jsonschemavalidator.net] and paste those
+https://jsonschema.dev/[jsonschema.dev] and paste those
 in. Removing the name field triggers an error as we have `"required":
 ["name"]` in there.
 
-image::images/ScreenShot2018-01-21at32846PM.png[image]
+image::images/ScreenShot2018-01-21at32846PM.png[]
 
 Another validation rule could be triggered if you enter date of birth in
 an incorrect format.
 
-image::images/ScreenShot2018-01-21at32812PM.png[image]
+image::images/ScreenShot2018-01-21at32812PM.png[]
 
 Conceptually that probably makes enough sense, but how to actually
 programmatically get this done? The JSON Schema .json files are usually
@@ -185,9 +187,9 @@ made available somewhere in a HTTP Link header
 http://json-schema.org/latest/json-schema-core.html[with a rel of
 describedby].
 
-....
+----
 Link: <http://example.com/schemas/user.json#>; rel="describedby"
-....
+----
 
 This might look a bit off to those not used to Link headers, but this is
 how a lot of links are handled these days. The one difficulty here is
@@ -202,15 +204,19 @@ https://docs.api.getpostman.com/[Postman Pro API]) is to shove a URL in
 the HTTP body instead. A GET request on `/collections/\{id}` will return
 all the JSON, and a schema field somewhere in the payload.
 
-....
+[source,json]
+----
 {
-    "collection": {
-        "info": {
-            "name": "[Turtles.com](http://Turtles.com)",
-            "description": "Postman Collection for Turtles.com",
-            "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
-        },
-....
+  "collection": {
+    "info": {
+      "name": "[Turtles.com](http://Turtles.com)",
+      "description": "Postman Collection for Turtles.com",
+      "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+    }
+    // ...
+  }
+}
+----
 
 Either way, once a API client has the schema URL they can download the
 file. This involves simply making a GET request to the URL provided.
@@ -224,10 +230,14 @@ Triggering validation rules on a random website is one thing, but
 learning how to do that with code is going to be far more useful. For
 JavaScript a module called https://github.com/korzio/ajv[ajv] is fairly
 popular, so install that with a simple `yarn add ajv@6`, then shove it
-in a JavaScript file. This code is available on the GitHub Repository
-http://github.com/apisyouwonthate/talking-to-other-peoples-apis-code/blob/master/json-schema-validation/1-simple.jshttps://github.com/apisyouwonthate/talking-to-other-peoples-apis-code/blob/master/json-schema-validation/1-simple.js[apisyouwonthate/talking-to-other-peoples-apis-code].
+in a JavaScript file. 
 
-....
+[sidebar]
+This code, and other sample code throughout the book, is available on the GitHub Repository
+[apisyouwonthate/surviving-other-peoples-apis].
+
+[source,javascript]
+----
 const Ajv = require('ajv');
 const ajv = new Ajv();
 
@@ -256,7 +266,7 @@ console.log('valid', validate(userSchema, input))
 // Ok screw up validation...
 input['email'] = 123
 console.log('fail', validate(userSchema, input))
-....
+----
 
 For the sake of keeping the example short, the actual JSON Schema has
 been "downloaded" from http://example.com/schemas/user.json and put into
@@ -272,15 +282,15 @@ calling the validation, and triggering errors.
 Calling this script should show the first validation to succeed, and the
 second should fail with an array of errors.
 
-....
-node ./1-simple.js
+----
+$ node ./1-simple.js
 true
 [ { keyword: 'type',
     dataPath: '.email',
     schemaPath: '#/properties/email/type',
     params: { type: 'string' },
     message: 'should be string' } ]
-....
+----
 
 At first this may seem like a pile of unusable gibberish, but it is
 actually incredibly useful. How? The dataPath by default uses JavaScript
@@ -297,7 +307,8 @@ errors.
 _Sadly a lot of this example is going to be specific to AJV, but the
 concepts should translate to any JSON Schema validator out there._
 
-....
+[source,js]
+----
 const Ajv = require('ajv');
 const ajv = new Ajv({ jsonPointers: true });
 const pointer = require('json-pointer');
@@ -321,20 +332,21 @@ function buildHumanErrors(errors) {
     return property.title + ' ' + error.message;
   });
 }
-....
+----
 
 The important things to note in this example are the `new Ajv(\{
 jsonPointers: true });` property, which makes dataPath return a JSON
 Path instead of dot notation stuff. Then we use that pointer to look
 into the schema objects (using the
-mailto:https://www.npmjs.com/package/json-pointer[json-pointer] npm
+https://www.npmjs.com/package/json-pointer[json-pointer] npm
 package), and find the relevant property object. From there we now have
 access to the human readable title, and we can build out some human
 readable errors based off of the various properties returned. This code
 might be a little odd looking, but it supports a few types of error quite
 nicely. Consider the following inputs.
 
-....
+[source,js]
+----
 [
   { },
   { name: "Lucrezia Nethersole", email: "not-an-email" },
@@ -345,18 +357,19 @@ nicely. Consider the following inputs.
     buildHumanErrors(validate(userSchema, input))
   );
 });
-....
+----
 
 These inputs give us a whole bunch of useful human errors back, that can
 be placed into our UI to explain to users that stuff is no good.
 
-....
-node 2-useful-errors.js
+----
+$ node 2-useful-errors.js
+
 [ 'Name is a required field' ]
 [ 'Email should match format "email"' ]
 [ 'Date Of Birth is in an invalid format, e.g: 1990-12-28' ]
 [ 'Name should NOT be longer than 20 characters' ]
-....
+----
 
 The errors we built from the JSON Schema using the properties that exist
 can get really intelligent depending on how good the schema files are,
@@ -384,9 +397,9 @@ maxLength of 40, any client should then get that change the next time
 they request the schema file. That is a fluffy simplicity which has a
 few details to explain...
 
-....
+----
 Link: <http://example.com/schemas/user.json#>; rel="describedby"
-....
+----
 
 This URL is not versioned, which suggests that it might change. This
 is... possibly ok, as long as they have not set a long cache. If a
@@ -403,16 +416,16 @@ in trouble.
 Some APIs version their schema files, and as such new versions _should_
 be published as a new URL.
 
-....
+----
 Link: <http://example.com/schemas/v1.0.0/user.json#>; rel="describedby"
-....
+----
 
 When a minor change is released like the maxLength one, API developers
 may well release another version.
 
-....
+----
 Link: <http://example.com/schemas/v1.0.1/user.json#>; rel="describedby"
-....
+----
 
 So long as URLs are not hardcoded in your application, and the URL is
 being read from the response (taken from wherever the API provides the

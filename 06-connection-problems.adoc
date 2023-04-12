@@ -112,7 +112,7 @@ We will deep dive into timeouts later on in the book, but a really helpful quick
 
 [,js]
 ----
-include::code/ch06-connection-problems/03-catch-json-errors.js[]
+include::code/ch06-connection-problems/04-timeout.js[]
 ----
 
 == Simulating Network Nonsense 
