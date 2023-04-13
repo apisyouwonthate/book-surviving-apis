@@ -131,24 +131,25 @@ Web mocking tools and can be configured to respond in certain ways depending on
 what URL, HTTP method, or body params are sent to it, depending on how complex
 things want to get. Most of the time this is used for simple stuff.
 
-Here's an example taken from the CLI-tool https://github.com/stoplightio/spectral[Spectral].
-
 [source,javascript]
 ----
-const invalidOas3SpecPath = resolve(__dirname, '__fixtures__/openapi-3.0-no-contact.yaml');
+import axios from 'axios';
+import nock from 'nock';
 
-describe('when loading specification files from web', () => {
-  test.nock('http://foo.local', api =>
-    api.get('/openapi').replyWithFile(200, validOas3SpecPath, {
-      'Content-Type': 'application/yaml',
-    }),
-  )
-  .stdout()
-  .command(['lint', 'http://foo.local/openapi'])
-  .it('outputs no issues', ctx => {
-    expect(ctx.stdout).toContain('No errors or warnings found!');
-  });
+test('Test API request', async () => {
+  // Set up Nock to mock the API response
+  nock('https://api.example.com')
+    .get('/data')
+    .reply(200, { data: 'Mocked data' });
+
+  // Make the API request using Axios or any other HTTP library
+  const response = await axios.get('https://api.example.com/data');
+
+  // Assert the response
+  expect(response.status).toBe(200);
+  expect(response.data).toEqual({ data: 'Mocked data' });
 });
+
 ----
 
 This test is setting up a server on the arbitrary fake hostname
@@ -222,11 +223,14 @@ would normally be tucked away in a helper, and it is manually using a cassette
 block, but the idea is this: You can define multiple cassettes, and switch them
 out to see the code working differently.
 
-How exactly it works under the hood might be a bit too much of how the sausage is made,
-but it is very clever so I am going to nerd out a little. In Ruby once again there is
-some monkey patching going on.footnote:[Monkey patching is the mysterious art of rewriting code at runtime, making a single instance of the application work differently. https://wikipedia.org/wiki/Monkey_patch] It knows to look out for common HTTP clients, and
-actually messes with their definitions a little (only in the test suite). This sounds a bit
-scary, but it means VCR can hijack the HTTP requests and use the recorded versions instead.
+How exactly it works under the hood might be a bit too much of how the sausage
+is made, but it is very clever so I am going to nerd out a little. In Ruby once
+again there is some monkey patching going on.footnote:[Monkey patching is the
+mysterious art of rewriting code at runtime, making a single instance of the
+application work differently. https://wikipedia.org/wiki/Monkey_patch] It knows
+to look out for common HTTP clients, and actually messes with their definitions
+a little (only in the test suite). This sounds a bit scary, but it means VCR can
+hijack the HTTP requests and use the recorded versions instead.
 
 Most of these record & replay tools can be configured to use the more static web
 mocking tools mentioned previously. Ruby VCR for example can use webmock, just
@@ -256,32 +260,35 @@ NetRecorder](https://github.com/chrisyoung/netrecorder) are the inspiration for
 a lot of other record and replay tools, and they maintain an impressive list of
 ports to other languages:
 
-* [Betamax](https://github.com/sigmavirus24/betamax) (Python)
-* [VCR.py](https://github.com/kevin1024/vcrpy) (Python)
-* [Betamax](https://github.com/thegreatape/betamax) (Go)
-* [DVR](https://github.com/orchestrate-io/dvr) (Go)
-* [Go VCR](https://github.com/dnaeon/go-vcr) (Go)
-* [Betamax](https://github.com/wjlroe/betamax) (Clojure)
-* [vcr-clj](https://github.com/ifesdjeen/vcr-clj) (Clojure)
-* [scotch](https://github.com/mleech/scotch) (C#/.NET)
-* [Betamax.NET](https://github.com/mfloryan/Betamax.Net) (C#/.NET)
-* [ExVCR](https://github.com/parroty/exvcr) (Elixir)
-* [HAVCR](https://github.com/cordawyn/havcr) (Haskell)
-* [Mimic](https://github.com/acoulton/mimic) (PHP/Kohana)
-* [PHP-VCR](https://github.com/php-vcr/php-vcr) (PHP)
-* [Polly.js](https://netflix.github.io/pollyjs/) (JavaScript/Node)
-* [Nock-VCR](https://github.com/carbonfive/nock-vcr) (JavaScript/Node)
-* [Sepia](https://github.com/linkedin/sepia) (JavaScript/Node)
-* [VCR.js](https://github.com/elcuervo/vcr.js) (JavaScript)
-* [yakbak](https://github.com/flickr/yakbak) (JavaScript/Node)
-* [NSURLConnectionVCR](https://bitbucket.org/martijnthe/nsurlconnectionvcr) (Objective-C)
-* [VCRURLConnection](https://github.com/dstnbrkr/VCRURLConnection) (Objective-C)
-* [DVR](https://github.com/venmo/DVR) (Swift)
-* [VHS](https://github.com/diegoeche/vhs) (Erlang)
-* [Betamax](https://github.com/betamaxteam/betamax) (Java)
-* [http_replayer](https://github.com/ucarion/http_replayer) (Rust)
-* [OkReplay](https://github.com/airbnb/okreplay) (Java/Android)
-* [vcr](https://github.com/ropensci/vcr) (R)
+* https://github.com/sigmavirus24/betamax[Betamax] (Python)
+* https://github.com/kevin1024/vcrpy[VCR.py] (Python)
+* https://github.com/thegreatape/betamax[Betamax] (Go)
+* https://github.com/orchestrate-io/dvr[DVR] (Go)
+* https://github.com/dnaeon/go-vcr[Go VCR] (Go)
+* https://github.com/wjlroe/betamax[Betamax] (Clojure)
+* https://github.com/ifesdjeen/vcr-clj[vcr-clj] (Clojure)
+* https://github.com/mleech/scotch[scotch] (C#/.NET)
+* https://github.com/mfloryan/Betamax.Net[Betamax.NET] (C#/.NET)
+* https://github.com/parroty/exvcr[ExVCR] (Elixir)
+* https://github.com/cordawyn/havcr[HAVCR] (Haskell)
+* https://github.com/acoulton/mimic[Mimic] (PHP/Kohana)
+* https://github.com/php-vcr/php-vcr[PHP-VCR] (PHP)
+* https://netflix.github.io/pollyjs/[Polly.js] (JavaScript/Node)
+* https://github.com/carbonfive/nock-vcr[Nock-VCR] (JavaScript/Node)
+* https://github.com/linkedin/sepia[Sepia] (JavaScript/Node)
+* https://github.com/elcuervo/vcr.js[VCR.js] (JavaScript)
+* https://github.com/flickr/yakbak[yakbak] (JavaScript/Node)
+* https://bitbucket.org/martijnthe/nsurlconnectionvcr[NSURLConnectionVCR]
+(Objective-C)
+* https://github.com/dstnbrkr/VCRURLConnection[VCRURLConnection]
+(Objective-C)
+* https://github.com/venmo/DVR[DVR] (Swift)
+* https://github.com/diegoeche/vhs[VHS] (Erlang)
+* https://github.com/betamaxteam/betamax[Betamax] (Java)
+* https://github.com/ucarion/http_replayer[http_replayer] (Rust)
+* https://github.com/airbnb/okreplay[OkReplay] (Java/Android)
+* https://github.com/ropensci/vcr[vcr] (R)
+
 
 If you are a JavaScript user then check out [Polly.js](https://netflix.github.io/pollyjs/), comically
 written by Netflix. It has some great config options.
@@ -315,5 +322,145 @@ that if the API is ignoring HTTP conventions like status codes, this will not
 work. Ask the API developers to stop ignoring conventions and build their APIs
 properly. Maybe send them a copy of _Build APIs You Won't Hate_. if they need convincing.
 
-// TODO using Prism for spec-based mocking, like web mocking but using specs provided by the API teams
-// so they are not being created by the client
+## "Consumer" Contract Testing
+
+Any API client that is talking to another API is just hoping they don't make
+breaking changes to parts of the API that they use. API developers should be
+using a sensible API Versioning strategy which does not allow for breaking
+changes, or using API Evolution where breaking change is extremely limited and
+only when its unavoidable do people deprecate entire endpoints with the Sunset
+header.
+
+If the API providers are adding Sunset headers but the consumers didn't notice,
+then applications will break.
+
+If the API providers are not doing their own contract testing and accidentally
+push out a breaking change, then applications will break.
+
+Either way, consumer contract testing can help keep an eye on if various
+dependency APIs are doing what the consumer wants to be doing.
+
+Tooling for this is very similar to the sort of tests you see in an API
+providers acceptance test, with one key difference: the API provider is
+(hopefully) testing all actions that should be possible, and asserting the
+responses have the correct contract, but the API consumer test suite is only
+testing what they need. The provider could have removed some fields and deleted
+an endpoint, but if the client doesn't care about that then it's not going to
+trigger a failure on the test suite.
+
+Here's an example of a test using Pact, which works in a bunch of languages but here's the JavaScript library.
+
+[source,js]
+----
+describe('Pact with Order API', () => {
+  describe('given there are orders', () => {
+    describe('when a call to the API is made', () => {
+      before(() => {
+        return provider.addInteraction({
+          state: 'there are orders',
+          uponReceiving: 'a request for orders',
+          withRequest: {
+            path: '/orders',
+            method: 'GET',
+          },
+          willRespondWith: {
+            body: eachLike({
+              id: 1,
+              items: eachLike({
+                name: 'burger',
+                quantity: 2,
+                value: 100,
+              }),
+            }),
+            status: 200,
+            headers: {
+              'Content-Type': 'application/json; charset=utf-8',
+            },
+          },
+        });
+      });
+
+      it('will receive the list of current orders', () => {
+        return expect(fetchOrders()).to.eventually.have.deep.members([new Order(orderProperties.id, [itemProperties])]);
+      });
+    });
+  });
+});
+----
+
+The test suite here is basically describing requests that will be made, and then outlines the “contract” for what should come back. The eachLike helping define examples of data that should come back, so if the data types mismatch it'll trigger errors. Then if the contract type is wrong you'll see more errors, and so on.
+
+Creating a test suite of expectations for your codebase is one way of doing it, but I worry that the tests here and the actual code have subtly different expectations. A developer unfamiliar with Pact could change the request in the code, but not updated the defined interactions in the test suite, meaning the test suite is giving a false sense of security.
+
+If you are very lucky, the provider will provide SDKs, version them with SemVer, and you can enable something like Dependabot to get updates for those SDKs, at which point your test suite will let you know if a used method or property has vanished from the SDK. If this is the case, you might not need consumer-driver contract testing.
+
+If that is not the case, but you're still lucky enough that the provider has provided OpenAPI descriptions (thanks Stripe 🙌) then you can point Prism at those and use the validation proxy.
+
+prism proxy --errors https://raw.githubusercontent.com/stripe/openapi/master/openapi/spec3.yaml https://api.stripe.com
+
+Running this will create a Prism Validation Proxy which is going to see what HTTP traffic comes through it, validate the request, and if it spots any mismatches it'll blow up thanks to --errors.
+
+If the request is good it'll remake that request to https://api.stripe.com, then validate the response. If the response is bad, you'll see output like this in the logs:
+
+> ✖  error  Request terminated with error: https://stoplight.io/prism/errors#UNPROCESSABLE_ENTITY: Invalid request body payload
+
+This curl command came from their documentation and I removed the currency parameter. I expected that to cause the error, but looking at the JSON that Prism returned, the error is actually that the Stripe OpenAPI is wrong. 🤣
+
+[source,bash]
+----
+$ curl -i http://localhost:4010/v1/charges \
+  -u sk_test_f5ssPbJNt4fzBElsVbbR3OLk0024dqCRk1: \
+  -d amount=2000 \
+  -d source=tok_visa \
+  -d description="My First Test Charge (created for API docs)"
+----
+
+[source]
+----
+HTTP/1.1 422 Unprocessable Entity
+content-type: application/problem+json
+Content-Length: 647
+Date: Wed, 17 Jun 2020 18:02:57 GMT
+Connection: keep-alive
+
+{
+    "type": "https:\/\/stoplight.io\/prism\/errors#UNPROCESSABLE_ENTITY",
+    "title": "Invalid request body payload",
+    "status": 422,
+    "detail": "Your request is not valid and no HTTP validation response was found in the spec, so Prism is generating this error for you.",
+    "validation": [
+        {
+            "location": [
+                "body",
+                "shipping",
+                "address"
+            ],
+            "severity": "Error",
+            "code": "required",
+            "message": "should have required property 'line1'"
+        },
+        {
+            "location": [
+                "body",
+                "shipping"
+            ],
+            "severity": "Error",
+            "code": "required",
+            "message": "should have required property 'name'"
+        },
+        {
+            "location": [
+                "body",
+                "transfer_data"
+            ],
+            "severity": "Error",
+            "code": "required",
+            "message": "should have required property 'destination'"
+        }
+    ]
+}
+----
+
+Here Prism is blowing up because the shipping property should be entirely optional, but if shipping is passed then the address.line1, name, and destination are all required. There's a valid way to do that in OpenAPI, but it's not this, so... success for Prism.
+
+Sniffing for mismatches is a good way to spot problems, whether thats a problem with the API documentation or a problem with what you're trying to use the API, either way a mismatch of expectations has occurred and can be discussed.
