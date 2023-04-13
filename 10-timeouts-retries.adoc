@@ -4,7 +4,9 @@ As you're building an API client you are inherently exposed to the risk of that
 APIs stability affecting the performance and reliability of your own
 application. Talking to the API will hopefully be quick, but with all the
 problems we've talked about here you might be starting to get the idea that you
-never really know what's going to happen. Waiting for a slow API request could mean the user gets stuck looking at a blank page, with of progress for seconds, or maybe even minutes.
+never really know what's going to happen. Waiting for a slow API request could
+mean the user gets stuck looking at a blank page, with of progress for seconds,
+or maybe even minutes.
 
 Slow applications can cost you a lot of money. A
 https://blog.kissmetrics.com/loading-time/?wide=1[Kissmetrics survey] suggests
@@ -12,12 +14,6 @@ that for every additional second a page takes to load, 7% fewer conversions will
 occur, so its important to keep as much of the user experience functioning as
 well as possible, for as long as possible, even when upstream dependencies are
 having a rough time.
-
-// Don’t always want a timeout. 
-
-// Question how to figure out if your internet is slow or if your server is struggling 
-
-// If the server is struggling then don’t keep bothering it, but if the internet is slow maybe you should keep at it. Having a backup plan (offline mode) might mean it’s good to give up within a reasonable time so the user is not blocked, but if it’s a video upload for example then just keep on trucking despite the slowness, just make the UI not blocking. 
 
 The most common interaction is simply trying to load primary data for a user
 interface, at which point the browser is essentially doing the work for you, and
@@ -78,11 +74,10 @@ things like this:
 
 image::images/ch10-timeouts-retries/3-heroku-timeout-chop.png[]
 
-This controller has an average response time of 2.9s, but the slow ones
-are floating right around that 30s mark. The Heroku Chop saves the
-caller from being stuck there indefinitely, but this behavior is not
-widespread. Other web servers with different policies could hang for
-longer, or forever.
+This controller has an average response time of 2.9s, but the slow ones are
+floating right around that 30s mark. The Heroku Chop saves the caller from being
+stuck there indefinitely, but this behavior is not widespread. Other web servers
+with different policies could hang for longer, or forever.
 
 For this reason, never presume any service is going to respond as fast as it
 usually does. Even if that team's developers are super confident. Even if it
@@ -101,20 +96,61 @@ This concept is known as a "timeout".
 
 === Setting a Timeout in the HTTP Client
 
-HTTP clients usually do not set a timeout by default, but most can be
-configured to control various aspects of timeout settings.
+Some HTTP clients will set a timeout by default, some do not. 
+
+Some can easily be configured easily, some cannot.
+
+JavaScript is a bit of a faff if you're using the Fetch API as it's a "low
+level" client, but you can teach it timeouts with a bit of extra code.
+
+[source,js]
+----
+function fetchWithTimeout(url, timeout) {
+  // Create a promise that resolves with the fetch response
+  const fetchPromise = fetch(url);
+
+  // Create a promise that rejects with a timeout error
+  const timeoutPromise = new Promise(function(resolve, reject) {
+    setTimeout(function() {
+      reject(new Error('Request timeout'));
+    }, timeout);
+  });
+
+  // Use Promise.race to return whichever promise resolves or rejects first
+  return Promise.race([fetchPromise, timeoutPromise]);
+}
+
+const url = "https://api.example.com/data";
+const timeout = 5000; // 5 seconds
+
+fetchWithTimeout(url, timeout)
+  .then(function(response) {
+    // Check if response.ok is true for a successful HTTP response
+    if (response.ok) {
+      return response.json(); // Parse response as JSON
+    } else {
+      throw new Error('HTTP error: ' + response.status);
+    }
+  })
+  .then(function(data) {
+    console.log('HTTP request successful:', data);
+  })
+  .catch(function(error) {
+    console.error('HTTP request failed:', error);
+  });
+
+----
 
 For Ruby users, the HTTP client
 https://github.com/lostisland/faraday/[Faraday] might look like this:
 
 [source,ruby]
 ----
-conn = Faraday.new('http://example.com'); 
+conn = Faraday.new('http://api.example.com/data'); 
 
 conn.get do |req| 
   req.url '/search' 
-  req.options.timeout = 5      # open/read timeout in seconds 
-  req.options.open_timeout = 2   # connection open timeout in seconds 
+  req.options.timeout = 5
 end
 ----
 
@@ -127,46 +163,47 @@ this:
 $client->request('GET', '/delay/5', ['timeout' => 5]);
 ----
 
-There are two types of timeout that a lot of HTTP clients use:
+Some HTTP clients will allow you to get even more particular than that, and set two different types of timeout:
 
-. Open (Connection) Timeout
-. Read Timeout
+- Open (Connection) Timeout
+- Read Timeout
 
-An *open timeout* asks: how long do you want to wait around to see if
-this server is actually accepting requests. That can mean many things
-but often means a server is too busy to take a request (there are no
-available workers processing the traffic). It also depends in part on
-expected network latency. If you are making an HTTP call to another
-service in the same data center, the latency is going to be a few
-milliseconds, but going to another continent takes time.
+An *open timeout* controls how long the client should wait around to see if this
+server is actually accepting requests. That can mean many things but often means
+a server is too busy to take a request (there are no available workers
+processing the traffic). It also depends in part on expected network latency. If
+you are making an HTTP call to another service in the same data center, the
+latency is going to be a few milliseconds, but going to another continent takes
+time.
 
 image::images/ch10-timeouts-retries/4-cloudping-aws-latency.png[,300,align="center"]
 
-The *read timeout* is how long you want to spend reading data from the
-server once the connection is open. It's common for this to be set
-higher, as waiting for a server to generate an answer (run queries,
-fetch data, serialize it, etc.) should take longer than opening the
-connection.
+The *read timeout* controls how long the client should spend reading data from
+the server once the connection is open. It's common for this to be set higher,
+as waiting for a server to generate an answer (run queries, fetch data,
+serialize it into JSON, etc.) should take longer than opening the connection.
 
-When you see the term "timeout" on its own (not an open timeout or a
-read timeout) that usually means the total timeout.
-https://github.com/lostisland/faraday/[Faraday] takes `timeout = 5` and
-`open_timeout = 2` to mean "I demand the server marks the connection as
-open within 2 seconds, then regardless of how long that took, it only
-has 5 seconds to finish responding."
+When you see the term "timeout" on its own (not an open timeout or a read
+timeout) that usually means the total timeout.
 
-Setting an open timeout and read timeout in fetch is a little tricker, as its a low level library and you have to do a bit more heavy lifting to get it doing advanced things like that.
+For example, Faraday takes `timeout = 5` and `open_timeout = 2` to mean "I
+demand the server opens the connection within 2 seconds, then regardless of how
+long that took, it only has 5 seconds to finish responding."
 
-.Timeout example in fetch() from earlier in the book.
-[,js]
+[source,ruby]
 ----
-include::code/ch06-connection-problems/04-timeout.js[]
+conn = Faraday.new('http://api.example.com/data'); 
+
+conn.get do |req| 
+  req.url '/search' 
+  req.options.open_timeout = 2 # connection timeout in seconds
+  req.options.timeout = 5      # total timeout (connection and read)
+end
 ----
 
-Axios can make using a single timeout easier, but still does not handle open/read timeouts separately. If anyone knows a good way to do this in JavaScript please send me your code examples.
-
-// TODO open/read timeouts in JavaScript
-
+Different HTTP clients are different, but you should usually be able to find
+some sort of code or extension for neatly handling timeouts somewhere. If not,
+time to earn some open-source badges!
 
 === Some Must Die, So Others May Live
 
@@ -209,6 +246,8 @@ there are threads available in the various workers... but if the
 performance issues for the squirrel chewed API continue, every time a
 user hits `GET /something`, another thread becomes unavailable for that
 30s.
+
+// Talk about WeWork?
 
 Let's do a bit of math. For each thread that gets stuck, given that
 thread is stuck for 30s, and most requests go through in 100ms, *that's
