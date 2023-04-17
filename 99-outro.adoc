@@ -1,12 +1,30 @@
 = Thank You For Reading
 
-This book is nearing completion but we've not sent it off for editing yet. Sorry
-for all the typos. 
+Mike and Phil both really appreciate you taking the time to read this book.
 
-If you have any ideas, requests, questions, or feedback, please get in touch:
+Hopefully it's been useful for you. Maybe it's taught you something new, helped
+you think about something differently, or solidified what you already knew. 
 
-phil@apisyouwonthate.com
+Maybe the book is missing something that you think would really help future
+readers.
 
-mike@apisyouwonthate.com
+As this is still an e-book, there's still time! We massively appreciate ideas,
+requests, questions, or feedback, all of which can be sent via email:
 
-We hope you enjoyed the content, and wish you the best of luck out there!
+*Phil Sturgeon:* phil@apisyouwonthate.com
+
+*Mike Bifulco:* mike@apisyouwonthate.com
+
+We'll listen to your suggestions and get things updated for future versions, then when we feel like feedback has stablised we can put out a paperback version and you'll get a mention for your brilliant feedback!
+
+Either way we hope to see you around the world of APIs You Won't Hate:
+
+- Check out the blog: https://apisyouwonthate.com
+
+- Listen to the podcast: https://apisyouwonthate.com/podcast
+
+- Slack Channel: https://apisyouwonthate.com/community
+
+Best of luck out there!
+
+Phil & Mike

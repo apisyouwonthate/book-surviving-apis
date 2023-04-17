@@ -291,3 +291,5 @@ These errors are mostly "something has gone wrong, this is how you should fix it
 // TODO 
 // == code samples solving common problems
 // == Localization
+
+// TODO graphql errors as data
