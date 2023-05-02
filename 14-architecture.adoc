@@ -158,8 +158,8 @@ Unfortunately, this is not always the case. Google Maps ditched their free
 mapping offering, Facebook regularly just turns off various APIs for whatever
 reason, and Meetup decided to ditch their API for any customers who were not
 Pro. Twitter API starting charging people bonkers money just to send a single
-tweet, and every Geocoding API I've ever loved has gone. Farewell Yahoo
-Placefinder API, Algolia Places Sunset, SimpleGeo...
+tweet, and every geocoding service I've ever loved has gone. Farewell Yahoo
+Placefinder API, Algolia Places Search, SimpleGeo...
 
 Stuff can just vanish, especially if it's a third-party API. If you are coupling
 your client application with a direct dependency on an API, the impact of that
@@ -501,3 +501,7 @@ Seeing as building a BFF is creating an API, the most logical suggestion would b
 // with circuit breakers is going to help to prevent a lot of potential performance
 // issues, but this does not help with with the scariest of all things in
 // dependencies: Change!
+
+
+// TODO Good GraphQL BFF thoughts for quoting
+// https://philcalcado.com/2019/07/12/some_thoughts_graphql_bff.html

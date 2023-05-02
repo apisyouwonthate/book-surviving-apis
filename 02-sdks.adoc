@@ -1,7 +1,7 @@
 = Software Development Kits (SDKs)
 
 Knowing how to interact with a HTTP API directly is a good skill to have, but
-sometimes you the API team will have created a library/package/module written in
+sometimes the API team will have created a library/package/module written in
 your programming language of choice, so that you don't have to bother. This is
 know as a Software Development Kit, or an SDK for short. 
 
@@ -28,7 +28,7 @@ const charge = await stripe.charges.create({
   amount: 2000,
   currency: 'usd',
   source: 'tok_amex',
-  description: 'My First Test Charge (created for API docs at https://www.stripe.com/docs/api)',
+  description: 'My First Test Charge',
 });
 ----
 
